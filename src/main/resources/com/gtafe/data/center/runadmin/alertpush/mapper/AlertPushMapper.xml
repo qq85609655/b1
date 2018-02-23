@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.runadmin.alertpush.mapper.AlertPushMapper">
+	<!-- 分页查询映射数据 -->
+	<select id="list"
+		resultType="com.gtafe.data.center.runadmin.alertpush.vo.AlertPush">
+		SELECT
+	u.user_id id,
+	u.realname,
+	u.user_no userNo,
+	CONCAT(
+		u.realname,
+		'(',
+		u.user_no,
+		')'
+	) xm,
+	u.send_error_mail isPush,
+    o.id orgId,
+	o.org_name orgName,
+	(
+		SELECT
+			COUNT(*)
+		FROM
+			sys_user_task ut,
+		    data_etl_task task
+		WHERE
+			ut.task_id = task.task_id
+		AND ut.user_id = u.user_id
+		AND task.business_type = 1
+	) fbCount,
+	(
+		SELECT
+			COUNT(*)
+		FROM
+			sys_user_task ut,
+		    data_etl_task task
+		WHERE
+		   ut.task_id = task.task_id
+		AND ut.user_id = u.user_id
+		AND task.business_type = 2
+	) dyCount
+FROM
+	sys_user u,
+	sys_org o
+WHERE
+	u.org_id = o.id
+		<if test="isPush !=-1">
+		and u.send_error_mail =#{isPush}
+		</if>
+		and u.org_id in (
+		<foreach collection="orgIdList" item="item" separator=",">
+			#{item}
+		</foreach>
+		)
+		and u.isdelete=0
+	</select>
+</mapper>

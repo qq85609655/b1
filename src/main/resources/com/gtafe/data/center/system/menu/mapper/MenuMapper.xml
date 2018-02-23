@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.system.menu.mapper.MenuMapper">
+    <select id="queryList" resultType="com.gtafe.data.center.system.menu.vo.MenuVo">
+        select
+        m.menu_id menuId,
+        m.menu_name menuName,
+        m.auth_code authCode,
+        m.parent_id parentId,
+        m.url,
+        m.remark
+        from sys_menu m
+        where 1=1
+        <if test="menuName != null">
+            and m.menu_name like CONCAT('%', #{menuName}, '%')
+        </if>
+    </select>
+
+    <!--修改 -->
+    <update id="updateEntity" parameterType="com.gtafe.data.center.system.menu.vo.MenuVo">
+        UPDATE SYS_MENU
+        SET
+        menu_name = #{menuName},
+        updatetime = SYSDATE(),
+        updater=#{updater}
+        WHERE
+        menu_id = #{id}
+    </update>
+	
+	<select id="queryMenuAuthCodes" resultType="com.gtafe.data.center.system.menu.vo.MenuAuthCodeInfo">
+		select * from
+		(
+			select
+				m.menu_id authId,
+				m.menu_name authName,
+				m.parent_id parentId,
+				false authFlag
+				from sys_menu m
+				where state = 1 order by sort
+		) t1
+		union all 
+		select * from
+		(
+				select 
+				auth_code authId,
+				auth_name authName,
+				menu_id parentId,
+				true authFlag
+				from sys_menu_authcode
+				where state = 1
+				order by menu_id asc,auth_code asc
+		) t2
+    </select>
+</mapper>

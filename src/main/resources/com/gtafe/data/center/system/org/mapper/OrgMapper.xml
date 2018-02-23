@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.system.org.mapper.OrgMapper">
+    <select id="queryList" resultType="com.gtafe.data.center.system.org.vo.OrgVo">
+        select
+        m.`id` ,
+        m.`org_name` orgName,
+        m.`org_address` orgAddress,
+        m.`parent_id` parentId,
+        m.`state` state,
+        m.`creater` creater ,
+        m.`createtime` createtime,
+        m.`org_type` orgType,
+        m.`sort` sort,
+        m.`node_type` nodeType
+        from sys_org m
+        where 1=1
+
+
+        order by m.updatetime desc
+    </select>
+
+	<select id="getOrgVos" resultType="com.gtafe.data.center.system.org.vo.OrgVo">
+		SELECT
+		o.id,
+		o.parent_id parentId,
+		o.org_name orgName,
+		o.node_type nodeType,
+		o.sort,
+		o.org_no orgNo
+		FROM
+		sys_org o
+		where 1 = 1
+		<if test="userId >= 0">
+			and (
+			o.id in(
+			select ro.org_id
+			from sys_role_org ro
+			inner join sys_role r on r.role_id = ro.role_id and r.state = 1
+			inner join sys_user_role ur on ur.role_id = ro.role_id
+			inner join sys_user u on ur.user_id = u.user_id and u.state = 1 and u.isdelete = 0
+			where u.user_id = #{userId}
+			)
+			or o.node_type &lt; 3
+			)
+		</if>
+		ORDER BY o.sort asc
+	</select>
+
+
+	<select id="getOrgVos4Import" resultType="com.gtafe.data.center.system.org.vo.OrgVo">
+		SELECT
+		o.id,
+		o.parent_id parentId,
+		o.org_name orgName,
+		o.node_type nodeType,
+		o.sort,
+		o.org_no orgNo
+		FROM
+		sys_org o
+		where 1 = 1
+		<if test="userId >= 0">
+			and (
+			o.id in(
+			select ro.org_id
+			from sys_role_org ro
+			inner join sys_role r on r.role_id = ro.role_id and r.state = 1
+			inner join sys_user_role ur on ur.role_id = ro.role_id
+			inner join sys_user u on ur.user_id = u.user_id and u.state = 1 and u.isdelete = 0
+			where u.user_id = #{userId}
+			)
+			or o.node_type &lt; 3
+			)
+		</if>
+		AND  o.node_type=3
+		ORDER BY o.sort asc
+	</select>
+	
+    <!--保存用戶數據-->
+    <insert id="saveEntity" parameterType="com.gtafe.data.center.system.org.vo.OrgVo">
+		INSERT INTO SYS_ORG(
+		`org_name` ,
+		`org_address` ,
+		`parent_id`,
+		`state`,
+		`creater` ,
+		`createtime` ,
+		`org_type`,
+		`sort`)
+		VALUES (
+		#{orgName},
+		#{orgAddress},
+		#{parentId},
+		#{state},
+		#{creater},
+		 SYSDATE(),
+		#{orgType},
+		#{sort}
+		)
+	</insert>
+    <!--修改 -->
+    <update id="updateEntity" parameterType="com.gtafe.data.center.system.org.vo.OrgVo">
+		UPDATE SYS_ORG
+		SET
+		org_name = #{orgName},
+		org_address = #{orgAddress},
+		parent_id = #{parentId},
+		state = #{state},
+		org_type = #{orgType},
+		sort = #{sort},
+		updatetime = SYSDATE(),
+		updater=#{updater}
+		WHERE
+		id = #{id}
+	</update>
+
+    <!--刪除 -->
+    <delete id="deleteEntity">
+        delete from SYS_ORG where id IN (
+        <foreach collection="ids" item="id" index="index" separator=",">
+            #{id }
+        </foreach>)
+    </delete>
+
+    <select id="getEntityById"  resultType="com.gtafe.data.center.system.org.vo.OrgVo">
+	 select
+		m.`id` ,
+		m.`org_name`  orgName,
+		m.`org_address` orgAddress,
+		m.`parent_id` parentId,
+		m.`state` state,
+		m.`creater` creater ,
+		m.`createtime`  createtime,
+		m.`org_type` orgType,
+		m.`sort` sort
+		from sys_org m
+		where m.id=#{orgId}
+	</select>
+</mapper>

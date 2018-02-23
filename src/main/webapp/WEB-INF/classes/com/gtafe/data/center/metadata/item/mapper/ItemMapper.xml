@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.metadata.item.mapper.ItemMapper">
+    <select id="queryItemList" resultType="com.gtafe.data.center.metadata.item.vo.ItemVO">
+        SELECT
+        b.subclass_code subclassCode,
+        b.item_code itemCode,
+        b.item_name itemName,
+        b.item_comment itemComment,
+        b.data_type dataType,
+        b.data_length dataLength,
+        b.data_primarykey dataPrimarykey,
+        b.data_nullable dataNullable,
+        b.data_value_source dataValueSource,
+        b.data_explain dataExplain,
+        b.data_referenced dataReferenced,
+        b.selectable selectable,
+		b.creator creator,
+		b.createtime createtime,
+		b.updater updater,
+		b.updatetime updatetime,
+		b.sourceid sourceid,
+		b.set_id setid,
+		b.type_id typeid,
+		b.code_id codeid,
+		s.subclass_comment subclassComment   
+		FROM
+		    info_metadata_item b, info_metadata_subclass s
+		    where b.sourceid=#{sourceId}
+		    AND b.subclass_code = s.subclass_code
+		<if test="itemCodeOritemName != null">
+        and (b.item_name like CONCAT('%', #{itemCodeOritemName}, '%') OR b.item_comment like CONCAT('%', #{itemCodeOritemName}, '%')) 
+        </if>
+        order by b.updatetime desc
+    </select>
+    
+    <delete id="itemDelete">
+        DELETE FROM info_metadata_item WHERE subclass_code = #{subclassCode} AND item_code = #{itemCode}
+    </delete>
+    
+    <insert id="itemAdd" parameterType="com.gtafe.data.center.metadata.item.vo.ItemVO">
+        INSERT INTO info_metadata_item (
+	    subclass_code,
+        item_code ,
+        item_name ,
+        item_comment ,
+        data_type ,
+        data_length ,
+        data_primarykey ,
+        data_nullable ,
+        data_value_source ,
+        data_explain ,
+        data_referenced ,
+        selectable ,
+        sourceid,
+		set_id,
+		type_id,
+		code_id,
+			    creator,
+			    createtime,
+			    updater,
+			    updatetime
+			)
+			VALUES
+			    (
+			    #{subclassCode},
+			    #{itemCode},
+			    #{itemName},
+			    #{itemComment},
+			    #{dataType},
+			    #{dataLength},
+			    #{dataPrimarykey},
+			    #{dataNullable},
+			    #{dataValueSource},
+			    #{dataExplain},
+			    #{dataReferenced},
+			    #{selectable},
+			    #{sourceid},
+			    #{setid},
+			    #{typeid},
+			    #{codeid},
+			    #{creator},
+			    SYSDATE(),
+			    #{updater},
+			    SYSDATE()
+	       )
+    </insert>
+    
+    <select id="queryByCode" resultType="com.gtafe.data.center.metadata.item.vo.ItemVO">
+        SELECT
+            b.subclass_code subclassCode,
+        b.item_code itemCode,
+        b.item_name itemName,
+        b.item_comment itemComment,
+        b.data_type dataType,
+        b.data_length dataLength,
+        b.data_primarykey dataPrimarykey,
+        b.data_nullable dataNullable,
+        b.data_value_source dataValueSource,
+        b.data_explain dataExplain,
+        b.data_referenced dataReferenced,
+        b.selectable selectable,
+		b.creator creator,
+		b.createtime createtime,
+		b.updater updater,
+		b.updatetime updatetime,
+		b.sourceid sourceid,
+		b.set_id setid,
+		b.type_id typeid,
+		b.code_id codeid  
+		FROM
+		    info_metadata_item b
+        WHERE b.subclass_code = #{subclassCode} AND b.item_code = #{itemCode}
+        
+    </select>
+    
+    
+    
+    <update id="itemUpdate" parameterType="com.gtafe.data.center.metadata.item.vo.ItemVO">
+        UPDATE info_metadata_item
+		SET item_comment = #{itemComment},
+		data_value_source = #{dataValueSource},
+		data_explain = #{dataExplain},
+		 data_referenced = #{dataReferenced},
+		 updatetime = SYSDATE()
+		WHERE
+		  subclass_code = #{subclassCode}
+		AND item_code = #{itemCode}
+    </update>
+    
+    
+    <!-- 级联查询获取树形节点 -->
+	<resultMap type="com.gtafe.data.center.metadata.item.vo.SubsetTreeVO"
+		id="subsetResult">
+		<id column="subsetCode"  property="subsetCode"/>
+		<result column="sourceId" property="sourceId" />
+		<result column="subsetCode" property="subsetCode" />
+		<result column="subsetName" property="subsetName" />
+		<collection property="classTreeVO"
+			ofType="com.gtafe.data.center.metadata.item.vo.ClassTreeVO">
+			<id column="classCode" property="classCode" />
+			<result column="classCode" property="classCode" />
+			<result column="className" property="className" />
+			<result column="subsetCode" property="subsetCode" />
+			<collection property="subclassTreeVO"
+				ofType="com.gtafe.data.center.metadata.item.vo.SubclassTreeVO">
+				<id column="subclassCode" property="subclassCode" />
+				<result column="classCode" property="classCode" />
+				<result column="subclassCode" property="subclassCode" />
+				<result column="subclassComment" property="subclassComment" />
+			</collection>
+		</collection>
+	</resultMap>
+
+
+	<select id="queryMetaDataTreeInfo" resultMap="subsetResult">
+		SELECT
+		a.sourceid sourceId,
+		a.code subsetCode,
+		a.code_name subsetName,
+		b.class_code classCode,
+		b.class_name className,
+		c.subclass_code subclassCode,
+		c.subclass_comment subclassComment
+		FROM
+		info_metadata_subset a,
+		info_metadata_class  b,
+		info_metadata_subclass c
+		WHERE
+		a.code = b.subset_code
+		and b.class_code = c.class_code
+		and a.sourceid=#{sourceId}
+	</select>
+	
+	<select id="queryItemListBysubclass" resultType="com.gtafe.data.center.metadata.item.vo.ItemVO">
+        SELECT
+        b.id id,
+        b.subclass_code subclassCode,
+        b.item_code itemCode,
+        b.item_name itemName,
+        b.item_comment itemComment,
+        b.data_type dataType,
+        b.data_length dataLength,
+        b.data_primarykey dataPrimarykey,
+        b.data_nullable dataNullable,
+        b.data_value_source dataValueSource,
+        b.data_explain dataExplain,
+        b.data_referenced dataReferenced,
+        b.selectable selectable,
+		b.creator creator,
+		b.createtime createtime,
+		b.updater updater,
+		b.updatetime updatetime,
+		b.sourceid sourceid,
+		b.set_id setid,
+		b.type_id typeid,
+		b.code_id codeid,
+        s.subclass_comment subclassComment   
+		FROM
+	    info_metadata_item b, info_metadata_subclass s
+        where b.subclass_code = #{subclassCode}  AND b.subclass_code = s.subclass_code
+        
+        <if test="itemCodeOrItemName != null">
+            AND (b.item_code LIKE CONCAT('%', #{itemCodeOrItemName}, '%') OR b.item_name LIKE CONCAT('%', #{itemCodeOrItemName}, '%'))
+        </if>
+        
+        order by b.updatetime desc
+                    
+    </select>
+       
+    <select id="queryTableName" parameterType="String" resultType="String">
+       select subclass_tablename from info_metadata_subclass where subclass_code = #{subclassCode}
+    </select>
+    
+    <select id="existTable" parameterType="java.lang.String"  resultType="int">
+      select count(1) from information_schema.tables where table_name = #{subclassTableName}
+    </select>
+       
+</mapper>

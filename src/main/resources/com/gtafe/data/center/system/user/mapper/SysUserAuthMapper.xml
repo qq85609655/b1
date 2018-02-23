@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.system.user.mapper.SysUserAuthMapper">
+    
+    <select id="getUserAllAuthcodes" resultType="java.lang.String">
+	    select DISTINCT t3.auth_code
+		from sys_user t1
+		inner join sys_user_role t2 on t1.user_id = t2.user_id
+		inner join sys_role_authcode t3 on t2.role_id = t3.role_id
+		inner join sys_role t4 on t2.role_id = t4.role_id and t4.state = 1
+		where t1.user_id = #{userId}
+    </select>
+</mapper>

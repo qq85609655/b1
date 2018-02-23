@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.information.code.mapper.CodeStandardMapper">
+    <select id="queryCodeList" resultType="com.gtafe.data.center.information.code.vo.CodeInfoVo">
+        SELECT
+        c.code_id codeId,
+        c.node_id nodeId,
+        c.code,
+        c.name,
+        c.description,
+        n.name nodeName
+        FROM info_codestandard_code c
+        inner join info_codestandard_node n on c.node_id= n.node_id
+        where 1=1
+        <if test="sourceId > 0">
+            and c.sourceid = #{sourceId}
+        </if>
+        <if test="nodeType == 1 ">
+            and c.node_id in (
+            select t3.node_id
+            from info_codestandard_node t2
+            inner join info_codestandard_node t3 on t2.node_id = t3.parentnode_id
+            where t2.node_id= #{nodeId}
+            )
+        </if>
+        <if test="nodeType == 2">
+            and c.node_id = #{nodeId}
+        </if>
+
+        <if test="keyWord != null and keyWord.trim().length() > 0">
+            and (c.code like CONCAT('%', #{keyWord}, '%') or c.name like CONCAT('%', #{keyWord}, '%') )
+        </if>
+        order by c.node_id
+    </select>
+
+
+    <select id="queryCodeList2" resultType="com.gtafe.data.center.information.code.vo.CodeInfoVo">
+
+        SELECT
+        c.code_id codeId,
+        c.node_id nodeId,
+        c. CODE,
+        c. NAME,
+        c.description,
+        n.name nodeName
+        FROM
+        info_codestandard_code c
+         INNER JOIN  info_codestandard_node n on c.node_id=n.node_id
+        WHERE
+        c.node_id IN (
+        SELECT
+        t1.node_id
+        FROM
+        info_codestandard_node t1
+        WHERE
+        t1.parentnode_id in (
+        SELECT
+        t1.node_id
+        FROM
+        info_codestandard_node t1
+        WHERE
+        t1.parentnode_id = #{parentId} )
+        )
+        <if test="keyWord != null and keyWord.trim().length() > 0">
+            and (c.code like CONCAT('%', #{keyWord}, '%') or c.name like CONCAT('%', #{keyWord}, '%') )
+        </if>
+
+        union all
+
+        SELECT
+        c.code_id codeId,
+        c.node_id nodeId,
+        c. CODE,
+        c. NAME,
+        c.description,
+        n.name nodeName
+        FROM
+        info_codestandard_code c
+        INNER JOIN  info_codestandard_node n on c.node_id=n.node_id
+        WHERE
+        c.node_id IN (
+        SELECT
+        t1.node_id
+        FROM
+        info_codestandard_node t1
+        WHERE
+        t1.parentnode_id =#{parentId}
+        )
+        <if test="keyWord != null and keyWord.trim().length() > 0">
+            and (c.code like CONCAT('%', #{keyWord}, '%') or c.name like CONCAT('%', #{keyWord}, '%') )
+        </if>
+
+        union ALL
+
+        SELECT
+        c.code_id codeId,
+        c.node_id nodeId,
+        c. CODE,
+        c. NAME,
+        c.description,
+        n.name nodeName
+        FROM
+        info_codestandard_code c
+        INNER JOIN  info_codestandard_node n on c.node_id=n.node_id
+        WHERE
+        c.node_id =#{parentId}
+        <if test="keyWord != null and keyWord.trim().length() > 0">
+            and (c.code like CONCAT('%', #{keyWord}, '%') or c.name like CONCAT('%', #{keyWord}, '%') )
+        </if>
+
+    </select>
+
+
+    <select id="queryCodeNodesByParentId" resultType="com.gtafe.data.center.information.code.vo.CodeNodeVo">
+SELECT
+	t1.node_id nodeId,
+	t1.parentnode_id parentnodeId,
+	t1. CODE CODE,
+	t1.`name` NAME,
+	t1.description description,
+	t1.node_type nodeType
+FROM
+	info_codestandard_node t1
+WHERE
+	t1.sourceid = 1
+AND t1.parentnode_id IN (
+	SELECT
+		t2.node_id nodeId
+	FROM
+		info_codestandard_node t2
+	WHERE
+		t2.sourceid = 1
+	AND t2.parentnode_id =#{parentId}
+)
+
+union all
+
+SELECT
+	t1.node_id nodeId,
+	t1.parentnode_id parentnodeId,
+	t1. CODE CODE,
+	t1.`name` NAME,
+	t1.description description,
+	t1.node_type nodeType
+FROM
+	info_codestandard_node t1
+WHERE
+	t1.sourceid = 1
+and t1.parentnode_id=#{parentId}
+
+union all
+SELECT
+	t1.node_id nodeId,
+	t1.parentnode_id parentnodeId,
+	t1. CODE CODE,
+	t1.`name` NAME,
+	t1.description description,
+	t1.node_type nodeType
+FROM
+	info_codestandard_node t1
+WHERE
+	t1.sourceid = 1
+and t1.node_id=#{parentId}
+    </select>
+
+    <select id="queryCodeNodes" resultType="com.gtafe.data.center.information.code.vo.CodeNodeVo">
+        SELECT
+        node_id nodeId,
+        parentnode_id parentnodeId,
+        code code,
+        `name` name,
+        description description,
+        node_type nodeType
+        FROM
+        info_codestandard_node
+        where 1=1
+        <if test="sourceId > 0">
+            and sourceid = #{sourceId}
+        </if>
+    </select>
+
+
+    <delete id="datasourceDelete">
+        delete from data_etl_dataconnection where id = #{id}
+    </delete>
+
+    <insert id="datasourceAdd" parameterType="com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO">
+     INSERT INTO data_etl_dataconnection (
+	    name,
+        dbtype ,
+        db_name ,
+        host ,
+        port ,
+        username ,
+        password ,
+        remark ,
+        org_id,
+        table_space ,
+        index_space ,
+			    creator,
+			    createtime,
+			    updater,
+			    updatetime
+			)
+			VALUES
+			    (
+			    #{name},
+			    #{dbType},
+			    #{dbName},
+			    #{host},
+			    #{port},
+			    #{username},
+			    #{password},
+			    #{remark},
+			    #{orgId},
+			    #{tableSpaces},
+			    #{indexSpaces},
+			    #{creator},
+			    SYSDATE(),
+			    #{updater},
+			    SYSDATE()
+	       )
+    
+    </insert>
+
+    <update id="datasourceUpdate" parameterType="com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO">
+     UPDATE data_etl_dataconnection
+		SET dbtype = #{dbType},
+		db_name = #{dbName},
+		host = #{host},
+		 port = #{port},
+		  username = #{username},
+		   password = #{password},
+		    remark = #{remark},
+		    table_space = #{tableSpaces},
+		    index_space = #{indexSpaces},
+		 updatetime = SYSDATE()
+		WHERE
+		  id = #{id}
+    </update>
+
+    <select id="queryIfExistById" resultType="com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO">
+        SELECT
+            a.id  id,
+		    a.name name,
+		    a.dbtype dbType,
+		    a.db_name dbName,
+		    a.host host,
+		    a.port port,
+       		a.org_id,
+		    a.username username,
+		    a.password password,
+		    a.remark remark,
+		    a.table_space tableSpaces,
+		    a.index_space indexSpaces,
+		    a.creator creator,
+		    a.createtime createtime,
+		    a.updater updater,
+		    a.updatetime updatetime 
+		FROM
+		    data_etl_dataconnection a
+        WHERE a.id = #{id}
+    </select>
+
+    <select id="queryDatasourceInfoById" resultType="com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO">
+      SELECT
+            a.id  id,
+		    a.name name,
+		    a.dbtype dbType,
+		    b.name dbTypeName,
+		    a.db_name dbName,
+		    a.host host,
+		    a.port port,
+		    a.org_id orgId,
+		    a.username username,
+		    a.password password,
+		    a.remark remark,
+		    a.table_space tableSpaces,
+		    a.index_space indexSpaces,
+		    a.creator creator,
+		    a.createtime createtime,
+		    a.updater updater,
+		    a.updatetime updatetime
+		FROM
+		    data_etl_dataconnection a
+		    left join data_etl_dbtype b
+		    on a.dbtype = b.code
+		     where a.id = #{id}
+    </select>
+
+    <select id="queryDatasourceIfExist" parameterType="String" resultType="int">
+       select count(1) from data_etl_dataconnection a where a.name = #{name}
+    </select>
+
+    <insert id="saveCodeVo" parameterType="com.gtafe.data.center.information.code.vo.CodeInfoVo">
+		insert into info_codestandard_code(node_id,code,`name`,description,sourceid,creater,updater,createtime,updatetime)
+		 values(#{nodeId},#{code},#{name},#{description},#{sourceId}, #{creater},#{updater},now(),now())
+	</insert>
+
+    <select id="queryCodeEntity" resultType="com.gtafe.data.center.information.code.vo.CodeInfoVo">
+        SELECT
+        c.code_id codeId,
+        c.node_id nodeId,
+        c. CODE,
+        c. NAME,
+        c.description
+        from info_codestandard_code  c where c.code_id =#{codeId}
+    </select>
+</mapper>

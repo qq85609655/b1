@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.information.data.mapper.DataStandardItemMapper">
+    <select id="querySubclassItemList" resultType="com.gtafe.data.center.information.data.vo.DataStandardItemVo">
+        SELECT
+        b.id id,
+        b.subclass_code subclassCode,
+        b.item_code itemCode,
+        b.item_name itemName,
+        b.item_comment itemComment,
+        b.data_type dataType,
+        b.data_length dataLength,
+        b.data_primarykey dataPrimarykey,
+        b.data_nullable dataNullable,
+        b.data_value_source dataValueSource,
+        b.data_explain dataExplain,
+        b.data_referenced dataReferenced,
+        b.selectable selectable
+        FROM
+        info_datastandard_item b
+        where b.subclass_code = #{subclassCode}
+        <if test="sourceId > 0">
+            and b.sourceid = #{sourceId}
+        </if>
+    </select>
+
+    <select id="queryItemList" resultType="com.gtafe.data.center.information.data.vo.DataStandardItemVo">
+        SELECT
+        b.id id,
+        b.subclass_code subclassCode,
+        b.item_code itemCode,
+        b.item_name itemName,
+        b.item_comment itemComment,
+        b.data_type dataType,
+        b.data_length dataLength,
+        b.data_primarykey dataPrimarykey,
+        b.data_nullable dataNullable,
+        b.data_value_source dataValueSource,
+        b.data_explain dataExplain,
+        b.data_referenced dataReferenced,
+        b.selectable selectable,
+        o.code_name subclassName
+        FROM info_datastandard_item b
+        inner join info_datastandard_org o on b.subclass_code= o.code and o.node_type = 3
+        where 1=1
+        <if test="sourceId > 0">
+            and b.sourceid = #{sourceId}
+        </if>
+        <if test="nodeType == 1">
+            and b.subclass_code in (
+            select t3.code
+            from info_datastandard_org t1
+            inner join info_datastandard_org t2 on t1.code = t2.parent_code
+            inner join info_datastandard_org t3 on t2.code = t3.parent_code
+            where t1.code= #{code}
+            )
+        </if>
+        <if test="nodeType == 2">
+            and b.subclass_code in (
+            select t3.code
+            from info_datastandard_org t2
+            inner join info_datastandard_org t3 on t2.code = t3.parent_code
+            where t2.code= #{code}
+            )
+        </if>
+        <if test="nodeType == 3">
+            and b.subclass_code = #{code}
+        </if>
+        <if test="keyWord != null and keyWord.trim().length() > 0">
+            and (item_name like CONCAT('%', #{keyWord}, '%') or item_comment like CONCAT('%', #{keyWord}, '%') )
+        </if>
+        order by b.subclass_code
+    </select>
+
+    <select id="getItemById" resultType="com.gtafe.data.center.information.data.vo.DataStandardItemVo">
+       SELECT
+       	b.id id,
+        b.subclass_code subclassCode,
+        b.item_code itemCode,
+        b.item_name itemName,
+        b.item_comment itemComment,
+        b.data_type dataType,
+        b.data_length dataLength,
+        b.data_primarykey dataPrimarykey,
+        b.data_nullable dataNullable,
+        b.data_value_source dataValueSource,
+        b.data_explain dataExplain,
+        b.data_referenced dataReferenced,
+        b.selectable selectable,
+        o.code_name subclassName
+		FROM info_datastandard_item b
+	    inner join info_datastandard_org o on b.subclass_code= o.code and o.node_type = 3
+	    where b.id = #{id}
+    </select>
+
+    <select id="checkCodeNameRepeat" resultType="com.gtafe.data.center.information.data.vo.DataStandardItemVo">
+       SELECT
+       	b.id id,
+        b.item_code itemCode,
+        b.item_name itemName
+		FROM info_datastandard_item b
+	    where (item_code = #{itemCode} or item_name = #{itemName})
+	    and subclass_code = #{subclassCode}
+	    limit 1
+    </select>
+
+    <insert id="insertDataStandardItemVo">
+		INSERT INTO info_datastandard_item(
+			subclass_code,item_code,item_name,item_comment,
+			data_type,data_length,data_primarykey,data_nullable,
+			data_value_source,data_explain,data_referenced,selectable,
+			creator,createtime,updater,updatetime,
+			sourceid ) values
+        	(
+	        	#{item.subclassCode},#{item.itemCode},#{item.itemName},#{item.itemComment},
+	        	#{item.dataType},#{item.dataLength},#{item.dataPrimarykey},#{item.dataNullable},
+	        	#{item.dataValueSource},#{item.dataExplain},#{item.dataReferenced},#{item.selectable},
+	        	#{userId}, now(), #{userId}, now(),
+	        	#{sourceId}  	
+        	)  
+	</insert>
+
+
+    <update id="updateDataStandardItemVo">
+		update info_datastandard_item
+		set item_comment = #{item.itemCode},
+			data_value_source = #{item.dataValueSource},
+			data_explain = #{item.dataExplain},
+			data_referenced = #{item.dataReferenced},
+			updater = #{userId} ,
+			updatetime = now()
+		where id= #{item.id} and sourceid = #{sourceId}
+	</update>
+
+    <delete id="deleteDataStandardItemVo">
+		delete from info_datastandard_item where id = #{id} and sourceid = #{sourceId}
+	</delete>
+
+
+    <select id="query4Index" resultType="java.lang.Integer">
+		SELECT count(1) FROM info_datastandard_org WHERE	node_type = 2 and sourceid = 1
+		UNION ALL
+		SELECT count(1) FROM info_datastandard_org WHERE	node_type = 3 and sourceid = 1
+		UNION ALL
+		SELECT count(1) FROM info_datastandard_item WHERE sourceid = 1
+		UNION ALL
+		SELECT count(1) FROM info_codestandard_node WHERE node_type >= 1 and sourceid = 1
+		UNION ALL
+		SELECT count(1) FROM info_codestandard_code WHERE sourceid = 1
+		UNION ALL
+		SELECT count(1) FROM info_codestandard_node WHERE sourceid = 2 and  node_type= 2
+	</select>
+</mapper>

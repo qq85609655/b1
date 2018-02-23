@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.codestandard.source.mapper.SourceMapper">
+	<select id="querySourceInfoAll"
+		resultType="com.gtafe.data.center.codestandard.source.vo.SourceVO">
+		SELECT
+		sourceid,
+		`code`,
+		creator,
+		createtime,
+		updater,
+		updatetime,
+		`name`
+		FROM
+		code_standard_source order by updatetime desc
+	</select>
+
+	<select id="querySourceInfoByCode"
+		resultType="com.gtafe.data.center.codestandard.source.vo.SourceVO">
+		SELECT
+		sourceid,
+		`code`,
+		creator,
+		createtime,
+		updater,
+		updatetime,
+		`name`
+		FROM
+		code_standard_source
+		WHERE
+		sourceid = #{sourceid}
+		and
+		`code` = #{code}
+	</select>
+	<!-- 查看是否存在引用关系 -->
+	<select id="isSourceCiteRelation" resultType="java.lang.Integer">
+		SELECT
+		count(1)
+		FROM
+		code_standard_set t
+		WHERE
+		t.sourceid = 1
+		LIMIT 1
+	</select>
+	<!-- 级联查询获取树形节点 -->
+	<resultMap type="com.gtafe.data.center.codestandard.source.vo.SourceVO"
+		id="sourceResult">
+		<id column="sourceid" property="sourceid" />
+		<id column="code" property="code" />
+		<result column="code" property="code" />
+		<result column="name" property="name" />
+		<collection property="setVOs"
+			ofType="com.gtafe.data.center.codestandard.set.vo.SetVO">
+			<id column="setId" property="setId" />
+			<result column="setName" property="name" />
+			<result column="setSourceid" property="sourceid" />
+			<result column="setCode" property="code" />
+			<collection property="typeVOs"
+				ofType="com.gtafe.data.center.codestandard.type.vo.TypeVO">
+				<id column="typeId" property="typeId" />
+				<result column="setId" property="setId" />
+				<result column="description" property="description" />
+				<result column="typeCode" property="code" />
+				<result column="typeName" property="name" />
+			</collection>
+		</collection>
+	</resultMap>
+
+
+	<select id="queryTreeInfo" resultMap="sourceResult" >
+		SELECT
+		s.sourceid,
+		s.`name`,
+		t.set_id setId,
+		t.set_name setName,
+		t.`code` SetCode,
+		t.sourceid
+		setSourceid,
+		p.`code` typeCode,
+		p.type_id typeId,
+		p.`name` typeName
+		FROM
+		code_standard_source AS s
+        LEFT JOIN code_standard_set AS t ON s.sourceid = t.sourceid
+        LEFT JOIN code_standard_type AS p ON t.set_id = p.set_id
+		WHERE s.sourceid=#{sourceid} 
+		order by p.updatetime desc
+	</select>
+
+	<insert id="saveSourceInfo"
+		parameterType="com.gtafe.data.center.codestandard.source.vo.SourceVO">
+		INSERT INTO code_standard_source (
+		`code`,
+		`name`,
+		creator,
+		createtime,
+		updater,
+		updatetime
+		)
+		VALUES
+		(#{code},#{name},#{creator},SYSDATE(),#{updater},
+		SYSDATE())
+	</insert>
+
+	<update id="updateSourceInfo"
+		parameterType="com.gtafe.data.center.codestandard.source.vo.SourceVO">
+		UPDATE
+		code_standard_source SET
+		name=#{name},updatetime=SYSDATE() where
+		sourceid=#{sourceid}
+		and
+		`code`=#{code}
+	</update>
+
+	<delete id="deleteSourceInfo"
+		parameterType="com.gtafe.data.center.codestandard.source.vo.SourceVO">
+		DELETE from
+		code_standard_source where
+		sourceid=#{sourceid} and
+		`code`=#{code}
+	</delete>
+</mapper>

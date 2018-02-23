@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.dataetl.datatask.mapper.DataTaskMapper">
+    <!-- 分页查询映射数据 -->
+    <select id="queryList" resultType="com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo">
+        SELECT
+        m.task_id taskId,
+        m.org_id orgId,
+        o.org_name orgName,
+        m.task_name taskName,
+        m.description description,
+        m.data_type dataType,
+        m.business_type businessType,
+        m.run_type runType,
+        m.run_space runSpace,
+        m.run_spaces runSpaces,
+        m.run_time runTime,
+        if(m.run_status=1,true,false) runStatus,
+        if(m.run_status=1,'启动','停止') runStatusStr
+        ,m.run_expression runEexpression,
+        m.third_connection_id thirdConnectionId,
+        m.third_tablename thirdTablename,
+        m.subset_code subsetCode,
+        m.class_code classCode,
+        m.subclass_code subclassCode,
+        m.center_tablename centerTablename
+        FROM data_etl_task m
+        inner JOIN sys_org o ON o.id = m.org_id
+        WHERE 1=1
+        <if test="businessType >= 0">
+            AND m.business_type=#{businessType}
+        </if>
+        <if test="collectionId > 0"> 
+        	AND m.third_connection_id = #{collectionId}
+        </if>
+        <if test="status >= 0">
+            AND m.run_status = #{status}
+        </if>
+        <if test="name != null and name.trim().length() > 0">
+            AND m.task_name LIKE CONCAT('%',#{name},'%')
+        </if>
+        and m.org_id in (
+        <foreach collection="orgIdList" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+        ORDER BY m.updatetime DESC
+    </select>
+
+    <select id="getDataTaskVo" resultType="com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo">  
+        SELECT
+        m.task_id taskId,
+        m.org_id orgId,
+        o.org_name orgName,
+        m.task_name taskName,
+        m.description description,
+        m.data_type dataType,
+        m.business_type businessType,
+        m.run_type runType,
+        m.run_space runSpace,
+        m.run_spaces runSpaces,
+        m.run_time runTime,
+        if(m.run_status=1,true,false) runStatus
+       	
+        ,m.run_expression runEexpression,
+        m.third_connection_id thirdConnectionId,
+        m.third_tablename thirdTablename,
+        m.subset_code subsetCode,
+        m.class_code classCode,
+        m.subclass_code subclassCode,
+        m.center_tablename centerTablename 
+        FROM  data_etl_task m
+        inner JOIN sys_org o ON o.id = m.org_id
+        WHERE  m.task_id = #{taskId}
+    </select>
+    
+    <select id="getDataTaskVos" resultType="com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo">  
+        SELECT
+        m.task_id taskId,
+        m.org_id orgId,
+        o.org_name orgName,
+        m.task_name taskName,
+        m.description description,
+        m.data_type dataType,
+        m.business_type businessType,
+        m.run_type runType,
+        m.run_space runSpace,
+        m.run_spaces runSpaces,
+        m.run_time runTime,
+        if(m.run_status=1,true,false) runStatus
+       	
+        ,m.run_expression runEexpression,
+        m.third_connection_id thirdConnectionId,
+        m.third_tablename thirdTablename,
+        m.subset_code subsetCode,
+        m.class_code classCode,
+        m.subclass_code subclassCode,
+        m.center_tablename centerTablename 
+        FROM  data_etl_task m
+        inner JOIN sys_org o ON o.id = m.org_id
+        WHERE  m.task_id in (
+        	<foreach collection="taskIds" item="item" index="i" separator=",">#{item}</foreach>
+        )
+    </select>
+
+    <select id="checkTaskNameRepeat" resultType="java.lang.Integer">
+        select count(1)
+        from data_etl_task
+        where task_name = #{taskName}
+        and org_id = #{orgId}
+        and business_type = #{businessType}
+        <if test="taskId != null ">
+            and task_id != #{taskId}
+        </if>
+    </select>
+
+    <insert id="insertDataTask" useGeneratedKeys="true" keyProperty="taskVo.taskId"
+            parameterType="com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo"
+    >
+		INSERT INTO data_etl_task(
+	        org_id, task_name, description, data_type, business_type,
+	        run_type ,run_space ,run_spaces ,run_time ,run_status ,run_expression ,
+	        third_connection_id, third_tablename,
+	        subset_code, class_code, subclass_code, center_tablename,
+	        creater, createtime, updater, updatetime
+	    )
+		VALUES (
+			#{taskVo.orgId}, #{taskVo.taskName}, #{taskVo.description}, #{taskVo.dataType},#{taskVo.businessType}, 
+			#{taskVo.runType}, #{taskVo.runSpace}, #{taskVo.runSpaces},#{taskVo.runTime}, #{taskVo.runStatus}, #{taskVo.runEexpression},
+			#{taskVo.thirdConnectionId}, #{taskVo.thirdTablename},
+			#{taskVo.subsetCode}, #{taskVo.classCode},#{taskVo.subclassCode}, #{taskVo.centerTablename},
+			#{userId}, now(), #{userId}, now()
+		)
+	</insert>
+
+    <update id="updateDataTask">
+		update data_etl_task m set
+	        m.task_name = #{taskVo.taskName},
+	        m.description = #{taskVo.description},
+	        m.data_type = #{taskVo.dataType},
+	        m.run_type = #{taskVo.runType},
+	        m.run_space = #{taskVo.runSpace},
+	        m.run_spaces = #{taskVo.runSpaces},
+	        m.run_time = #{taskVo.runTime},
+	        m.run_expression = #{taskVo.runEexpression},
+	        
+	        m.third_connection_id = #{taskVo.thirdConnectionId},
+	        m.third_tablename = #{taskVo.thirdTablename},
+	        m.subset_code = #{taskVo.subsetCode},
+	        m.class_code = #{taskVo.classCode},
+	        m.subclass_code = #{taskVo.subclassCode},
+	        m.center_tablename = #{taskVo.centerTablename}
+	        ,updater = #{userId}, updatetime = now()
+        WHERE  m.task_id = #{taskVo.taskId}
+	</update>
+
+    <update id="updateDataTaskStatus">
+		update data_etl_task m set
+	        m.run_status = #{runStatus},updater = #{userId}, updatetime = now()
+        WHERE  m.task_id in (
+        	<foreach collection="taskIds" item="item" index="i" separator=",">#{item}</foreach>
+        )
+	</update>
+
+    <delete id="deleteTaskSteps">
+		delete from data_etl_task_step where task_id = #{taskId}
+	</delete>
+
+    <insert id="insertTaskSteps">
+        INSERT INTO data_etl_task_step(task_id, serial, step_detail, updater, updatetime) VALUES
+        <foreach collection="steps" item="item" index="i" separator=",">
+            (
+            #{taskId}, ${i+1}, #{item}, #{userId}, now()
+            )
+        </foreach>
+    </insert>
+    
+    <select id="queryListByOrgs" resultType="com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo">
+        select m.task_id taskId,
+        	m.org_id orgId,
+        	m.task_name taskName,
+        	m.business_type businessType
+          from data_etl_task m 
+          where 1=1
+        <if test="businessType > 0 ">
+            and business_type = #{businessType}
+        </if>
+        and m.org_id in (
+           <foreach collection="orgIds" item="item" index="i" separator=",">#{item}</foreach>
+           )
+    </select>  
+
+</mapper>

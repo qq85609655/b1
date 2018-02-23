@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.system.user.mapper.SysUserMapper">
+    <select id="queryList" resultType="com.gtafe.data.center.system.user.vo.SysUserVo">
+        select
+        m.user_id userId,
+        m.realname  realName ,
+        m.email email ,
+        m.phone phone,
+        m.sex sex ,
+        if(m.state=1, true, false) state ,
+        m.user_no userNo ,
+        m.org_id orgId ,
+        m.createtime createtime ,
+        m.createtimestr createtimeStr ,
+        m.creater creater,
+        m.updater updater ,
+        m.updatetime updatetime,
+        o.org_name orgName,
+        m.user_type userType
+        from sys_user m
+        LEFT  JOIN  sys_org o on  m.org_id=o.id
+        where  m.isdelete=0
+        <if test="state >= 0 ">
+            and m.state = #{state}
+        </if>
+        <if test="isAdmin == false ">
+            and m.user_type > 1
+        </if>
+        <if test="keyWord != '' ">
+            and (m.realname like CONCAT('%', #{keyWord}, '%') OR  m.user_no like Concat('%', #{keyWord}, '%') )
+        </if>
+        and m.org_id in (
+        <foreach collection="orgIdList" item="item" separator=",">
+        	#{item}
+        </foreach> 
+        )
+        order by m.updatetime desc
+    </select>
+
+    <select id="getUserVoByUserNo" resultType="com.gtafe.data.center.system.user.vo.SysUserVo">
+		select
+        m.user_id userId,
+        m.user_no userNo ,
+        m.realname realName ,
+        m.login_pwd loginPwd ,
+        m.email email ,
+        m.phone phone,
+        m.sex sex ,
+        if(m.state=1, true, false) state ,
+        m.org_id orgId ,
+        m.createtime createTime ,
+        m.createtimestr createtimeStr ,
+        m.creater creater,
+        m.updater updater ,
+        m.updatetime updateTime ,
+        m.user_type userType
+        from sys_user m
+        where m.user_no=#{userNo} and m.isdelete = 0
+        limit 1
+	</select>
+
+
+    <select id="getUserVoByuserId" resultType="com.gtafe.data.center.system.user.vo.SysUserVo">
+        select
+        m.user_id userId,
+        m.user_no userNo ,
+        m.realname realName ,
+        m.login_pwd loginPwd ,
+        m.email email ,
+        m.phone phone,
+        m.sex sex ,
+        if(m.state=1, true, false) state ,
+        m.org_id orgId ,
+        m.createtime createTime ,
+        m.createtimestr createtimeStr ,
+        m.creater creater,
+        m.updater updater ,
+        m.updatetime updateTime ,
+        m.user_type userType
+        from sys_user m
+        where m.user_id=#{userId} and m.isdelete = 0
+        limit 1
+    </select>
+
+
+
+
+
+    <update id="updatePwd">
+		UPDATE sys_user set login_pwd=#{newPwd},updatetime=now(),updater=#{updater} where user_id=#{userId} and login_pwd=#{oldPwd}
+	</update>
+
+    <!--保存用戶數據-->
+    <insert id="saveEntity" parameterType="com.gtafe.data.center.system.user.vo.SysUserVo" useGeneratedKeys="true" keyProperty="userId">
+        INSERT INTO SYS_USER(
+  `realname` ,
+  `login_pwd` ,
+  `email`,
+  `phone`,
+  `sex` ,
+  `state` ,
+  `user_no`,
+  `org_id`,
+  `creater`,
+  `createtime`,
+  `createtimestr`,
+  `updater`,
+  `updatetime`)
+  VALUES (
+  #{realName},
+  #{loginPwd},
+  #{email},
+  #{phone},
+  #{sex},
+  #{state},
+  #{userNo},
+  #{orgId},
+  #{creater},
+  #{createTime},
+  #{createTimeStr},
+  #{updater},
+  #{updateTime}
+  )
+    </insert>
+    
+    <!--修改用户信息-->
+    <update id="updateEntity" parameterType="com.gtafe.data.center.system.user.vo.SysUserVo">
+        UPDATE SYS_USER
+          SET   
+          <if test="type == 1">
+          	realname = #{userVo.realName},
+          	email = #{userVo.email},
+          	phone = #{userVo.phone},
+            sex = #{userVo.sex},
+          </if>
+        <if test="type == 2">
+            state = <choose><when test="userVo.state">1</when><otherwise>0</otherwise></choose>,
+        </if>
+        <if test="type == 4">
+            send_error_mail = <choose><when test="userVo.sendErrorState">1</when><otherwise>0</otherwise></choose>,
+        </if>
+          <if test="type == 3">
+          	login_pwd = #{userVo.loginPwd},
+          </if>
+	      	updater = #{userVo.updater},
+          	updatetime = now()
+		WHERE
+		  user_id = #{userVo.userId}
+    </update>
+
+    <!--刪除用戶-->
+    <delete id="deleteEntity">
+        UPDATE  SYS_USER SET  isdelete=1 WHERE user_id = #{userId}
+    </delete>
+
+    <insert id="saveUserRole" parameterType="java.util.List">
+        insert into sys_user_role(`user_id`,`role_id`) VALUES
+        <foreach collection="roleIds" item="item" index="index" separator=",">
+            (#{userId},#{item})
+        </foreach>
+    </insert>
+
+    <insert id="saveUserTasks" parameterType="java.util.List">
+        insert into sys_user_task(`user_id`,`task_id`,`bus_type`) VALUES
+        <foreach collection="taskList" item="item" index="index" separator=",">
+            (#{userId},#{item},#{busType})
+        </foreach>
+    </insert>
+</mapper>

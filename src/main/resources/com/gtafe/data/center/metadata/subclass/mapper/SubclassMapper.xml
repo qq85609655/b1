@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.metadata.subclass.mapper.SubclassMapper">
+	<select id="querySubclassPageInfo"
+		resultType="com.gtafe.data.center.metadata.subclass.vo.SubclassVO">
+		select
+		s.class_code classCode ,
+		s.subclass_code subclassCode,
+		s.subclass_comment subclassComment,
+		s.subclass_tablename
+		subclassTablename,
+		s.description,
+		s.creator,
+		s.createtime,
+		s.updater,
+		s.updatetime,
+		c.class_name className,
+		t.code_name codeName
+		FROM
+		info_metadata_subset t,
+		info_metadata_class c,
+		info_metadata_subclass s,
+		info_metadata_source ims
+		WHERE
+		t.`code` =
+		c.subset_code
+		AND c.class_code = s.class_code
+		AND t.sourceid =
+		ims.sourceid
+		AND ims.sourceid = #{sourceId}
+		<if test="subsetCode != null  ">
+			AND t.`code` = #{subsetCode}
+		</if>
+		<if test="classCode !=null ">
+			AND c.class_code = #{classCode}
+		</if>
+		<if test="codeOrName != null ">
+			AND (s.subclass_code LIKE CONCAT('%',
+			#{codeOrName},'%')
+			OR
+			s.subclass_comment LIKE CONCAT('%',
+			#{codeOrName},'%'))
+		</if>
+		ORDER
+		BY
+		<choose>
+			<when test="orderName != null">
+				#{orderName} ASC
+			</when>
+			<otherwise>
+				s.updatetime DESC
+			</otherwise>
+		</choose>
+
+	</select>
+
+	<select id="querybySubclassCode" parameterType="java.lang.String"
+		resultType="com.gtafe.data.center.metadata.subclass.vo.SubclassVO">
+		SELECT
+		s.class_code classCode,
+		s.subclass_code subclassCode,
+		s.subclass_comment subclassComment,
+		s.subclass_tablename
+		subclassTablename,
+		s.description,
+		s.creator,
+		s.createtime,
+		s.updater,
+		s.updatetime
+		FROM
+		info_metadata_subclass s
+		WHERE
+		s.subclass_code =
+		#{subclassCode} and s.class_code=#{classCode}
+	</select>
+	<select id="querySubclassInfoAll"
+		resultType="com.gtafe.data.center.metadata.subclass.vo.SubclassVO">
+		SELECT
+		class_code classCode,
+		subclass_code subclassCode,
+		subclass_comment subclassComment,
+		subclass_tablename subclassTablename,
+		description,
+		creator,
+		createtime,
+		updater,
+		updatetime
+		FROM
+		info_metadata_subclass
+		order by updatetime desc
+	</select>
+
+	<select id="isSubclassCiteRelation" parameterType="java.lang.String"
+		resultType="int">
+		SELECT
+		COUNT(1)
+		FROM
+		info_metadata_item i
+		WHERE
+		i.subclass_code
+		= #{subclassCode}
+		LIMIT 1
+	</select>
+
+	<insert id="saveSubclassInfo"
+		parameterType="com.gtafe.data.center.metadata.subclass.vo.SubclassVO">
+		INSERT INTO info_metadata_subclass (
+		class_code,
+		subclass_code,
+		subclass_comment,
+		subclass_tablename,
+		description,
+		creator,
+		createtime,
+		updater,
+		updatetime
+		)
+		VALUES
+		(
+		#{classCode},
+		#{subclassCode},
+		#{subclassComment},
+		#{subclassTableName},
+		#{description},
+		#{creator},
+		SYSDATE(),
+		#{updater},
+		SYSDATE()
+		)
+	</insert>
+
+	<update id="updateSubclassInfo"
+		parameterType="com.gtafe.data.center.metadata.subclass.vo.SubclassVO">
+		UPDATE info_metadata_subclass
+		SET subclass_comment =
+		#{subclassComment},
+		description = #{description},
+		updatetime = SYSDATE()
+		WHERE
+		subclass_code
+		= #{subclassCode}
+		AND
+		class_code=#{classCode}
+	</update>
+	<insert id="addSubclassBatch">
+		INSERT INTO info_metadata_subclass (
+		class_code,
+		subclass_code,
+		subclass_comment,
+		subclass_tablename,
+		description,
+		creator,
+		createtime,
+		updater,
+		updatetime
+		)
+		VALUES
+		<foreach collection="listSubclassByClassVO" item="subclassVO"
+			separator=",">
+			(
+			#{classCode},
+			#{subclassVO.subclassCode},
+			#{subclassVO.subclassComment},
+			#{subclassVO.subclassTableName},
+			#{subclassVO.description},
+			#{subclassVO.creator},
+			SYSDATE(),
+			#{subclassVO.updater},
+			SYSDATE()
+			)
+		</foreach>
+	</insert>
+	<select id="isTableExists" resultType="java.lang.Integer">
+		SELECT
+		COUNT(*)
+		FROM
+		`INFORMATION_SCHEMA`.`TABLES`
+		WHERE
+		`TABLE_NAME` = #{subclassTableName};
+
+	</select>
+	<delete id="deleteSubclassInfo">
+		delete FROM info_metadata_subclass where
+		subclass_code =#{subclassCode} AND class_code=#{classCode}
+	</delete>
+
+	<update id="updateComment" parameterType="java.util.Map">
+		ALTER TABLE ${subclassTableName} COMMENT
+		#{subclassComment}
+	</update>
+</mapper>

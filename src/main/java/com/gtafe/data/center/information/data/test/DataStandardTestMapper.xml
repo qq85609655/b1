@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.information.data.test.DataStandardTestMapper">
+    <select id="querySubclass" resultType="com.gtafe.data.center.information.data.vo.DataStandardVo">
+        SELECT
+            org.code,
+            org.parent_code parentCode,
+            org.code_name name,
+            org.description description,
+            org.tablename tableName,
+            item.nodeType nodeType
+		FROM info_datastandard_org org
+		inner join 
+		(
+			<if test="type==0">
+				select subclass_code,sum(data_primarykey) nodeType 
+					from info_datastandard_item group by subclass_code
+			</if>
+			<if test="type==1">
+				select subclass_code,sum(data_primarykey) nodeType 
+					from info_datastandard_item  where data_primarykey > 0 group by subclass_code
+			</if>
+			<if test="type==2">
+				select subclass_code,nodeType from (
+					select subclass_code,sum(data_primarykey) nodeType 
+						from info_datastandard_item group by subclass_code
+				) tt where tt.nodeType = 0
+			</if>
+		) item on org.code=item.subclass_code 
+		
+		where 1=1 and org.node_type = 3
+		
+		<if test="keyword!=null and keyword.trim().length()>0">
+			and (org.code_name like concat('%', #{keyword}, '%') or org.tablename like concat('%', #{keyword2}, '%') )
+		</if>
+		
+		group by org.code
+		order by org.code
+    </select>
+
+    <select id="queryItemList" resultType="com.gtafe.data.center.information.data.vo.DataStandardItemVo">
+        SELECT
+        b.id id,
+        b.subclass_code subclassCode,
+        b.item_code itemCode,
+        b.item_name itemName,
+        b.item_comment itemComment,
+        b.data_type dataType,
+        b.data_length dataLength,
+        b.data_primarykey dataPrimarykey,
+        b.data_nullable dataNullable,
+        b.data_value_source dataValueSource,
+        b.data_explain dataExplain,
+        b.data_referenced dataReferenced,
+        b.selectable selectable,
+        o.code_name subclassName
+        FROM info_datastandard_item b
+        inner join info_datastandard_org o on b.subclass_code= o.code and o.node_type = 3
+        where 1=1 
+        and b.subclass_code = #{subclassCode}
+        order by b.subclass_code
+    </select>
+
+
+    <update id="updatePrimaryKey">
+		update info_datastandard_item
+			set data_primarykey = #{primary},
+			updater = 1 ,
+			updatetime = now()
+		where subclass_code= #{subclassCode} 
+		<if test="ids!=null">
+			and id in (
+				<foreach collection="ids" item="item" separator=",">#{item}</foreach>
+			)
+		</if>
+	</update>
+
+</mapper>

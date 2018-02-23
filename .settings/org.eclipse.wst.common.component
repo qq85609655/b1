@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="2.0">
+	<wb-module deploy-name="GTADataCenter">
+		<property name="context-root" value="GTADataCenter"/>
+		<wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/resources"/>
+		<wb-resource deploy-path="/WEB-INF/classes" source-path="src/main/java"/>
+		<wb-resource deploy-path="/" source-path="src/main/webapp"/>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/javax.servlet/jstl/1.2/74aca283cd4f4b4f3e425f5820cda58f44409547/jstl-1.2.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-core/2.9.0/52f6548ae1688e126c29b5dc400929dc0128615/log4j-core-2.9.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-slf4j-impl/2.9.0/1bd7f6b6ddbaf8a21d6c2b288d0cc5bc5b791cc0/log4j-slf4j-impl-2.9.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-1.2-api/2.9.0/7e2f1637394eecdc3c8cd067b3f2cf4801b1bcf6/log4j-1.2-api-2.9.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-jcl/2.9.0/5f0735e7b5995a86bb83af54f84c3001a21860dd/log4j-jcl-2.9.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-web/2.9.0/2eb17e314b4f43d5db5ed4732f0ec621733c9d0a/log4j-web-2.9.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/commons-fileupload/commons-fileupload/1.3.3/4ff14d809195b711fd6bcc87e6777f886730ca1/commons-fileupload-1.3.3.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.springframework/spring-webmvc/4.3.10.RELEASE/6809017a5a76bdaf1957f1cc0a892d448fc6f3df/spring-webmvc-4.3.10.RELEASE.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.springframework/spring-jdbc/4.3.10.RELEASE/91e2f69e633f8eac5d5ef516595556ab7db87f3d/spring-jdbc-4.3.10.RELEASE.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.springframework/spring-context-support/4.3.10.RELEASE/2c507b7441c428b4702c60be52c0d6446ae72673/spring-context-support-4.3.10.RELEASE.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.oracle/ojdbc6/11.2.0.3/de96f0060c7353532f4cb4a0b73d20545580fc91/ojdbc6-11.2.0.3.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/mysql/mysql-connector-java/5.1.44/61b6b998192c85bb581c6be90e03dcd4b9079db4/mysql-connector-java-5.1.44.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.microsoft.sqlserver/mssql-jdbc/6.2.1.jre8/9eae98adeec9c7b6b1e52363b187a6c000a45283/mssql-jdbc-6.2.1.jre8.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/net.sourceforge.jtds/jtds/1.3.1/1527f2fc2f040898625370a1687d902aa0743bcc/jtds-1.3.1.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-dbcp2/2.1.1/c4f4a76171671ccf293be8995a498eab7fa8ed24/commons-dbcp2-2.1.1.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-annotations/2.9.0/7c10d545325e3a6e72e06381afe469fd40eb701/jackson-annotations-2.9.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-core/2.9.0/88e7c6220be3b3497b3074d3fc7754213289b987/jackson-core-2.9.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.core/jackson-databind/2.9.0/14fb5f088cc0b0dc90a73ba745bcade4961a3ee3/jackson-databind-2.9.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.dataformat/jackson-dataformat-xml/2.9.0/abdc8dff4aba64558c0ec5442497c88b9c3631c8/jackson-dataformat-xml-2.9.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.mybatis/mybatis-spring/1.3.1/5197169e15a43066f177a1cd12a098e1283fdc76/mybatis-spring-1.3.1.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.mybatis/mybatis/3.4.5/5200759b13f70652995fd206a52fdc98b01c65cd/mybatis-3.4.5.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.github.pagehelper/pagehelper/5.0.4/d3ef9c14a17620f26581705cc444a3df27205527/pagehelper-5.0.4.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger2/2.7.0/dd28b7ce26af1209d6ef19f5f24a8c23b41ca6fc/springfox-swagger2-2.7.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.aspectj/aspectjweaver/1.8.10/e198c5fee28988c355f74e06461614eae36b2032/aspectjweaver-1.8.10.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/pentaho-kettle/kettle-core/7.1.0.4-63/7dbd8d0ecfcbf3c4ec159a9da3c7a7f78884a143/kettle-core-7.1.0.4-63.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/pentaho-kettle/kettle-engine/7.1.0.4-63/78a5c0c87339f243a5036fd25336331e2c6482d0/kettle-engine-7.1.0.4-63.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.quartz-scheduler/quartz/2.2.3/d4d8ea088852beeb89f54d3040fe1cbaa8491dcd/quartz-2.2.3.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/javax.mail/mail/1.4.7/9add058589d5d85adeb625859bf2c5eeaaedf12d/mail-1.4.7.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.poi/poi-ooxml/3.14/911b3a5562b5dc4c5156d2d5f0f68a83346100d0/poi-ooxml-3.14.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.alibaba/fastjson/1.1.40/cf8b196dea0f5efa96adc81c047adf7b3d4633ed/fastjson-1.1.40.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.velocity/velocity/1.7/2ceb567b8f3f21118ecdec129fe1271dbc09aa7a/velocity-1.7.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.belerweb/pinyin4j/2.5.1/ea23babfc45a078af5b73cd9f3401caad1f1b2a9/pinyin4j-2.5.1.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.jasig.cas.client/cas-client-core/3.4.1/a000397061c6c02fd695c706430ccbf439843008/cas-client-core-3.4.1.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.logging.log4j/log4j-api/2.9.0/e0dcd508dfc4864a2f5a1963d6ffad170d970375/log4j-api-2.9.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.25/da76ca59f6a57ee3102f8f9bd9cee742973efa8a/slf4j-api-1.7.25.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/commons-logging/commons-logging/1.2/4bfc12adfe4842bf07b657f0369c4cb522955686/commons-logging-1.2.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/commons-io/commons-io/2.2/83b5b8a7ba1c08f9e8c8ff2373724e33d3c1e22a/commons-io-2.2.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.springframework/spring-aop/4.3.10.RELEASE/3a8c23246045e5e1dbd7d91354741b165e997a88/spring-aop-4.3.10.RELEASE.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.springframework/spring-beans/4.3.10.RELEASE/9d89b786f755f9b1da344f10f6f045f927679a72/spring-beans-4.3.10.RELEASE.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.springframework/spring-context/4.3.10.RELEASE/645ce6fdba38448d183a1374506fc24036009869/spring-context-4.3.10.RELEASE.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.springframework/spring-core/4.3.10.RELEASE/db1462df62dbedad7244da30ec471390660271c0/spring-core-4.3.10.RELEASE.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.springframework/spring-expression/4.3.10.RELEASE/4975ab542028945ab98fefba772472a40495d7ca/spring-expression-4.3.10.RELEASE.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.springframework/spring-web/4.3.10.RELEASE/6344501cb03cb4787c67cf3f820a471e07b9203b/spring-web-4.3.10.RELEASE.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.springframework/spring-tx/4.3.10.RELEASE/569d30fd8d2050910e0271b838cf927ebb7efcdc/spring-tx-4.3.10.RELEASE.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-pool2/2.4.2/e5f4f28f19d57716fbc3989d7a357ebf1e454fea/commons-pool2-2.4.2.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.fasterxml.jackson.module/jackson-module-jaxb-annotations/2.9.0/2d1fb33f57102810f8f74fe28bebb59d2b23312a/jackson-module-jaxb-annotations-2.9.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.codehaus.woodstox/stax2-api/3.1.4/ac19014b1e6a7c08aad07fe114af792676b685b7/stax2-api-3.1.4.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.fasterxml.woodstox/woodstox-core/5.0.3/10aa199207fda142eff01cd61c69244877d71770/woodstox-core-5.0.3.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.github.jsqlparser/jsqlparser/1.0/63d49424a53ea8ca17a58e291694d5b4a60256ee/jsqlparser-1.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/io.swagger/swagger-annotations/1.5.13/72433c890a61a876d22063e269be421c810a1a8d/swagger-annotations-1.5.13.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/io.swagger/swagger-models/1.5.13/571a0046f35f9dac569a1870465248595e33ccdb/swagger-models-1.5.13.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spi/2.7.0/dab14edcb863dd506278dc950908b4f684e93b7/springfox-spi-2.7.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-schema/2.7.0/aab297a6781e829b9d6bac514a4dc860966c3c8d/springfox-schema-2.7.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-swagger-common/2.7.0/5a632aecc733753887f90592382fa271e546062a/springfox-swagger-common-2.7.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-spring-web/2.7.0/a54be5572b6b5210f6892e13d6b136dde5e96bf6/springfox-spring-web-2.7.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.fasterxml/classmate/1.3.3/864c8e370a691e343210cc7c532fc198cee460d8/classmate-1.3.3.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.springframework.plugin/spring-plugin-core/1.2.0.RELEASE/f380e7760032e7d929184f8ad8a33716b75c0657/spring-plugin-core-1.2.0.RELEASE.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.springframework.plugin/spring-plugin-metadata/1.2.0.RELEASE/97223fc496b6cab31602eedbd4202aa4fff0d44f/spring-plugin-metadata-1.2.0.RELEASE.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.mapstruct/mapstruct/1.1.0.Final/65b81fa5234e1fd8461b77bbccee7b9ebc0bbbb2/mapstruct-1.1.0.Final.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/commons-beanutils/commons-beanutils/1.9.3/c845703de334ddc6b4b3cd26835458cb1cba1f3d/commons-beanutils-1.9.3.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/commons-collections/commons-collections/3.2.2/8ad72fe39fa8c91eaaf12aadb21e0c3661fe26d5/commons-collections-3.2.2.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/commons-lang/commons-lang/2.6/ce1edb914c94ebc388f086c6827e8bdeec71ac2/commons-lang-2.6.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/commons-httpclient/commons-httpclient/3.1/964cd74171f427720480efdec40a7c7f6e58426a/commons-httpclient-3.1.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/commons-dbcp/commons-dbcp/1.4/30be73c965cc990b153a100aaaaafcf239f82d39/commons-dbcp-1.4.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/commons-pool/commons-pool/1.5.7/66fdaa3d33d41ef0e931c5fddd15937608805531/commons-pool-1.5.7.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/pentaho/metastore/7.1.0.4-63/f7bcd935d2a3b6f67a822638b0ea6d663da7a2be/metastore-7.1.0.4-63.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-compress/1.4.1/b02e84a993d88568417536240e970c4b809126fd/commons-compress-1.4.1.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/dom4j/dom4j/1.6.1/5d3ccc056b6f056dbf0dddfdf43894b9065a8f94/dom4j-1.6.1.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-util/8.1.15.v20140411/9fe1fedd4c3a0bc5dbc2f1c0588fc5c9c83014a5/jetty-util-8.1.15.v20140411.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/jug-lgpl/jug-lgpl/2.0.0/ea83645d04e1a31126b83e8ef0e372803d0356e1/jug-lgpl-2.0.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.jcraft/jsch/0.1.54/da3584329a263616e277e15462b387addd1b208d/jsch-0.1.54.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/ognl/ognl/2.6.9/fad9692184899994e977b647998f9fa4a9cfec35/ognl-2.6.9.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/net.sf.scannotation/scannotation/1.0.2/e2b4559236410970da0494ca2a24991ccb53fca7/scannotation-1.0.2.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.wcohen/com.wcohen.secondstring/0.1/d84bf1e3d07e0c6242ae992ecde02b6573512cf/com.wcohen.secondstring-0.1.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.owasp.encoder/encoder/1.2/3725ab6ba4e15c574c013da7fa61b5c39ae6f9e1/encoder-1.2.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.samba.jcifs/jcifs/1.3.3/1c10f34fb9897769e05ff5680921bdf450bc9edf/jcifs-1.3.3.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-bridge/1.8/4ab4110b0ed4650ef50d4a344f0ca5c027f3283a/batik-bridge-1.8.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-css/1.8/2b3f22cc65702a0821b7f0178d055282a1cdde59/batik-css-1.8.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-dom/1.8/4e696cf01cee52e8c4f86c842b5d8314e689209c/batik-dom-1.8.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-gvt/1.8/fbde4cd3c43001c162446cf43093d09fda346e11/batik-gvt-1.8.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-svg-dom/1.8/97c9d00d08c849066d2359b0f1124f0e82b952c2/batik-svg-dom-1.8.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-transcoder/1.8/f330b3e9946ff21ddf3ea6d4f58ae44145cfd362/batik-transcoder-1.8.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-codec/1.8/d7f7da595e2d9bbe4b0b167e05da46cad3a45ad4/batik-codec-1.8.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-util/1.8/35dcd204f397d6976290ca48ffa0011ba9b7ef43/batik-util-1.8.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-ext/1.8/8713f3238cfac337624a90c3ad7d45d7bc6fb1b5/batik-ext-1.8.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-xml/1.8/9bf0ee759fed1e3a2e4ad41819eac69ff4873732/batik-xml-1.8.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-anim/1.8/68197dfa3643a906ba250025a03dc42e6efe2dec/batik-anim-1.8.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-parser/1.8/7e4e69a4aa5317861864db93da5f246214750484/batik-parser-1.8.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-script/1.8/5bda6a9d45065b184c83c46b64d8002b4e0ab7c7/batik-script-1.8.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.xmlgraphics/batik-awt-util/1.8/5cd7f97060cdfab0139e70504962d48ceee71ef2/batik-awt-util-1.8.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/xml-apis/xml-apis-ext/1.3.04/41a8b86b358e87f3f13cf46069721719105aff66/xml-apis-ext-1.3.04.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.karaf/org.apache.karaf.main/3.0.3/13ca5b4234a8d8b8d54fc0676ab234ef4653d9da/org.apache.karaf.main-3.0.3.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-plus/8.1.15.v20140411/75451de9107622685777aef7054d2121dfe8a188/jetty-plus-8.1.15.v20140411.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-server/8.1.15.v20140411/cb98dcc1eb7c35ae7f4f9014b4346626ee97242b/jetty-server-8.1.15.v20140411.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-security/8.1.15.v20140411/316d3cc398212e67e01b603a20d1686af163a3e4/jetty-security-8.1.15.v20140411.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-servlet/8.1.15.v20140411/908de8a0c2c4e7a1aaa75e54a029e861026d3527/jetty-servlet-8.1.15.v20140411.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-xml/8.1.15.v20140411/e8f6d97674c025f5f5a2064879ecbcf91d072066/jetty-xml-8.1.15.v20140411.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-webapp/8.1.15.v20140411/de4135682466ccbf5736b8393c252986aa2ef639/jetty-webapp-8.1.15.v20140411.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.googlecode.log4jdbc/log4jdbc/1.2/ba3acb0b14ab0c132de306336c60cb2f086d57a0/log4jdbc-1.2.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/c3p0/c3p0/0.9.1.1/302704f30c6e7abb7a0457f7771739e03c973e80/c3p0-0.9.1.1.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/javax.activation/activation/1.1/e6cb541461c2834bdea3eb920f1884d1eb508b50/activation-1.1.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.poi/poi/3.14/fad7ae6d2e59c59ffdb45f1981500babfa765180/poi-3.14.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.poi/poi-ooxml-schemas/3.14/97fe4bfdef7f103bfd9ec63c98ea90469afeec7b/poi-ooxml-schemas-3.14.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.github.virtuald/curvesapi/1.03/6b0977602901464b056959027fdf2396050f9dd2/curvesapi-1.03.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/io.springfox/springfox-core/2.7.0/f3e6d1cf5170b4b56ee0a00c1b3b05221f2ecb96/springfox-core-2.7.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.reflections/reflections/0.9.11/4c686033d918ec1727e329b7222fcb020152e32b/reflections-0.9.11.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-continuation/8.1.15.v20140411/2e3e54e282fcd70775356d15a21d03a54ed73c12/jetty-continuation-8.1.15.v20140411.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-http/8.1.15.v20140411/ab816e1b5eb0e055cfa4f3aef6876de210e2be7b/jetty-http-8.1.15.v20140411.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.xmlbeans/xmlbeans/2.6.0/29e80d2dd51f9dcdef8f9ffaee0d4dc1c9bbfc87/xmlbeans-2.6.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy/1.6.14/871c3e49dc6183d0d361601c2f1d11abb1a6b48c/byte-buddy-1.6.14.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.eclipse.jetty/jetty-io/8.1.15.v20140411/8849cf59187275366cd05f37b2fb71319291370b/jetty-io-8.1.15.v20140411.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/stax/stax-api/1.0.1/49c100caf72d658aca8e58bd74a4ba90fa2b0d70/stax-api-1.0.1.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-vfs2/2.1-20150824/ef78e5bd68eccc4823607705896dea5199a45726/commons-vfs2-2.1-20150824.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/com.google.guava/guava/20.0/89507701249388e1ed5ddcf8c41f4ce1be7831ef/guava-20.0.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/commons-codec/commons-codec/1.10/4b95f4897fa13f2cd904aee711aeafc0c5295cd8/commons-codec-1.10.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/gang.zhou/.gradle/caches/modules-2/files-2.1/org.javassist/javassist/3.21.0-GA/598244f595db5c5fb713731eddbb1c91a58d959b/javassist-3.21.0-GA.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+		<dependent-module deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/E:/projects/GTA_DATACENTER/service/src/main/resources/libs/GTA.License.jar">
+			<dependency-type>uses</dependency-type>
+		</dependent-module>
+	</wb-module>
+</project-modules>

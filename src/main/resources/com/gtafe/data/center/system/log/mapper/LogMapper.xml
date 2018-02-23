@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.system.log.mapper.LogMapper">
+    <select id="queryList4Login" resultType="com.gtafe.data.center.system.log.vo.LogVo">
+        select
+        m.log_id logId,
+        m.oper_user_no operUserNo,
+        m.oper_module_id operModuleId,
+        m.oper_module_name operModuleName,
+        m.oper_content operContent,
+        m.oper_time operTime,
+        m.oper_type operType,
+        m.oper_res operRes,
+        m.oper_user_name operUserName,
+        m.oper_org_id operOrgId,
+        m.oper_org_name operOrgName,
+        m.oper_ip operIp
+        from sys_log m
+        where 1=1
+        <if test="keyWord != null and keyWord.trim().length()>0">
+            and (m.oper_user_no like CONCAT('%', #{keyWord}, '%') OR m.oper_ip like CONCAT('%', #{keyWord}, '%') )
+        </if>
+        <if test="operRes > 0">
+            and m.oper_res = #{operRes}
+        </if>
+        <if test="startTime !=null and startTime.trim().length()>0 and endTime !=null and endTime.trim().length()>0">
+            and m.oper_time &gt;= concat(#{startTime} , ' 00:00:00')
+            and m.oper_time &lt;= concat(#{endTime} , ' 23:59:59')
+        </if>
+        <if test="orgIdList != null">
+            and m.oper_org_id in (
+            <foreach collection="orgIdList" item="item" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+        and m.oper_module_id=0
+        order by m.oper_time desc
+    </select>
+
+    <select id="queryList4Oper" resultType="com.gtafe.data.center.system.log.vo.LogVo">
+        select
+        m.log_id logId,
+        m.oper_user_no operUserNo,
+        m.oper_module_id operModuleId,
+        mm.menu_name operModuleName,
+        m.oper_content operContent,
+        m.oper_time operTime,
+        m.oper_type operType,
+        m.oper_res operRes,
+        m.oper_user_name operUserName,
+        m.oper_org_id operOrgId,
+        m.oper_org_name operOrgName,
+        m.oper_ip operIp
+        from sys_log m,sys_menu mm
+        where m.oper_module_id=mm.menu_id
+        <if test="keyWord != null and keyWord.trim().length()>0">
+            and (m.oper_user_no like CONCAT('%', #{keyWord}, '%') OR m.oper_ip like CONCAT('%', #{keyWord}, '%') )
+        </if>
+        <if test="operRes > 0">
+            and m.oper_res = #{operRes}
+        </if>
+        <if test="startTime !=null and startTime.trim().length()>0 and endTime !=null and endTime.trim().length()>0">
+            and m.oper_time &gt;= concat(#{startTime} , ' 00:00:00')
+            and m.oper_time &lt;= concat(#{endTime} , ' 23:59:59')
+        </if>
+        <if test="operModuleIdList != null">
+            and m.oper_module_id in (
+            <foreach collection="operModuleIdList" item="item" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+        order by m.oper_time desc
+    </select>
+
+
+    <!--保存-->
+    <insert id="saveEntity" parameterType="com.gtafe.data.center.system.log.vo.LogVo">
+        INSERT INTO sys_log(
+        `oper_user_no` ,
+        `oper_user_name` ,
+        `oper_module_id` ,
+        `oper_module_name` ,
+        `oper_res` ,
+        `oper_content`,
+        `oper_time`,
+        `oper_type` ,
+        `oper_org_id`,
+        `oper_org_name`,
+        `oper_ip`)
+        VALUES (
+        #{operUserNo},
+        #{operUserName},
+        #{operModuleId},
+        #{operModuleName},
+        #{operRes},
+        #{operContent},
+        #{operTime},
+        #{operType},
+        #{operOrgId},
+        #{operOrgName},
+        #{operIp}
+        )
+    </insert>
+
+
+    <!--查询邮件发送的日志-->
+    <select id="queryList4EmailSend" resultType="com.gtafe.data.center.system.log.vo.EmailSendLog">
+        select
+        m.id id,
+        u.realname xm,
+        m.module module,
+        m.sendTime sendTime,
+        m.content content,
+        m.sendSuccess,
+        CASE `sendSuccess` WHEN  1 THEN '成功' WHEN 0 THEN '失败' END  sendSuccessStr,
+        m.moduleName moduleName
+        from sys_email_log m
+        left join sys_user u
+        on m.userNo=u.user_no
+        where 1=1
+        <if test="keyWord != null">
+            and (u.realname like CONCAT('%', #{keyWord}, '%') OR m.content like CONCAT('%', #{keyWord}, '%') )
+        </if>
+        <if test="module > 0">
+            and m.module = #{module}
+        </if>
+        <if test="startTime !=null and startTime.trim().length()>0 and endTime !=null and endTime.trim().length()>0">
+            and m.sendTime &gt;= concat(#{startTime} , ' 00:00:00')
+            and m.sendTime &lt;= concat(#{endTime} , ' 23:59:59')
+        </if>
+        order by m.sendTime desc
+    </select>
+
+
+    <insert id="saveEmailSendLog" parameterType="com.gtafe.data.center.system.log.vo.EmailSendLog">
+  INSERT INTO sys_email_log(
+        `userNo` ,
+        `sendtime` ,
+        `sendSuccess`,
+        `content` ,
+        `module` ,
+        `moduleName`)
+        VALUES (
+        #{userNo},
+        #{sendTime},
+        #{sendSuccess},
+        #{content},
+        #{module},
+        #{moduleName}
+        )
+    </insert>
+</mapper>

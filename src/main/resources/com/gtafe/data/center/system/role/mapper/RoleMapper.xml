@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.system.role.mapper.RoleMapper">
+	<select id="queryList" resultType="com.gtafe.data.center.system.role.vo.RoleVo">
+		select
+		m.role_id roleId,
+		m.role_name roleName,
+		m.remark remark,
+		if(m.state=1,true,false) state,
+		sum( if(r.role_id is null, 0 , 1) ) ncount
+		from sys_role m
+		left join sys_user_role r on r.role_id= m.role_id
+		where 1=1
+		<if test="state >= 0 ">
+			and m.state = #{state}
+		</if>
+		<if test="roleName != null">
+			and m.role_name like CONCAT('%', #{roleName}, '%')
+		</if>
+		group by m.role_id
+		order by m.updatetime desc
+	</select>
+	
+	<update id="updateEntity">
+		update sys_role set state = <if test="state==1">true</if><if test="state!=1">false</if>,
+		role_name = #{roleName},remark=#{remark},
+		updater = #{updater}, updatetime= #{updateTime}   
+		where role_id  = #{roleId}
+	</update>
+	
+	<!--保存 -->
+	<insert id="saveEntity" useGeneratedKeys="true" keyProperty="roleId" parameterType="com.gtafe.data.center.system.role.vo.RoleVo">
+		INSERT INTO SYS_ROLE(
+		`role_name`,
+		`state`,
+		`remark`,
+		`ncount`,
+		creater,
+		createtime,
+		updater,
+		updatetime)
+		VALUES (
+		#{roleName},
+		<if test="state==1">true</if><if test="state!=1">false</if>,
+		#{remark},
+		0,
+		#{creater},
+		#{createTime},
+		#{updater},
+		#{updateTime}
+		)
+	</insert>
+
+	<!--刪除-->
+	<delete id="deleteEntity">
+		delete from SYS_ROLE where role_id = #{roleId}
+	</delete>
+	<delete id="deleteEntityforRelation">
+		DELETE  from sys_user_role where role_id= #{roleId}
+	</delete>
+
+
+
+	<select id="checkRoleNameRepeat" resultType="java.lang.Integer">
+		select
+		count(1)
+		from sys_role m
+		where m.role_name = #{roleName}
+		<if test="roleId != null ">
+			and m.role_id != #{roleId}
+		</if>
+	</select>
+	
+	<delete id="deleteRoleAuthcode">
+		delete from sys_role_authcode where role_id = #{roleId}
+	</delete>
+	<delete id="deleteRoleOrg">
+		delete from sys_role_org where role_id = #{roleId}
+	</delete>
+	
+	<insert id="insertRoleAuthcode" parameterType="java.util.List">
+		INSERT INTO sys_role_authcode(role_id,auth_code) values  
+		<foreach collection="authList" item="item" index="index" separator=","  >  
+        (#{roleId},#{item})  
+    	</foreach>  
+	</insert>
+	<insert id="insertRoleOrg" parameterType="java.util.List">
+		INSERT INTO sys_role_org(role_id,org_id) values  
+		<foreach collection="orgList" item="item" index="index" separator=",">  
+        (#{roleId},#{item})  
+    	</foreach>  
+	</insert>
+	<select id="getRoleAuthcode" resultType="java.lang.String">
+		select distinct auth_code from sys_role_authcode where role_id = #{roleId}
+	</select>
+	<select id="getRoleOrg" resultType="java.lang.Integer">
+		select distinct org_id from sys_role_org where role_id = #{roleId}
+	</select>
+</mapper>

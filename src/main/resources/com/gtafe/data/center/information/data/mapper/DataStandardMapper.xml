@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.information.data.mapper.DataStandardMapper">
+    <select id="queryDataOrgList" resultType="com.gtafe.data.center.information.data.vo.DataStandardVo">
+       SELECT
+            code,
+            parent_code parentCode,
+            code_name name,
+            description description,
+            tablename tableName,
+            sourceid sourceId,
+            node_type nodeType
+		FROM
+		    info_datastandard_org
+		    where 1=1
+			<if test="nodeType == 1">
+			 and node_type = 1
+			</if>
+			<if test="nodeType == 2">
+			 and node_type = 2
+			 and parent_code = #{subsetCode}
+			</if>
+			<if test="nodeType == 3">
+			 and node_type = 3
+			 and parent_code = #{classCode}
+			</if>
+			<if test="keyWord != null and keyWord.trim().length() > 0">
+				and (code_name like CONCAT('%', #{keyWord}, '%') or code like CONCAT('%', #{keyWord}, '%') )
+			</if>
+			<if test="sourceId > 0">
+			 and sourceid = #{sourceId}
+			</if>
+    </select>
+    
+    <select id="queryDataOrgListAll" resultType="com.gtafe.data.center.information.data.vo.DataStandardVo">
+       SELECT
+            code,
+            parent_code parentCode,
+            code_name name,
+            description description,
+            tablename tableName,
+            sourceid sourceId,
+            node_type nodeType
+		FROM
+		    info_datastandard_org
+		    where 1=1
+			<if test="nodeType == 1">
+			 and node_type = 1
+			</if>
+			<if test="nodeType == 2">
+			 and node_type = 2
+			 and parent_code = #{subsetCode}
+			</if>
+			<if test="nodeType == 3">
+			 and node_type = 3
+			 and parent_code = #{classCode}
+			</if>
+			<if test="sourceId > 0">
+			 and sourceid = #{sourceId}
+			</if>
+    </select>
+    
+    <select id="queryDataOrgTreeVos" resultType="com.gtafe.data.center.information.data.vo.DataStandardVo">
+       SELECT
+            code,
+            parent_code parentCode,
+            code_name name,
+            node_type nodeType
+		FROM
+		    info_datastandard_org
+		    where 1=1
+			<if test="sourceId > 0">
+			 and sourceid = #{sourceId}
+			</if>
+    </select>
+    
+    
+    <select id="getDataStandardVo" resultType="com.gtafe.data.center.information.data.vo.DataStandardVo">
+       SELECT
+            code,
+            parent_code parentCode,
+            code_name name,
+            description description,
+            tablename tableName,
+            sourceid sourceId,
+            node_type nodeType
+		FROM
+		    info_datastandard_org
+		where code = #{code}
+	</select>
+    
+    <select id="getChildDataStandardVos" resultType="com.gtafe.data.center.information.data.vo.DataStandardVo">
+       SELECT
+            code code,
+            parent_code parentCode,
+            code_name name,
+            description description,
+            tablename tableName,
+            sourceid sourceId,
+            node_type nodeType
+		FROM
+		    info_datastandard_org
+		where parent_code = #{parentCode} and sourceid = #{sourceId}
+	</select>
+    
+    
+    <select id="checkDataCodeRepeat" resultType="java.lang.String">
+       	SELECT code
+		FROM info_datastandard_org
+		where code in ( <foreach collection="codeList" item="item" separator=",">#{item}</foreach>)
+	</select>
+    
+    <select id="checkDataNameRepeat" resultType="java.lang.String">
+       	SELECT code_name
+		FROM info_datastandard_org
+		where code_name in ( <foreach collection="nameList" item="item" separator=",">#{item}</foreach>)
+		and parent_code = #{parentCode}
+		<if test="code != null">
+			and code != #{code}
+		</if>
+	</select>
+	
+	<select id="checkDataTablenameRepeat" resultType="java.lang.String">
+       	SELECT tablename
+		FROM info_datastandard_org
+		where tablename in ( <foreach collection="tablenameList" item="item" separator=",">#{item}</foreach>)
+		and node_type = 3
+	</select>
+    
+    
+    <insert id="insertDataStandardVos" parameterType="java.util.List">
+		INSERT INTO info_datastandard_org(code,parent_code,code_name,description
+			,tablename,sourceid,node_type
+			,creater,createtime,updater,updatetime) values
+		<foreach collection="voList" item="item" index="index" separator=","  >  
+        	(
+	        	#{item.code},#{item.parentCode},#{item.name},#{item.description},
+	        	#{item.tableName},#{sourceId},#{item.nodeType},
+	        	#{userId}, now(), #{userId}, now()      	
+        	)  
+    	</foreach>  
+	</insert>
+    
+    <update id="updateDataStandardVo">
+    	update info_datastandard_org
+    		set code_name=#{dataVo.name},
+	    	description=#{dataVo.description},
+	    	updater=#{userId},
+	    	updatetime=now()
+    	where code = #{dataVo.code} and sourceid = #{sourceId}
+    </update>
+    
+    
+    <delete id="deleteDataStandardVo">
+        delete from info_datastandard_org where code = #{code} and sourceid = #{sourceId}
+    </delete>
+</mapper>

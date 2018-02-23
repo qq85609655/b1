@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.runadmin.etlerrorlog.mapper.KettleLogMapper">
+    <!-- 分页查询映射数据 -->
+    <select id="list"
+            resultType="com.gtafe.data.center.runadmin.etlerrorlog.vo.KettleLogVO">
+        /* START( "start" ), END( "end" ), STOP( "stop" ), ERROR( "error" ), RUNNING( "running" ), PAUSED( "paused" );*/
+        SELECT
+        log.id_batch id,
+        m.task_name transname,
+        (case log.STATUS
+        WHEN 'start' THEN '开始'
+        WHEN 'end' THEN '结束'
+        WHEN 'stop' THEN '停止'
+        WHEN 'running' THEN '运行中'
+        WHEN 'paused' THEN '暂停'
+        END )status,
+        log.LINES_INPUT line_input,
+        (select count(1) from kettle_error_log ll where ll.channel_id=log.channel_id ) line_rejected,
+        log.startdate startdate,
+        log.enddate enddate,
+        log.logdate logdate,
+        log.log_field log_field,
+        log.channel_id channel_id,
+        o.org_name orgName,
+        o.id orgId
+        FROM
+        kettle_log log,
+        data_etl_task m,
+        sys_org o
+        WHERE
+        log.transname = m.task_id
+        AND m.org_id = o.id
+        and m.business_type = #{businessType}
+        <if test="transName != null">
+            AND m.task_name LIKE
+            CONCAT('%',#{transName},'%')
+        </if>
+        <if test="startTime !=null and startTime.trim().length()>0 and endTime !=null and endTime.trim().length()>0">
+            and log.LOGDATE &gt;= concat(#{startTime} , ' 00:00:00')
+            and log.LOGDATE &lt;= concat(#{endTime} , ' 23:59:59')
+        </if>
+        and m.org_id in (
+        <foreach collection="orgIdList" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+        ORDER BY log.logdate DESC
+    </select>
+
+
+    <select id="queryErrorList" resultType="com.gtafe.data.center.runadmin.etlerrorlog.vo.ErrorLogVo">
+        SELECT t.id,
+        DATE_FORMAT(t.log_dt,"%Y-%m-%d %T")  logDt,
+        t.nr nr,
+        t.description description,
+        t.field,
+        t.code,
+        t.pk_value pkValue,
+        t.channel_id channelId
+        FROM kettle_error_log t
+    where t.channel_id=#{channel_id}
+    </select>
+
+    <!--查询任务最后一次运行日志-->
+    <select id="queryLstErrorList" resultType="com.gtafe.data.center.runadmin.etlerrorlog.vo.KettleLogVO">
+SELECT
+	  log.id_batch id,
+        m.task_name transname,
+         log.logdate logdate,
+        log.log_field log_field,
+         log.errors
+FROM
+	kettle_log log,
+	data_etl_task m
+WHERE
+	log.transname = m.task_id
+AND m.task_id =#{taskId}
+ORDER BY
+	log.logdate DESC
+LIMIT 1
+</select>
+
+</mapper>

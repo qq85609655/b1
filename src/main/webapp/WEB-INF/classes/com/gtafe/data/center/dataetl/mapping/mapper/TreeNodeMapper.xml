@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.dataetl.mapping.mapper.TreeNodeMapper"> 
+	<!-- 是否同一节点存在同名 -->
+	<select id="queryNodeExistName" resultType="java.lang.Integer">
+		SELECT
+		count(1)
+		FROM
+		data_etl_resourcetree t
+		WHERE t.parent_id = #{parentId}
+		AND t.`name` =#{name}
+		AND t.business_type =#{businessType}
+		<if test=" id != null ">  
+		    AND t.id != #{id}
+		</if>  
+	</select>
+	<!-- 删除节点是否存在引用 -->
+	<select id="queryNodeInfoById" resultType="java.lang.Integer">
+		SELECT
+		count(1)
+		FROM
+		data_etl_resourcetree t
+		WHERE
+		t.parent_id = #{id}
+	</select>
+	<!-- 修改节点 -->
+	<update id="updateNode">
+		UPDATE data_etl_resourcetree
+		SET `name` = #{name}
+		WHERE
+		id = #{id}
+	</update>
+	<!-- 新增节点 -->
+	<insert id="insertNode">
+		INSERT INTO data_etl_resourcetree (
+		parent_id,
+		`name`,
+		business_type,
+		creator,
+		createtime,
+		updater,
+		updatetime
+		)
+		VALUES
+		<foreach collection="resourceTreeByVO.resourceNodeVO" item="treeVO"
+			separator=",">
+			(
+			#{resourceTreeByVO.parentId},
+			#{treeVO.name},
+			#{treeVO.businessType},
+			#{treeVO.creator},
+			SYSDATE(),
+			#{treeVO.updater},
+			SYSDATE()
+			)
+		</foreach>
+	</insert> 
+	
+	<!-- 删除节点 -->
+	<delete id="deleteNode">
+		DELETE
+		FROM
+		data_etl_resourcetree
+		WHERE
+		id = #{id}
+	</delete>
+
+	<!-- 显示树形 -->
+	<select id="queryAllResourceTree"
+		resultType="com.gtafe.data.center.dataetl.mapping.vo.ResourceNodeVO">
+		SELECT
+		id id,
+		parent_id parentId,
+		`name` `name`,
+		business_type businessType,
+		creator creator,
+		createtime createtime,
+		updater updater,
+		updatetime updatetime
+		FROM
+		data_etl_resourcetree
+		where business_Type=#{businessType}
+		ORDER BY
+		updatetime DESC
+	</select>
+
+	<!-- 根据id查询name -->
+	<select id="queryTreeNameById" resultType="java.lang.String">
+			SELECT
+			`name`
+			FROM
+			data_etl_resourcetree r
+			WHERE
+			id = (
+			SELECT
+			c.parent_id
+			FROM
+			data_etl_resourcetree c
+			WHERE
+			id = #{id}
+			)
+	</select>
+
+</mapper>

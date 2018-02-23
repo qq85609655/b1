@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: pentaho-kettle:kettle-engine:7.1.0.4-63">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/pentaho-kettle/kettle-engine/7.1.0.4-63/78a5c0c87339f243a5036fd25336331e2c6482d0/kettle-engine-7.1.0.4-63.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/pentaho-kettle/kettle-engine/7.1.0.4-63/fd871c035232f3d48baa6b63531dd8f9b1121680/kettle-engine-7.1.0.4-63-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
