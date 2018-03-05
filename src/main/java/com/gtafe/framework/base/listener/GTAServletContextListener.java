@@ -29,7 +29,7 @@ public class GTAServletContextListener implements ServletContextListener{
             rootpath += "/";
         }
         servletContext.setAttribute("userOnlineMap", new ConcurrentHashMap<String,String>());
-        this.initCasProperties();
+      //  this.initCasProperties();
     }
 
     @Override

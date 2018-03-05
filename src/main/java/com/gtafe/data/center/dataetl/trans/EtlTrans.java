@@ -51,7 +51,7 @@ public class EtlTrans {
     //@Value("${db.jdbc.logusername}")
     private String logusername="root";
 
-   // @Value("${db.jdbc.logpassword}")
+    //@Value("${db.jdbc.logpassword}")
     private String logpassword="123456";
 
     //@Value("${db.jdbc.logip}")

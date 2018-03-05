@@ -81,10 +81,14 @@ public class SysConfigServiceImpl extends BaseService implements SysConfigServic
 
     @Override
     public SysConfigVo getBasicSysConfigVO() {
-        SysConfigVo vo = this.getCacheSysConfigVO();
-        SysConfigVo newVo = new SysConfigVo();
+        System.out.println("系统配置信息初始化...start......");
+    /*    SysConfigVo newVo = new SysConfigVo();
         try {
+            System.out.println("系统配置信息初始化...start......");
+            flushSystemInfo(true);
+            SysConfigVo vo = this.getCacheSysConfigVO();
             BeanUtils.copyProperties(newVo, vo);
+            System.out.println("系统配置信息初始化...over.....");
         } catch (Exception e) {
 
         }
@@ -93,8 +97,10 @@ public class SysConfigServiceImpl extends BaseService implements SysConfigServic
         newVo.setEmailSmtpAddr(null);
         newVo.setEmailSmtpPort(0);
         newVo.setEmailUser(null);
-        newVo.setSfInit(0);//未初始化中心库
-        return newVo;
+        newVo.setSfInit(0);//未初始化中心库*/
+        SysConfigVo vo = this.sysConfigMapper.queryEntity(false);
+        System.out.println("系统配置信息初始化...over.....");
+        return vo;
     }
 
     @Override
@@ -259,7 +265,7 @@ public class SysConfigServiceImpl extends BaseService implements SysConfigServic
             this.dataStandardItemMapper.insertDataStandardItemVo(dataStandardItemVo, 1, 1);
             LOGGER.info("插入成功》》》》》》》" + vo.getCode() + "000");
         }
-      //  LOGGER.info("第二步開始重新生成建表語句");
+        //  LOGGER.info("第二步開始重新生成建表語句");
         initCenterDataBase_inner();
         return true;
     }
