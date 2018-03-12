@@ -12,10 +12,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.sql.Connection;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,6 +22,37 @@ import java.util.regex.Pattern;
  * 字符串的一些实用操作
  */
 public class StringUtil {
+    public static  int checkConnection(Map<Integer, Object[]> connMap, int id) {
+        if (!connMap.containsKey(id)) {
+            return 2;
+        }
+        Object[] obj = connMap.get(id);
+        DatasourceVO vo = (DatasourceVO) obj[0];
+        int status = (Integer) obj[1];
+        if (status >= 0) {
+            return status;
+        }
+        ConnectDB tDb = StringUtil.getEntityBy(vo);
+        Connection connection = null;
+        status = 2;
+        try {
+            connection = tDb.getConn();
+            if (connection != null) {
+                status = 1;
+            } else {
+                boolean machineFlag = StringUtil.ping(vo.getHost(), 1, 2);
+                if (machineFlag) {
+                    status = 2;
+                } else {
+                    status = 3;
+                }
+            }
+        } finally {
+            tDb.closeDbConn(connection);
+        }
+        obj[1] = status;
+        return status;
+    }
 
     /**
      * 功能描述：分割字符串

@@ -177,6 +177,7 @@
         </foreach>
     </insert>
     
+    
     <select id="queryListByOrgs" resultType="com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo">
         select m.task_id taskId,
         	m.org_id orgId,
@@ -192,4 +193,41 @@
            )
     </select>  
 
+
+
+    <insert id="saveEtlTaskStatus"   parameterType="com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus">
+      INSERT INTO data_etl_task_status
+      (
+	      task_id,
+	      source_status,
+	      source_status_name,
+	      bus_type,
+	      source_table_name,
+	      tagert_table_name,
+	      org_id,
+	      task_name,
+	      target_status,
+	      target_status_name,
+	      source_connection_id,
+	      tagert_connection_id,
+	      create_time
+      )
+       VALUES   
+     (
+	     #{ee.taskId},
+	     #{ee.sourceStatus},
+	     #{ee.sourceStatusName},
+	     #{ee.busType},
+	     #{ee.sourceTableName},
+	     #{ee.tagertTableName},
+	     #{ee.orgId},
+	     #{ee.taskName},
+	     #{ee.targetStatus},
+	     #{ee.targetStatusName},
+	     #{ee.sourceConnectionId},
+	     #{ee.targetConnectionId},
+	     now()
+     )  
+    </insert>
+    
 </mapper>
