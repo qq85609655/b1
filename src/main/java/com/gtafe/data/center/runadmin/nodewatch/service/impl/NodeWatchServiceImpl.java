@@ -136,8 +136,8 @@ public class NodeWatchServiceImpl extends BaseController implements NodeWatchSer
                 targetConnectionId = vo.getThirdConnectionId();
                 sourceConnectionId = centerVo.getId();
             }
-            int sourceFlag = this.checkConnection(connMap, sourceConnectionId);
-            int targetFlag = this.checkConnection(connMap, targetConnectionId);
+            int sourceFlag = StringUtil.checkConnection(connMap, sourceConnectionId);
+            int targetFlag = StringUtil.checkConnection(connMap, targetConnectionId);
             vvo.setId(vo.getTaskId());
             vvo.setResourceName(vo.getTaskName());
             vvo.setSourceTableName(sourceTableName);
@@ -190,35 +190,5 @@ public class NodeWatchServiceImpl extends BaseController implements NodeWatchSer
      * @date 2017年12月5日
      */
 
-    public int checkConnection(Map<Integer, Object[]> connMap, int id) {
-        if (!connMap.containsKey(id)) {
-            return 2;
-        }
-        Object[] obj = connMap.get(id);
-        DatasourceVO vo = (DatasourceVO) obj[0];
-        int status = (Integer) obj[1];
-        if (status >= 0) {
-            return status;
-        }
-        ConnectDB tDb = StringUtil.getEntityBy(vo);
-        Connection connection = null;
-        status = 2;
-        try {
-            connection = tDb.getConn();
-            if (connection != null) {
-                status = 1;
-            } else {
-                boolean machineFlag = StringUtil.ping(vo.getHost(), 1, 2);
-                if (machineFlag) {
-                    status = 2;
-                } else {
-                    status = 3;
-                }
-            }
-        } finally {
-            tDb.closeDbConn(connection);
-        }
-        obj[1] = status;
-        return status;
-    }
+
 }

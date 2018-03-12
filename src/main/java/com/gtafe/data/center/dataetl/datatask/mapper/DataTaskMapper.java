@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
+import com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus;
 import com.gtafe.framework.base.mapper.BaseMapper;
 
 public interface DataTaskMapper extends BaseMapper {
@@ -75,4 +76,7 @@ public interface DataTaskMapper extends BaseMapper {
         "        FROM data_etl_task m \n" +
         "       where m.third_connection_id =#{collectionId}  ")
     List<DataTaskVo> findTasksByConnId(@Param("collectionId")int collectionId);
+    
+
+	void saveEtlTaskStatus(@Param("ee") EtlTaskStatus etlTaskStatus);
 }

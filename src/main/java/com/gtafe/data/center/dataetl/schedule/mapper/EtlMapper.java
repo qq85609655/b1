@@ -3,6 +3,8 @@ package com.gtafe.data.center.dataetl.schedule.mapper;
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
 import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
 import com.gtafe.data.center.runadmin.etlerrorlog.vo.KettleLogVO;
+import com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus;
+
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
 import org.springframework.stereotype.Repository;
@@ -74,4 +76,9 @@ public interface EtlMapper {
     @Select("select ERRORS errors from kettle_log where CHANNEL_ID=#{channelId}")
     KettleLogVO taskStatus(String channelId);
 
+    @Delete("delete from data_etl_task_status where task_id is not null ")
+    void cleanAllStatus();
+ 
+    
+    
 }

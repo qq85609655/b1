@@ -46,4 +46,6 @@ public class IndexController extends BaseController {
     IndexVo getTaskStatus() throws Exception {
         return nodeWatchServiceImpl.queryTaskRunStatus();
     }
+
+
 }
