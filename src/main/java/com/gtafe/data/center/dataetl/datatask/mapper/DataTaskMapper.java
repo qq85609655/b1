@@ -13,7 +13,7 @@ import com.gtafe.framework.base.mapper.BaseMapper;
 
 public interface DataTaskMapper extends BaseMapper {
 
-    List<DataTaskVo> queryList(@Param("collectionId")int collectionId, @Param("orgIdList") List<Integer> orgIdList,
+    List<DataTaskVo> queryList(@Param("collectionId") int collectionId, @Param("orgIdList") List<Integer> orgIdList,
                                @Param("status") Integer status,
                                @Param("name") String name,
                                @Param("pageNumKey") int pageNum,
@@ -23,6 +23,7 @@ public interface DataTaskMapper extends BaseMapper {
     DataTaskVo getDataTaskVo(@Param("taskId") Integer taskId);
 
     List<DataTaskVo> getDataTaskVos(@Param("taskIds") List<Integer> taskIds);
+
     /**
      * 检查名称重复
      *
@@ -52,7 +53,7 @@ public interface DataTaskMapper extends BaseMapper {
     @Delete("delete from data_etl_task where task_id= #{taskId}")
     void deleteTaskById(@Param("taskId") Integer taskId);
 
-    List<DataTaskVo> queryListByOrgs(@Param("orgIds")List<Integer> orgIds, @Param("businessType")int businessType);
+    List<DataTaskVo> queryListByOrgs(@Param("orgIds") List<Integer> orgIds, @Param("businessType") int businessType);
 
     @Delete("delete from sys_user_task where user_id=#{userId}")
     void clearUserTaskRelation(@Param("userId") Integer userId);
@@ -65,18 +66,26 @@ public interface DataTaskMapper extends BaseMapper {
             "        m.center_tablename centerTablename \n" +
             "        FROM data_etl_task m \n" +
             "       where m.subclass_code =#{subclassCode}  ")
-    List<DataTaskVo> findTasksBySubclass(@Param("subclassCode")String subclassCode);
-    
-    @Select("   SELECT\n" +
-        "        m.task_id taskId,\n" +
-        "        m.task_name taskName,\n" +
-        "        m.business_type businessType,\n" +
-        "        m.third_tablename thirdTablename,\n" +
-        "        m.center_tablename centerTablename \n" +
-        "        FROM data_etl_task m \n" +
-        "       where m.third_connection_id =#{collectionId}  ")
-    List<DataTaskVo> findTasksByConnId(@Param("collectionId")int collectionId);
-    
+    List<DataTaskVo> findTasksBySubclass(@Param("subclassCode") String subclassCode);
 
-	void saveEtlTaskStatus(@Param("ee") EtlTaskStatus etlTaskStatus);
+    @Select("   SELECT\n" +
+            "        m.task_id taskId,\n" +
+            "        m.task_name taskName,\n" +
+            "        m.business_type businessType,\n" +
+            "        m.third_tablename thirdTablename,\n" +
+            "        m.center_tablename centerTablename \n" +
+            "        FROM data_etl_task m \n" +
+            "       where m.third_connection_id =#{collectionId}  ")
+    List<DataTaskVo> findTasksByConnId(@Param("collectionId") int collectionId);
+
+
+    void saveEtlTaskStatus(@Param("ee") EtlTaskStatus etlTaskStatus);
+
+    @Select(" select s.task_id taskId,s.source_status sourceStatus,s.source_status_name sourceStatusName," +
+            "s.bus_type busType,s.source_table_name sourceTableName,s.tagert_table_name tagertTableName," +
+            "s.org_id orgId,s.task_name taskName,s.target_status targetStatus,s.target_status_name targetStatusName," +
+            "s.source_connection_id sourceConnectionId," +
+            "s.tagert_connection_id tagertConnectionId,o.org_name orgName " +
+            " from data_etl_task_status s left join sys_org o on s.org_id=o.id ")
+    List<EtlTaskStatus> queryTaskStatusList();
 }

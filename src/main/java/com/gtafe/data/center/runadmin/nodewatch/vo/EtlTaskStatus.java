@@ -32,7 +32,10 @@ public class EtlTaskStatus {
 	private int busType;
 	private int sourceConnectionId;
 	private int targetConnectionId;
-	
+
+	private String orgName;
+
+
 
 	public int getSourceConnectionId() {
 		return sourceConnectionId;
@@ -147,6 +150,13 @@ public class EtlTaskStatus {
 				+ ", createTime=" + createTime + ", orgId=" + orgId + ", busType=" + busType + ", sourceConnectionId="
 				+ sourceConnectionId + ", targetConnectionId=" + targetConnectionId + "]";
 	}
-	
-	
+
+
+	public String getOrgName() {
+		return orgName;
+	}
+
+	public void setOrgName(String orgName) {
+		this.orgName = orgName;
+	}
 }

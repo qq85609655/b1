@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 
 import com.gtafe.data.center.runadmin.etlerrorlog.mapper.KettleLogMapper;
 import com.gtafe.data.center.runadmin.etlerrorlog.vo.KettleLogVO;
+import com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,12 +61,53 @@ public class NodeWatchServiceImpl extends BaseController implements NodeWatchSer
         if (vlist.isEmpty()) {
             return new ArrayList<NodeWatchVo>();
         }
-        return compactList(vlist);
+
+        List<EtlTaskStatus> etlTaskStatuses = this.dataTaskMapper.queryTaskStatusList();
+        List<NodeWatchVo> nodeWatchVos = new ArrayList<NodeWatchVo>();
+        for (EtlTaskStatus v : etlTaskStatuses) {
+            NodeWatchVo vvv = new NodeWatchVo();
+            vvv.setBusType(v.getBusType());
+            vvv.setId(v.getTaskId());
+            vvv.setOrgId(v.getOrgId() + "");
+            vvv.setOrgName(v.getOrgName());
+            vvv.setResourceName(v.getTaskName());
+            vvv.setSourceTableName(v.getSourceTableName());
+            vvv.setTagertTableName(v.getTagertTableName());
+            int sourceFlag = v.getSourceStatus();
+            int targetFlag = v.getTargetStatus();
+            StringBuffer error = new StringBuffer("");
+            if (sourceFlag == 1) {
+                vvv.setStatus(sourceFlag);
+                error.append(v.getSourceStatusName());
+            } else if (sourceFlag == 3) {
+                vvv.setStatus(sourceFlag);
+                error.append(v.getSourceStatusName());
+            } else {
+                vvv.setStatus(sourceFlag);
+                error.append(v.getSourceStatusName());
+            }
+            if (vvv.getStatus() == 1) {
+                if (targetFlag == 1) {
+                    vvv.setStatus(targetFlag);
+                    error.append(v.getTargetStatusName());
+                } else if (targetFlag == 3) {
+                    vvv.setStatus(targetFlag);
+                    error.append(v.getTargetStatusName());
+                } else {
+                    vvv.setStatus(targetFlag);
+                    error.append(v.getTargetStatusName());
+                }
+            }
+            vvv.setStatusName(error.toString());
+            nodeWatchVos.add(vvv);
+        }
+        return nodeWatchVos;
     }
 
     @Override
     public IndexVo queryTaskRunStatus() {
         IndexVo result = new IndexVo();
+        int successSize = 0;
         List<Integer> orgIds = orgServiceImpl.getUserAuthOrgIds(this.getUserId());
         if (orgIds.size() > 0) {
             List<DataTaskVo> list = dataTaskMapper.queryList(-1, orgIds, -1, null, 1, 19, -1);
@@ -75,16 +117,25 @@ public class NodeWatchServiceImpl extends BaseController implements NodeWatchSer
                 result.setNodeWatchVos(new ArrayList<NodeWatchVo>());
                 return result;
             }
-            List<NodeWatchVo> nodeList = compactList(list);
+          /*  List<NodeWatchVo> nodeList = compactList(list);
             int size = nodeList.size();
-            int successSize = 0;
             for (NodeWatchVo vo : nodeList) {
                 if (vo.getStatus() == 1) {
                     successSize++;
                 }
             }
             int errorSize = size - successSize;
-            result.setNodeWatchVos(nodeList);
+            result.setNodeWatchVos(nodeList);*/
+
+            List<EtlTaskStatus> statusList = this.dataTaskMapper.queryTaskStatusList();
+            int size = statusList.size();
+            result.setEtlTaskStatuses(statusList);
+            for (EtlTaskStatus vo : statusList) {
+                if (vo.getSourceStatus() == 1 && vo.getTargetStatus() == 1) {
+                    successSize++;
+                }
+            }
+            int errorSize = size - successSize;
             result.setErrorCounts(errorSize);
             if (list instanceof Page) {
                 @SuppressWarnings("resource")
@@ -101,7 +152,13 @@ public class NodeWatchServiceImpl extends BaseController implements NodeWatchSer
         return result;
     }
 
-    public List<NodeWatchVo> compactList(List<DataTaskVo> vlist) {
+    @Override
+    public IndexVo doRefrashTaskStatus() {
+
+        return null;
+    }
+
+   /* public List<NodeWatchVo> compactList(List<DataTaskVo> vlist) {
         Map<Integer, Object[]> connMap = new HashMap<Integer, Object[]>();
         List<Integer> connIds = new ArrayList<Integer>();
         List<DatasourceVO> centerList = this.datasourceMapper.queryCenterData();
@@ -180,15 +237,5 @@ public class NodeWatchServiceImpl extends BaseController implements NodeWatchSer
             list.add(vvo);
         }
         return list;
-    }
-
-
-    /**
-     * //1正常 2数据库连接不通 3机器ping不通
-     *
-     * @author 汪逢建
-     * @date 2017年12月5日
-     */
-
-
+    } */
 }

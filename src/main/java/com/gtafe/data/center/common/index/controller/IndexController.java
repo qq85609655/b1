@@ -40,11 +40,17 @@ public class IndexController extends BaseController {
     public IndexVo getStandardInfos() throws Exception {
         return this.indexServiceImpl.queryIndex();
     }
-    
+
     @RequestMapping("/getTaskStatus")
     public @ResponseBody
     IndexVo getTaskStatus() throws Exception {
         return nodeWatchServiceImpl.queryTaskRunStatus();
+    }
+
+    @RequestMapping("/doRefrashTaskStatus")
+    public @ResponseBody
+    IndexVo doRefrashTaskStatus() throws Exception {
+        return nodeWatchServiceImpl.doRefrashTaskStatus();
     }
 
 

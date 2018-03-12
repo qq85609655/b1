@@ -15,4 +15,6 @@ public interface NodeWatchService {
     List<NodeWatchVo> list(List<DataTaskVo> mappingVOList);
 
     IndexVo queryTaskRunStatus();
+
+    IndexVo doRefrashTaskStatus();
 }

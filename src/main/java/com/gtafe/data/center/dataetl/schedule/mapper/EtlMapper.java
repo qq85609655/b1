@@ -21,6 +21,8 @@ public interface EtlMapper {
             @Result(column = "third_connection_id",property = "thirdConnectionId"),
             @Result(column = "third_tablename",property = "thirdTablename"),
             @Result(column = "business_type",property = "businessType"),
+            @Result(column = "org_id",property = "orgId"),
+            @Result(column = "center_tablename",property = "centerTablename"),
             @Result(column = "run_expression",property = "runEexpression"),
             @Result(column = "updatetime",property = "updateTime")
     })

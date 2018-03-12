@@ -2,6 +2,7 @@ package com.gtafe.data.center.common.common.vo;
 
 import java.util.List;
 
+import com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus;
 import com.gtafe.data.center.runadmin.nodewatch.vo.NodeWatchVo;
 
 /**
@@ -20,6 +21,8 @@ public class IndexVo {
     private int errorCounts;
     
     private List<NodeWatchVo> nodeWatchVos;
+
+    private List<EtlTaskStatus> etlTaskStatuses;
 
     public int getA1() {
         return a1;
@@ -106,5 +109,13 @@ public class IndexVo {
                 ", errorCounts=" + errorCounts +
                 ", nodeWatchVos=" + nodeWatchVos +
                 '}';
+    }
+
+    public List<EtlTaskStatus> getEtlTaskStatuses() {
+        return etlTaskStatuses;
+    }
+
+    public void setEtlTaskStatuses(List<EtlTaskStatus> etlTaskStatuses) {
+        this.etlTaskStatuses = etlTaskStatuses;
     }
 }
