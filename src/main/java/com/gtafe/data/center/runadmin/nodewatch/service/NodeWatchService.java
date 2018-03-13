@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.gtafe.data.center.common.common.vo.IndexVo;
 import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
+import com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus;
 import com.gtafe.data.center.runadmin.nodewatch.vo.NodeWatchVo;
 
 /**
@@ -12,9 +13,11 @@ import com.gtafe.data.center.runadmin.nodewatch.vo.NodeWatchVo;
  * @Description:
  */
 public interface NodeWatchService {
-    List<NodeWatchVo> list(List<DataTaskVo> mappingVOList);
+    //List<NodeWatchVo> list(List<DataTaskVo> mappingVOList);
+
+    List<EtlTaskStatus> queryTaskStatusList(String orgIds, int pageNum, int pageSize, int busType);
 
     IndexVo queryTaskRunStatus();
 
-    IndexVo doRefrashTaskStatus();
+    String doRefrashTaskStatus();
 }

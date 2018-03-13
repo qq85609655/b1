@@ -14,6 +14,16 @@ public class EtlTaskStatus {
 	private String sourceTableName;
 
 	private String tagertTableName;
+
+	public String getErrorInfo() {
+		return errorInfo;
+	}
+
+	public void setErrorInfo(String errorInfo) {
+		this.errorInfo = errorInfo;
+	}
+
+	private String errorInfo;
 	// 源库 状态
 
 	private int sourceStatus;

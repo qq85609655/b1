@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -48,23 +49,34 @@ public class NodeWatchController extends BaseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(
             NodeWatchController.class);
 
+//    @SuppressWarnings("resource")
+//    @RequestMapping(path = "/queryList", method = RequestMethod.POST)
+//    @ApiOperation(value = "分页显示", notes = "分页显示")
+//    @ApiResponses(value = {
+//            @ApiResponse(code = 200, message = "查询:参数")})
+//    public @ResponseBody
+//    PageInfo<NodeWatchVo> list(@RequestBody NodeWatchParam param) {
+//        List<DataTaskVo> list=this.dataTaskServiceImpl.queryList(0, param.getOrgIds(),0, -1,"",param.getPageNum(),param.getPageSize(),param.getBusType());
+//        List<NodeWatchVo> result = nodeWatchServiceImpl.list(list);
+//        if(list instanceof Page) {
+//            Page<DataTaskVo> page = (Page<DataTaskVo>)list;
+//            Page<NodeWatchVo> newPage = new Page<NodeWatchVo>(page.getPageNum(), page.getPageSize());
+//            newPage.addAll(result);
+//            newPage.setTotal(page.getTotal());
+//            result = newPage;
+//        }
+//        LOGGER.debug("Result: ", result.size());
+//        return new PageInfo<NodeWatchVo>(result);
+//    }
+
     @SuppressWarnings("resource")
     @RequestMapping(path = "/queryList", method = RequestMethod.POST)
     @ApiOperation(value = "分页显示", notes = "分页显示")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "查询:参数")})
     public @ResponseBody
-    PageInfo<NodeWatchVo> list(@RequestBody NodeWatchParam param) {
-        List<DataTaskVo> list=this.dataTaskServiceImpl.queryList(0, param.getOrgIds(),0, -1,"",param.getPageNum(),param.getPageSize(),param.getBusType());
-        List<NodeWatchVo> result = nodeWatchServiceImpl.list(list);
-        if(list instanceof Page) {
-            Page<DataTaskVo> page = (Page<DataTaskVo>)list;
-            Page<NodeWatchVo> newPage = new Page<NodeWatchVo>(page.getPageNum(), page.getPageSize());
-            newPage.addAll(result);
-            newPage.setTotal(page.getTotal());
-            result = newPage;
-        }
-        LOGGER.debug("Result: ", result.size());
-        return new PageInfo<NodeWatchVo>(result);
+    PageInfo<EtlTaskStatus> list(@RequestBody NodeWatchParam param) {
+        List<EtlTaskStatus> list=this.nodeWatchServiceImpl.queryTaskStatusList(param.getOrgIds(),param.getPageNum(),param.getPageSize(),param.getBusType());
+        return new PageInfo<EtlTaskStatus>(list);
     }
 }

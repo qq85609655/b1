@@ -49,7 +49,7 @@ public class IndexController extends BaseController {
 
     @RequestMapping("/doRefrashTaskStatus")
     public @ResponseBody
-    IndexVo doRefrashTaskStatus() throws Exception {
+    String doRefrashTaskStatus() throws Exception {
         return nodeWatchServiceImpl.doRefrashTaskStatus();
     }
 

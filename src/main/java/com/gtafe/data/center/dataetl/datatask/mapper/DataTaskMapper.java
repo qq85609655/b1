@@ -81,11 +81,8 @@ public interface DataTaskMapper extends BaseMapper {
 
     void saveEtlTaskStatus(@Param("ee") EtlTaskStatus etlTaskStatus);
 
-    @Select(" select s.task_id taskId,s.source_status sourceStatus,s.source_status_name sourceStatusName," +
-            "s.bus_type busType,s.source_table_name sourceTableName,s.tagert_table_name tagertTableName," +
-            "s.org_id orgId,s.task_name taskName,s.target_status targetStatus,s.target_status_name targetStatusName," +
-            "s.source_connection_id sourceConnectionId," +
-            "s.tagert_connection_id tagertConnectionId,o.org_name orgName " +
-            " from data_etl_task_status s left join sys_org o on s.org_id=o.id ")
-    List<EtlTaskStatus> queryTaskStatusList();
+    List<EtlTaskStatus> queryTaskStatusList(@Param("orgIdList") List<Integer> orgIdList,
+                                            @Param("pageNumKey") int pageNum,
+                                            @Param("pageSizeKey") int pageSize,
+                                            @Param("busType") int busType);
 }

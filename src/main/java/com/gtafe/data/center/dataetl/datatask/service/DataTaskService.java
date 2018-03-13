@@ -23,7 +23,7 @@ public interface DataTaskService {
      */
     List<DataTaskVo> queryList(int collectionId, String orgIds, Integer dataTypeValue, Integer status,
                                String name, int pageNum, int pageSize, Integer businessType);
-    
+
     /**
      * 获取单个任务基本信息
      * @author 汪逢建

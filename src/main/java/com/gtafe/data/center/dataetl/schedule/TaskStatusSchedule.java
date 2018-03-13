@@ -29,6 +29,8 @@ import org.springframework.stereotype.Component;
 public class TaskStatusSchedule {
 
     @Autowired
+    private DataTaskMapper dataTaskMapper;
+    @Autowired
     EtlMapper etlMapper;
 
     @Autowired
@@ -38,18 +40,21 @@ public class TaskStatusSchedule {
     private DatasourceMapper datasourceMapper;
     Logger logger = LoggerFactory.getLogger(TaskStatusSchedule.class);
 
-    @Autowired
-    private DataTaskMapper dataTaskMapper;
-
 
     /**
      * 定时任务 每十分钟扫描一次转换任务： 针对机器和运行任务进行组装结果
      */
-    @Scheduled(cron = "0 0/10 * * * ? *")
-   // @Scheduled(cron = "0 02 17 ? * *")
+    @Scheduled(cron = "0 0/2 * * * *")
+    // @Scheduled(cron = "0 02 17 ? * *")
     public void refrashTaskStatus() {
 
         System.out.println("開始執行任務....");
+        this.doTask();
+
+
+    }
+
+    private void doTask() {
         // 清空状态表数据
         etlMapper.cleanAllStatus();
         // 扫描所有有效的转换任务
@@ -65,12 +70,15 @@ public class TaskStatusSchedule {
             connection = tDb.getConn();
             if (connection != null) {
                 centerStatus = 1;// ok
+                System.out.println("中心庫鏈接ok!");
             } else {
                 boolean machineFlag = StringUtil.ping(centerVo.getHost(), 1, 2);
                 if (machineFlag) {
                     centerStatus = 2; // database is ok
+                    System.out.println("中心庫機器ok ,但是數據庫連不上了!");
                 } else {
                     centerStatus = 3; // all is error
+                    System.out.println("中心庫機器宕機，請速聯係管理員!");
                 }
             }
         } finally {
@@ -80,6 +88,7 @@ public class TaskStatusSchedule {
 
         // 1:首先判断是否数据库能取得链接 如果可以 则机器也ok了，然后需要读取转换日志，获取最近一次异常日志
         // 如果没有异常日志，则显示 一起正常
+        System.out.println("讀取出來所有的有效任務的數量為:"+dataTaskVolist.size()+"個..");
         for (DataTaskVo vo : dataTaskVolist) {
             EtlTaskStatus etlTaskStatus = new EtlTaskStatus();
             etlTaskStatus.setTaskId(vo.getTaskId());
@@ -143,9 +152,9 @@ public class TaskStatusSchedule {
                     targetDesc.append("目标数据库连接异常!");
                 }
                 etlTaskStatus.setSourceStatus(centerStatus);
-                etlTaskStatus.setSourceStatusName(sourceDesc.append(error).toString());
+                etlTaskStatus.setSourceStatusName(sourceDesc.toString());
                 etlTaskStatus.setTargetStatus(thirdStatus);
-                etlTaskStatus.setTargetStatusName(targetDesc.append(error).toString());
+                etlTaskStatus.setTargetStatusName(targetDesc.toString());
                 etlTaskStatus.setSourceConnectionId(centerVo.getId());
                 etlTaskStatus.setTargetConnectionId(vo.getThirdConnectionId());
             } else {
@@ -166,18 +175,17 @@ public class TaskStatusSchedule {
                     targetDesc.append("源数据库连接异常!");
                 }
                 etlTaskStatus.setTargetStatus(centerStatus);
-                etlTaskStatus.setTargetStatusName(sourceDesc.append(error).toString());
+                etlTaskStatus.setTargetStatusName(sourceDesc.toString());
                 etlTaskStatus.setSourceStatus(thirdStatus);
-                etlTaskStatus.setSourceStatusName(targetDesc.append(error).toString());
+                etlTaskStatus.setSourceStatusName(targetDesc.toString());
                 etlTaskStatus.setSourceConnectionId(vo.getThirdConnectionId());
                 etlTaskStatus.setTargetConnectionId(centerVo.getId());
             }
 
+            etlTaskStatus.setErrorInfo(error.toString());
             etlTaskStatus.setTaskName(vo.getTaskName());
             dataTaskMapper.saveEtlTaskStatus(etlTaskStatus);
         }
-
         System.out.println("任務....完畢,共計掃描任務:" + dataTaskVolist.size() + "條");
-
     }
 }

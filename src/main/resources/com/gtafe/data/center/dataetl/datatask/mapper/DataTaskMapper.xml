@@ -49,6 +49,9 @@
         ORDER BY m.updatetime DESC
     </select>
 
+
+
+
     <select id="getDataTaskVo" resultType="com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo">  
         SELECT
         m.task_id taskId,
@@ -210,7 +213,8 @@
 	      target_status_name,
 	      source_connection_id,
 	      tagert_connection_id,
-	      create_time
+	      create_time,
+	      error_info
       )
        VALUES   
      (
@@ -226,8 +230,45 @@
 	     #{ee.targetStatusName},
 	     #{ee.sourceConnectionId},
 	     #{ee.targetConnectionId},
-	     now()
+	     now(),
+	     #{ee.errorInfo}
      )  
     </insert>
-    
+
+
+    <select id="queryTaskStatusList" resultType="com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus">
+        SELECT
+        s.task_id taskId,
+        s.source_status sourceStatus,
+        s.source_status_name sourceStatusName,
+        s.bus_type busType,
+        s.source_table_name sourceTableName,
+        s.tagert_table_name tagertTableName,
+        s.org_id orgId,
+        s.task_name taskName,
+        s.target_status targetStatus,
+        s.target_status_name targetStatusName,
+        s.source_connection_id sourceConnectionId,
+        s.tagert_connection_id tagertConnectionId,
+        o.org_name orgName,
+        s.error_info errorInfo
+        FROM
+        data_etl_task_status s
+        LEFT JOIN sys_org o ON s.org_id = o.id
+        WHERE  1 = 1
+        <if test="busType > 0">
+            AND s.bus_type = #{busType}
+        </if>
+        and s.org_id in (
+        <foreach collection="orgIdList" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+
+        ORDER BY s.create_time DESC
+    </select>
+
+
+
+
 </mapper>
