@@ -11,6 +11,8 @@
 package com.gtafe.data.center.dataetl.datatask.service.impl;
 
 
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,6 +22,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
+import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
+import com.gtafe.data.center.system.config.vo.SysConfigVo;
+import com.gtafe.framework.base.listener.GTAServletContextListener;
+import com.gtafe.framework.base.utils.KettleExecuUtil;
+import com.gtafe.framework.base.utils.PropertyUtils;
 import org.quartz.JobExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -95,7 +103,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         this.revisionDataTaskVo(businessType, taskVo);
         if (this.dataTaskMapper.checkTaskNameRepeat(null,
                 taskVo.getTaskName(), taskVo.getOrgId(), businessType) > 0) {
-            throw new OrdinaryException(this.getName(businessType)+"资源名称已存在");
+            throw new OrdinaryException(this.getName(businessType) + "资源名称已存在");
         }
         int userId = this.getUserId();
         //插入数据
@@ -107,7 +115,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         LogInfo logInfo = new LogInfo();
         logInfo.setModuleId(getMoudleId(businessType));
         logInfo.setOperType("新增");
-        logInfo.setOperContent("新增"+this.getName(businessType)+"资源：" + taskVo.getTaskName()+(taskVo.isRunStatus()?"，并启动":"，未启动"));
+        logInfo.setOperContent("新增" + this.getName(businessType) + "资源：" + taskVo.getTaskName() + (taskVo.isRunStatus() ? "，并启动" : "，未启动"));
         this.logServiceImpl.saveLog(logInfo);
         if (taskVo.isRunStatus()) {
             //启动任务
@@ -119,21 +127,21 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
     public boolean updateDataTaskVo(int businessType, DataTaskVo taskVo) {
         DataTaskVo dbVo = this.dataTaskMapper.getDataTaskVo(taskVo.getTaskId());
         if (dbVo == null) {
-            throw new OrdinaryException(this.getName(businessType)+"资源不存在会已被删除！");
+            throw new OrdinaryException(this.getName(businessType) + "资源不存在会已被删除！");
         }
         this.revisionDataTaskVo(businessType, taskVo);
         if (this.dataTaskMapper.checkTaskNameRepeat(dbVo.getTaskId(),
                 taskVo.getTaskName(), taskVo.getOrgId(), businessType) > 0) {
-            throw new OrdinaryException(this.getName(businessType)+"资源名称已存在");
+            throw new OrdinaryException(this.getName(businessType) + "资源名称已存在");
         }
         int userId = this.getUserId();
         int taskId = taskVo.getTaskId();
         //插入数据
         this.dataTaskMapper.updateDataTask(taskVo, userId);
-        
-        if(taskVo.isRunStatus()) {
+
+        if (taskVo.isRunStatus()) {
             //立即启动是，需要启动任务，否则不更新状态
-            this.dataTaskMapper.updateDataTaskStatus(Arrays.asList(new Integer[] {taskVo.getTaskId()}), 1 , userId);
+            this.dataTaskMapper.updateDataTaskStatus(Arrays.asList(new Integer[]{taskVo.getTaskId()}), 1, userId);
         }
         //插入步骤
         this.dataTaskMapper.deleteTaskSteps(taskId);
@@ -146,14 +154,14 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         LogInfo logInfo = new LogInfo();
         logInfo.setModuleId(getMoudleId(businessType));
         logInfo.setOperType("修改");
-        logInfo.setOperContent("修改"+this.getName(businessType)+"资源：" + content);
+        logInfo.setOperContent("修改" + this.getName(businessType) + "资源：" + content);
         this.logServiceImpl.saveLog(logInfo);
         return true;
     }
 
     @Override
     public boolean batchUpdateState(String taskIds, int state) {
-        if(state<0 || state>1 || StringUtils.isEmpty(taskIds)) {
+        if (state < 0 || state > 1 || StringUtils.isEmpty(taskIds)) {
             throw new ParamInvalidException();
         }
         List<Integer> taskIdList = new ArrayList<Integer>();
@@ -162,7 +170,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
             taskIdList.add(Integer.parseInt(s));
         }
         List<DataTaskVo> list = this.dataTaskMapper.getDataTaskVos(taskIdList);
-        if(list.isEmpty()) {
+        if (list.isEmpty()) {
             return true;
         }
         taskIdList.clear();
@@ -173,11 +181,11 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         }
         int businessType = list.get(0).getBusinessType();
         this.dataTaskMapper.updateDataTaskStatus(taskIdList, state, this.getUserId());
-        
+
         LogInfo logInfo = new LogInfo();
         logInfo.setModuleId(getMoudleId(businessType));
         logInfo.setOperType("修改");
-        logInfo.setOperContent((state==1?"启动":"停止")+""+this.getName(businessType)+"资源：" + StringUtil.join(nameList, ","));
+        logInfo.setOperContent((state == 1 ? "启动" : "停止") + "" + this.getName(businessType) + "资源：" + StringUtil.join(nameList, ","));
         this.logServiceImpl.saveLog(logInfo);
         //日志
         return true;
@@ -186,18 +194,18 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
     @Override
     public boolean deleteTasks(List<Integer> taskIds) {
         List<DataTaskVo> list = this.dataTaskMapper.getDataTaskVos(taskIds);
-        if(list.isEmpty()) {
+        if (list.isEmpty()) {
             return true;
         }
         List<String> nameList = new ArrayList<String>();
         for (DataTaskVo vo : list) {
-            if(vo.isRunStatus()) {
+            if (vo.isRunStatus()) {
                 nameList.add(vo.getTaskName());
             }
         }
         int businessType = list.get(0).getBusinessType();
-        if(!nameList.isEmpty()) {
-            throw new OrdinaryException("部分"+this.getName(businessType)+"资源["+StringUtil.join(nameList, ",")+"]已启动，操作失败！") ;
+        if (!nameList.isEmpty()) {
+            throw new OrdinaryException("部分" + this.getName(businessType) + "资源[" + StringUtil.join(nameList, ",") + "]已启动，操作失败！");
         }
         nameList.clear();
         for (DataTaskVo vo : list) {
@@ -206,11 +214,11 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
             this.dataTaskMapper.deleteTaskById(taskId);
             nameList.add(vo.getTaskName());
         }
-        
+
         LogInfo logInfo = new LogInfo();
         logInfo.setModuleId(getMoudleId(businessType));
         logInfo.setOperType("修改");
-        logInfo.setOperContent("删除"+this.getName(businessType)+"资源：" + StringUtil.join(nameList, ","));
+        logInfo.setOperContent("删除" + this.getName(businessType) + "资源：" + StringUtil.join(nameList, ","));
         this.logServiceImpl.saveLog(logInfo);
         return true;
     }
@@ -308,6 +316,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
             return LogConstant.Module_Data_subscribe;
         }
     }
+
     private String getName(int businessType) {
         if (businessType == 1) {
             return "发布";
@@ -319,7 +328,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
     @Override
     public boolean startNow(int taskId) {
         DataTaskVo vo = this.dataTaskMapper.getDataTaskVo(taskId);
-        if(vo == null) {
+        if (vo == null) {
             throw new OrdinaryException("数据资源不存在，会已被删除!");
         }
         try {
@@ -332,8 +341,90 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         LogInfo logInfo = new LogInfo();
         logInfo.setModuleId(getMoudleId(businessType));
         logInfo.setOperType("修改");
-        logInfo.setOperContent("手动同步"+this.getName(businessType)+"资源：" + vo.getTaskName());
+        logInfo.setOperContent("手动同步" + this.getName(businessType) + "资源：" + vo.getTaskName());
         this.logServiceImpl.saveLog(logInfo);
         return true;
+    }
+
+    @Autowired
+    private SysConfigMapper sysConfigMapper;
+
+    @Override
+    public boolean startLocalKettleNow() {
+        String kettleInstallPath = "";
+        SysConfigVo sysConfigVo = this.sysConfigMapper.queryEntity(false);
+        if (sysConfigVo != null) {
+            kettleInstallPath = sysConfigVo.getKettleInstallPath();
+        }
+        System.out.println(kettleInstallPath);
+        if (StringUtil.isNotBlank(kettleInstallPath)) {
+            String spoonFilePath = kettleInstallPath + File.separator + "Spoon.bat";
+            File s = new File(spoonFilePath);
+            if (!s.exists()) {
+                System.out.println("本地kettle安裝路徑配置有誤!请联系管理员!");
+                return false;
+            }
+        }
+        Runtime rt = Runtime.getRuntime();
+        String strcmd = "cmd  /c start " + kettleInstallPath + "/Spoon.bat";
+        Process ps = null;  //Process可以控制该子进程的执行或获取该子进程的信息。
+        try {
+            ps = rt.exec(strcmd);   //该对象的exec()方法指示Java虚拟机创建一个子进程执行指定的可执行程序，并返回与该子进程对应的Process对象实例。
+            ps.waitFor();  //等待子进程完成再往下执行。
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            return false;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        int i = ps.exitValue();  //接收执行完毕的返回值
+        if (i == 0) {
+            System.out.println("执行完成.");
+        } else {
+            System.out.println("执行失败.");
+            return false;
+        }
+
+        ps.destroy();  //销毁子进程
+        ps = null;
+        return true;
+    }
+
+    @Override
+    public List<TransFileVo> queryKfileList(String fileType, String fileName, int pageNum, int pageSize) {
+        return this.dataTaskMapper.queryKfileList(fileName, fileType, pageNum, pageSize);
+    }
+
+    @Override
+    public boolean runItem(int fileId) {
+        TransFileVo vo = this.dataTaskMapper.findEtlFileInfoById(fileId);
+        if (vo != null) {
+            String filePath = vo.getFilePath();
+            String type = vo.getFileType();
+            if (StringUtil.isBlank(filePath)) {
+                throw new OrdinaryException("文件路径不存在!");
+            }
+            if (StringUtil.isBlank(type) || !type.equals("ktr") || !type.equals("kjb")) {
+                throw new OrdinaryException("文件类型有异常!");
+            }
+            File ktrFile = new File(filePath);
+            if (!ktrFile.exists()) {
+                throw new OrdinaryException("文件不存在!!!");
+            }
+            int errors = 0;
+            KettleExecuUtil execuUtil = new KettleExecuUtil();
+            if (type.equals("ktr")) {
+                errors = execuUtil.runTrans(filePath);
+            } else if (type.equals("kjb")) {
+                errors = execuUtil.runJob(filePath);
+            }
+            if (errors > 0) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 }

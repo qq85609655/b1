@@ -11,6 +11,17 @@ public class DatasourceParam extends PageParam{
     private String nameOrDBName;
     @ApiParam(name = "orgIds", value = "机构id列表，逗号分割", required = false, defaultValue = "") 
     private String orgIds;
+
+    private String isCenter;
+
+    public String getIsCenter() {
+        return isCenter;
+    }
+
+    public void setIsCenter(String isCenter) {
+        this.isCenter = isCenter;
+    }
+
     public Integer getDbType() {
         return dbType;
     }

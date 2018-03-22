@@ -3,6 +3,7 @@ package com.gtafe.data.center.dataetl.datatask.mapper;
 
 import java.util.List;
 
+import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -85,4 +86,9 @@ public interface DataTaskMapper extends BaseMapper {
                                             @Param("pageNumKey") int pageNum,
                                             @Param("pageSizeKey") int pageSize,
                                             @Param("busType") int busType);
+
+    List<TransFileVo> queryKfileList(@Param("fileName") String fileName, @Param("fileType") String fileType,  @Param("pageNumKey")int pageNum, @Param("pageSizeKey")int pageSize);
+
+    @Select("select file_path,file_id, from t_trans_file_info where file_id=#{fileId}")
+    TransFileVo findEtlFileInfoById(@Param("fileId") int fileId);
 }

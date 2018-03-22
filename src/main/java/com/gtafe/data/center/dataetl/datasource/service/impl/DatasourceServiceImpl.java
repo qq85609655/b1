@@ -58,13 +58,13 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
     public List<DatasourceVO> queryDatasourceList(Integer dbType,
                                                   String nameOrDBName,
                                                   int pageNum, int pageSize,
-                                                  String orgIds) {
+                                                  String orgIds,String isCenter) {
         List<Integer> orgIdList = StringUtil.splitListInt(orgIds);
         if (orgIdList.isEmpty()) {
             return EmptyUtil.emptyList(pageSize, DatasourceVO.class);
         }
         return this.datasourceMapper.queryDatasourceList(dbType, nameOrDBName,
-                pageNum, pageSize, orgIdList);
+                pageNum, pageSize, orgIdList,isCenter);
     }
 
     @Override

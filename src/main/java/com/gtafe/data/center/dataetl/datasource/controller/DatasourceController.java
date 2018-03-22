@@ -42,17 +42,11 @@ public class DatasourceController extends BaseController {
     @Resource
     private IDatasourceService datasourceServiceImpl;
 
+
     /**
-     * queryDatasourceList:分页查询数据源信息(跟初始化查询数据源用同一个方法). <br/>
      *
-     * @param dbType       数据库类型
-     * @param nameOrDBName 数据源名称或数据库名称
-     * @param pageNum      页码
-     * @param pageSize     每一页数据数量
+     * @param param
      * @return
-     * @history
-     * @author wuhu.zhu
-     * @since JDK 1.7
      */
     @RequestMapping(path = "/queryList", method = RequestMethod.POST)
     @ApiOperation(value = "查询数据源或初始化查询数据源", notes = "查询数据源或初始化查询数据源")
@@ -64,7 +58,7 @@ public class DatasourceController extends BaseController {
             param.setNameOrDBName(param.getNameOrDBName().trim());
         }
         List<DatasourceVO> result = datasourceServiceImpl.queryDatasourceList(
-            param.getDbType(), param.getNameOrDBName(), param.getPageNum(), param.getPageSize(), param.getOrgIds());
+            param.getDbType(), param.getNameOrDBName(), param.getPageNum(), param.getPageSize(), param.getOrgIds(),param.getIsCenter());
         LOGGER.debug("Result: ", result.size());
         return new PageInfo<DatasourceVO>(result);
     }

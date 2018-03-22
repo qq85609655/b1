@@ -16,6 +16,7 @@
         a.db_name dbName,
         a.host host,
         a.port port,
+		a.is_center isCenter ,
         a.username username,
         a.password password,
         a.remark remark,
@@ -43,13 +44,19 @@
             </foreach>
             )
         </if>
+		<if test="isCenter !=null">
+			and a.is_center=#{isCenter}
+		</if>
         order by a.updatetime desc
     </select>
 
     <select id="queryDatasourceListAll" resultType="com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO">
        SELECT
-            a.id  id, a.name name,a.dbtype dbType
-		FROM data_etl_dataconnection a where 1=1 and a.is_center != 1
+        a.id  id,
+		a.name name,
+		a.dbtype dbType
+		FROM data_etl_dataconnection a
+		where 1=1 and a.is_center != 1
 		<if test="orgIdList != null">
 			and a.org_id in (
 				<foreach collection="orgIdList" item="item" separator=",">

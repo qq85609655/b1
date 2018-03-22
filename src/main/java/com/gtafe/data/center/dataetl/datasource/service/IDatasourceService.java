@@ -16,7 +16,7 @@ import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.TableFieldVo;
 
 public interface IDatasourceService {
-	List<DatasourceVO> queryDatasourceList(Integer dbType, String nameOrDBName, int pageNum, int pageSize, String orgIds);
+	List<DatasourceVO> queryDatasourceList(Integer dbType, String nameOrDBName, int pageNum, int pageSize, String orgIds,String isCenter);
 	
 	List<DatasourceVO> queryDatasourceListAll(String orgIds);
 	

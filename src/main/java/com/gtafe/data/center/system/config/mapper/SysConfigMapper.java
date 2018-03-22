@@ -1,9 +1,8 @@
 package com.gtafe.data.center.system.config.mapper;
 
+import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
 import com.gtafe.data.center.system.config.vo.SysConfigVo;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -23,6 +22,10 @@ public interface SysConfigMapper {
             "set sys_name=#{sysName}," +
             "school_name=#{schoolName}," +
             "copyright=#{copyRight} ," +
+            "sys_type=#{sysType} ," +
+            "kettle_install_path=#{kettleInstallPath} ," +
+            "ktr_files_path=#{ktrFilesPath} ," +
+            "kjb_files_path=#{kjbFilesPath} ," +
             " sfinit=#{sfInit}")
     boolean updateSys(SysConfigVo vo);
 
@@ -35,6 +38,18 @@ public interface SysConfigMapper {
     @Update("update sys_org set org_name=#{schoolName} where parent_id = 0")
     boolean updateSchoolNameToOrg(@Param("schoolName") String schoolName);
 
-    @Select("select email_host emailHost,email_user emailUser,email_pwd emailPwd,email_smtp_addr emailSmtpAddr,email_smtp_port emailSmtpPort from sys_config where id=1")
+    @Select("select email_host emailHost,email_user emailUser," +
+            "email_pwd emailPwd,email_smtp_addr emailSmtpAddr," +
+            "email_smtp_port emailSmtpPort,sys_type sysType," +
+            "kettle_install_path kettleInstallPath ," +
+            "ktr_files_path ktrFilesPath," +
+            "kjb_files_path kjbFilesPath from sys_config where id=1")
     SysConfigVo sysConfig();
+
+    @Insert("insert into t_trans_file_info(file_id,file_name,create_time,update_time,create_user_info,access_time,file_type,file_path)" +
+            " values(#{vo.fileId},#{vo.fileName},#{vo.createTime},#{vo.updateTime},#{vo.createUserInfo},#{vo.accessTime},#{vo.fileType},#{vo.filePath})")
+    void saveTransFile(@Param("vo") TransFileVo transFileVo);
+
+    @Delete("delete from t_trans_file_info where file_type= #{fileType}")
+    void truncateTransFile(@Param("fileType") String fileType);
 }

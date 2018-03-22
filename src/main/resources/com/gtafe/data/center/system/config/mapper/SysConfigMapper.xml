@@ -4,22 +4,25 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gtafe.data.center.system.config.mapper.SysConfigMapper">
     <select id="queryEntity" resultType="com.gtafe.data.center.system.config.vo.SysConfigVo">
-    
-        select  sys_name sysName,
-        	school_name schoolName,
-        	sys_logo_url sysLogoUrl,
-        	copyright copyRight,
-        	email_host emailHost,
-        	email_user emailUser,
-        	email_pwd emailPwd,
-        	email_smtp_addr emailSmtpAddr,
-			sfinit sfInit,
-        	email_smtp_port emailSmtpPort
-        	<if test="logo">
-        		,logo_info logoInfo  
-        	</if>
-        	from sys_config 
-        	limit 1
+        select
+        sys_name sysName,
+        school_name schoolName,
+        sys_logo_url sysLogoUrl,
+        copyright copyRight,
+        email_host emailHost,
+        email_user emailUser,
+        email_pwd emailPwd,
+        email_smtp_addr emailSmtpAddr,
+        sfinit sfInit,
+        email_smtp_port emailSmtpPort,
+        kettle_install_path kettleInstallPath,
+        ktr_files_path ktrFilesPath,
+        kjb_files_path kjbFilesPath
+        <if test="logo">
+            ,logo_info logoInfo
+        </if>
+        from sys_config
+        limit 1
     </select>
-       
+
 </mapper>

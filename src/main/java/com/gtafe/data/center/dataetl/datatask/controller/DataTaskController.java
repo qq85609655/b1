@@ -65,6 +65,15 @@ public class DataTaskController extends BaseController {
         return this.dataTaskServiceImpl.startNow(Integer.parseInt(taskId));
     }
 
+
+    @RequestMapping(path = "/startLocalKettle", method = RequestMethod.GET)
+    public @ResponseBody
+    boolean startLocalKettle() {
+       return this.dataTaskServiceImpl.startLocalKettleNow();
+    }
+
+
+
     /**
      * 根据任务id获取明细信息
      *
@@ -85,7 +94,7 @@ public class DataTaskController extends BaseController {
      */
     public @ResponseBody
     boolean checkBeforeInsert() {
-        List<DatasourceVO> dvos = this.datasourceServiceImpl.queryDatasourceList(null, "", 1, 1, null);
+        List<DatasourceVO> dvos = this.datasourceServiceImpl.queryDatasourceList(null, "", 1, 1, null,null);
         //如果不存在 或者 配置多个中心库 或者 没配置
         if (dvos == null || dvos.size() == 0 || dvos.size() > 1) {
             return false;

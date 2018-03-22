@@ -32,8 +32,8 @@
         <if test="businessType >= 0">
             AND m.business_type=#{businessType}
         </if>
-        <if test="collectionId > 0"> 
-        	AND m.third_connection_id = #{collectionId}
+        <if test="collectionId > 0">
+            AND m.third_connection_id = #{collectionId}
         </if>
         <if test="status >= 0">
             AND m.run_status = #{status}
@@ -49,7 +49,26 @@
         ORDER BY m.updatetime DESC
     </select>
 
+    <select id="queryKfileList" resultType="com.gtafe.data.center.dataetl.datatask.vo.TransFileVo">
+        SELECT
+        t.file_id fileId,
+        t.file_name fileName,
+        t.file_path filePath,
+        t.file_type fileType,
+        t.create_time createTime,
+        t.update_time updateTime,
+        t.access_time accessTime
+        from t_trans_file_info t
+        where 1=1
+        <if test="fileName != null and fileName.trim().length() > 0">
+            AND t.file_name LIKE CONCAT('%',#{fileName},'%')
+        </if>
 
+        <if test="fileType != null and fileType.trim().length() > 0">
+            AND t.file_type=#{fileType}
+        </if>
+        ORDER by t.update_time DESC
+    </select>
 
 
     <select id="getDataTaskVo" resultType="com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo">  
@@ -66,7 +85,6 @@
         m.run_spaces runSpaces,
         m.run_time runTime,
         if(m.run_status=1,true,false) runStatus
-       	
         ,m.run_expression runEexpression,
         m.third_connection_id thirdConnectionId,
         m.third_tablename thirdTablename,
@@ -78,8 +96,8 @@
         inner JOIN sys_org o ON o.id = m.org_id
         WHERE  m.task_id = #{taskId}
     </select>
-    
-    <select id="getDataTaskVos" resultType="com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo">  
+
+    <select id="getDataTaskVos" resultType="com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo">
         SELECT
         m.task_id taskId,
         m.org_id orgId,
@@ -93,18 +111,18 @@
         m.run_spaces runSpaces,
         m.run_time runTime,
         if(m.run_status=1,true,false) runStatus
-       	
+
         ,m.run_expression runEexpression,
         m.third_connection_id thirdConnectionId,
         m.third_tablename thirdTablename,
         m.subset_code subsetCode,
         m.class_code classCode,
         m.subclass_code subclassCode,
-        m.center_tablename centerTablename 
-        FROM  data_etl_task m
+        m.center_tablename centerTablename
+        FROM data_etl_task m
         inner JOIN sys_org o ON o.id = m.org_id
-        WHERE  m.task_id in (
-        	<foreach collection="taskIds" item="item" index="i" separator=",">#{item}</foreach>
+        WHERE m.task_id in (
+        <foreach collection="taskIds" item="item" index="i" separator=",">#{item}</foreach>
         )
     </select>
 
@@ -160,12 +178,12 @@
 	</update>
 
     <update id="updateDataTaskStatus">
-		update data_etl_task m set
-	        m.run_status = #{runStatus},updater = #{userId}, updatetime = now()
-        WHERE  m.task_id in (
-        	<foreach collection="taskIds" item="item" index="i" separator=",">#{item}</foreach>
+        update data_etl_task m set
+        m.run_status = #{runStatus},updater = #{userId}, updatetime = now()
+        WHERE m.task_id in (
+        <foreach collection="taskIds" item="item" index="i" separator=",">#{item}</foreach>
         )
-	</update>
+    </update>
 
     <delete id="deleteTaskSteps">
 		delete from data_etl_task_step where task_id = #{taskId}
@@ -179,26 +197,25 @@
             )
         </foreach>
     </insert>
-    
-    
+
+
     <select id="queryListByOrgs" resultType="com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo">
         select m.task_id taskId,
-        	m.org_id orgId,
-        	m.task_name taskName,
-        	m.business_type businessType
-          from data_etl_task m 
-          where 1=1
+        m.org_id orgId,
+        m.task_name taskName,
+        m.business_type businessType
+        from data_etl_task m
+        where 1=1
         <if test="businessType > 0 ">
             and business_type = #{businessType}
         </if>
         and m.org_id in (
-           <foreach collection="orgIds" item="item" index="i" separator=",">#{item}</foreach>
-           )
-    </select>  
+        <foreach collection="orgIds" item="item" index="i" separator=",">#{item}</foreach>
+        )
+    </select>
 
 
-
-    <insert id="saveEtlTaskStatus"   parameterType="com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus">
+    <insert id="saveEtlTaskStatus" parameterType="com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus">
       INSERT INTO data_etl_task_status
       (
 	      task_id,
@@ -255,7 +272,7 @@
         FROM
         data_etl_task_status s
         LEFT JOIN sys_org o ON s.org_id = o.id
-        WHERE  1 = 1
+        WHERE 1 = 1
         <if test="busType > 0">
             AND s.bus_type = #{busType}
         </if>
@@ -267,8 +284,6 @@
 
         ORDER BY s.create_time DESC
     </select>
-
-
 
 
 </mapper>

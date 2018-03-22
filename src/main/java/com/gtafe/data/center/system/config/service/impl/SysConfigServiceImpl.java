@@ -11,6 +11,7 @@ import java.util.UUID;
 import javax.annotation.Resource;
 import javax.mail.internet.MimeMessage;
 
+import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
 import com.gtafe.data.center.information.data.mapper.DataStandardItemMapper;
 import com.gtafe.data.center.information.data.vo.DataStandardItemVo;
 import org.apache.commons.codec.binary.Base64;
@@ -268,5 +269,15 @@ public class SysConfigServiceImpl extends BaseService implements SysConfigServic
         //  LOGGER.info("第二步開始重新生成建表語句");
         initCenterDataBase_inner();
         return true;
+    }
+
+    @Override
+    public void saveTransFile(TransFileVo transFileVo) {
+        this.sysConfigMapper.saveTransFile(transFileVo);
+    }
+
+    @Override
+    public void deleteAllFilesInfo(String fileType) {
+        this.sysConfigMapper.truncateTransFile(fileType);
     }
 }

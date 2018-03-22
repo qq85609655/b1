@@ -16,13 +16,53 @@ public class SysConfigVo {
 
     private String sysName;//系统名称
 
+    public String getSysType() {
+        return sysType;
+    }
+
+    public void setSysType(String sysType) {
+        this.sysType = sysType;
+    }
+
+    private String sysType;//系统类型
+
     private String schoolName;
 
     private String sysLogoUrl;//系统logo 路径
 
     private String copyRight;//系统说明
-    
+
     private String logoInfo;//系统说明
+
+    private String kettleInstallPath;
+
+    private String ktrFilesPath;
+
+    private String kjbFilesPath;
+
+    public String getKettleInstallPath() {
+        return kettleInstallPath;
+    }
+
+    public void setKettleInstallPath(String kettleInstallPath) {
+        this.kettleInstallPath = kettleInstallPath;
+    }
+
+    public String getKtrFilesPath() {
+        return ktrFilesPath;
+    }
+
+    public void setKtrFilesPath(String ktrFilesPath) {
+        this.ktrFilesPath = ktrFilesPath;
+    }
+
+    public String getKjbFilesPath() {
+        return kjbFilesPath;
+    }
+
+    public void setKjbFilesPath(String kjbFilesPath) {
+        this.kjbFilesPath = kjbFilesPath;
+    }
 
     public int getSfInit() {
         return sfInit;

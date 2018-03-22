@@ -12,6 +12,7 @@ package com.gtafe.data.center.dataetl.datatask.service;
 import java.util.List;
 
 import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
+import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
 
 public interface DataTaskService {
 
@@ -49,4 +50,10 @@ public interface DataTaskService {
     boolean deleteTasks(List<Integer> taskIds);
     
     boolean startNow(int taskId);
+
+    boolean startLocalKettleNow();
+
+    List<TransFileVo> queryKfileList(String fileType, String fileName, int pageNum, int pageSize);
+
+    boolean runItem(int fileId);
 }
