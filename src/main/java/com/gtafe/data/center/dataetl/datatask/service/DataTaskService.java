@@ -56,4 +56,6 @@ public interface DataTaskService {
     List<TransFileVo> queryKfileList(String fileType, String fileName, int pageNum, int pageSize);
 
     boolean runItem(int fileId);
+
+    TransFileVo findEtlFileInfoById(int fileId);
 }

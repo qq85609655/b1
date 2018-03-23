@@ -396,6 +396,9 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         return this.dataTaskMapper.queryKfileList(fileName, fileType, pageNum, pageSize);
     }
 
+    public TransFileVo findEtlFileInfoById(int fileId){
+        return this.dataTaskMapper.findEtlFileInfoById(fileId);
+    }
     @Override
     public boolean runItem(int fileId) {
         TransFileVo vo = this.dataTaskMapper.findEtlFileInfoById(fileId);

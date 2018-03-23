@@ -5,11 +5,16 @@ import com.gtafe.data.center.dataetl.datatask.service.DataTaskService;
 import com.gtafe.data.center.dataetl.datatask.vo.KfileParam;
 import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
 import com.gtafe.framework.base.controller.BaseController;
+import com.gtafe.framework.base.exception.OrdinaryException;
+import com.gtafe.framework.base.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -46,5 +51,10 @@ public class KfileMgrController extends BaseController {
         return this.dataTaskServiceImpl.runItem(fileId);
     }
 
+    @RequestMapping(path = "/downIt", method = RequestMethod.GET)
+    public String template(String filePath) {
+        System.out.println(filePath);
+        return "forward:" + filePath;
+    }
 
 }
