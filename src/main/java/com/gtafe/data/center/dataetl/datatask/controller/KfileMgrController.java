@@ -39,7 +39,6 @@ public class KfileMgrController extends BaseController {
         LOGGER.debug("Result: ", result.size());
         return new PageInfo<TransFileVo>(result);
     }
-
     /**
      * 手动执行ktr任务
      *
@@ -55,6 +54,11 @@ public class KfileMgrController extends BaseController {
     public String template(String filePath) {
         System.out.println(filePath);
         return "forward:" + filePath;
+    }
+
+    @RequestMapping(path = "/sendInTask", method = RequestMethod.GET)
+    public  boolean sendInTask(String filePath){
+        return this.dataTaskServiceImpl.sendInTask(filePath);
     }
 
 }

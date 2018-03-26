@@ -11,21 +11,19 @@
 package com.gtafe.data.center.dataetl.datatask.service.impl;
 
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 import javax.annotation.Resource;
 
+import com.gtafe.data.center.dataetl.datatask.vo.OSinfo;
 import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
 import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
 import com.gtafe.data.center.system.config.vo.SysConfigVo;
@@ -461,5 +459,83 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
             }
         }
         return false;
+    }
+
+
+    private static String OS = System.getProperty("os.name").toLowerCase();
+
+    /**
+     * 判断操作系统类型 如果是window 则先根据规则 删除定时任务，然后再创建一个新的定时任务
+     * @param filePath
+     * @return
+     */
+    public boolean sendInTask(String filePath){
+        boolean flag=false;
+        if(OSinfo.getOSname().equals("Windows")){
+            File tempFile =new File(filePath.trim());
+            String fileName = tempFile.getName();
+            fileName = fileName.substring(0, fileName.lastIndexOf("."));
+            StringBuffer taskNameBuffer=new StringBuffer(fileName);
+            taskNameBuffer=  taskNameBuffer.append(UUID.randomUUID().toString().replace("-",""));
+            String command="schtasks /delete /tn "+taskNameBuffer+" /f";
+            StringBuilder sb = new StringBuilder();
+            Runtime runtime = Runtime.getRuntime();
+            try {
+                String line = null;
+                Process process = runtime.exec(command);
+                BufferedReader  bufferedReader = new BufferedReader
+                        (new InputStreamReader(process.getInputStream()));
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line + "\n");
+                        System.out.println(line);
+                }
+                command="";
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //再插入这个job
+        }else if(OSinfo.getOSname().equals("Linux")){
+
+        }
+
+        return flag;
+    }
+
+
+    public void ss() throws IOException {
+
+        Runtime runtime = Runtime.getRuntime();
+        String t = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+        //获取发布运行路径
+
+        //解决路径中空格的问题
+          t= URLDecoder.decode(t,"utf-8");
+
+        int num = t.indexOf("test");//查找此项目跟目录位置
+
+        String path = t.substring(1, num).replace('/', '\\')+ "test\\static\\bat\\1.bat";//写bat文件路径
+
+        String data ="";//"\"C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin\\mysqldump\" -u \"root\" -p\"root\" -P\"3306\" \"test\"> \""+ mysqlPathString + "\\" + fileNameString + ".sql\"";
+
+//bat内容
+
+        data.replace("\'", "\"");
+
+        File txt = new File(path);
+
+        txt.createNewFile();//创建文件
+
+        byte bytes[] = new byte[512]; bytes = data.getBytes();//写文件
+
+        int b = data.length();
+
+        FileOutputStream fos = new FileOutputStream(txt);
+
+        fos.write(bytes, 0, b);
+
+        fos.close();
+
+        runtime.exec(path);
     }
 }

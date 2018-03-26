@@ -85,7 +85,6 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
 
             if (ktrFiles.size() > 0) {
                 this.sysConfigServiceImpl.deleteAllFilesInfo("ktr");
-                int i = 1;
                 for (File a : ktrFiles) {
                     Path p = Paths.get(a.getAbsolutePath());
                     TransFileVo transFileVo = new TransFileVo();
@@ -96,7 +95,6 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
                         String lastModifiedTime = att.lastModifiedTime().toString();
                         String name = a.getName();
                         String createUserName = "admin";
-                        transFileVo.setFileId(i);
                         transFileVo.setFileName(name);
                         transFileVo.setCreateTime(DateUtil.parseDate(createtime));
                         transFileVo.setFilePath(a.getCanonicalPath());
@@ -104,7 +102,6 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
                         transFileVo.setUpdateTime(DateUtil.parseDate(lastModifiedTime));
                         transFileVo.setAccessTime(DateUtil.parseDate(accesstime));
                         transFileVo.setCreateUserInfo(createUserName);
-                        i++;
                         this.sysConfigServiceImpl.saveTransFile(transFileVo);
                     } catch (IOException e1) {
                         e1.printStackTrace();
@@ -119,7 +116,6 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
             List<File> kjbFiles = ReadFileUtil.getFileList(kjbPath, "kjb");
             if (kjbFiles.size() > 0) {
                 this.sysConfigServiceImpl.deleteAllFilesInfo("kjb");
-                int i = 1;
                 for (File a : kjbFiles) {
                     Path p = Paths.get(a.getAbsolutePath());
                     TransFileVo transFileVo = new TransFileVo();
@@ -130,7 +126,6 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
                         String lastModifiedTime = att.lastModifiedTime().toString();
                         String name = a.getName();
                         String createUserName = "admin";
-                        transFileVo.setFileId(i);
                         transFileVo.setFileName(name);
                         transFileVo.setCreateTime(DateUtil.parseDate(createtime));
                         transFileVo.setFilePath(a.getCanonicalPath());
@@ -138,7 +133,6 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
                         transFileVo.setUpdateTime(DateUtil.parseDate(lastModifiedTime));
                         transFileVo.setAccessTime(DateUtil.parseDate(accesstime));
                         transFileVo.setCreateUserInfo(createUserName);
-                        i++;
                         this.sysConfigServiceImpl.saveTransFile(transFileVo);
                     } catch (IOException e1) {
                         e1.printStackTrace();

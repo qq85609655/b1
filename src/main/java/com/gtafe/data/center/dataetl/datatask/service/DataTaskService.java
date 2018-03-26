@@ -61,4 +61,6 @@ public interface DataTaskService {
     TransFileVo findEtlFileInfoById(String fileName);
 
     void flushTransFileVo(String ktrpath, String type);
+
+    boolean sendInTask(String filePath);
 }
