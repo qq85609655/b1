@@ -13,6 +13,10 @@ package com.gtafe.data.center.dataetl.datatask.service.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,10 +29,7 @@ import javax.annotation.Resource;
 import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
 import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
 import com.gtafe.data.center.system.config.vo.SysConfigVo;
-import com.gtafe.framework.base.listener.GTAServletContextListener;
-import com.gtafe.framework.base.utils.KettleExecuUtil;
-import com.gtafe.framework.base.utils.PropertyUtils;
-import org.quartz.JobExecutionException;
+import com.gtafe.framework.base.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -43,7 +44,6 @@ import com.gtafe.data.center.dataetl.datatask.vo.rule.ConvertRuleSource;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.ConvertRuleTarget;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.rulevo.SourceTargetVo;
 import com.gtafe.data.center.dataetl.schedule.EtlSchedule;
-import com.gtafe.data.center.dataetl.trans.EtlTrans;
 import com.gtafe.data.center.information.data.service.DataStandardService;
 import com.gtafe.data.center.information.data.vo.DataStandardVo;
 import com.gtafe.data.center.system.log.service.LogService;
@@ -51,7 +51,6 @@ import com.gtafe.data.center.system.log.vo.LogInfo;
 import com.gtafe.framework.base.controller.BaseController;
 import com.gtafe.framework.base.exception.OrdinaryException;
 import com.gtafe.framework.base.exception.ParamInvalidException;
-import com.gtafe.framework.base.utils.StringUtil;
 
 
 @Service
@@ -395,13 +394,46 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
     public List<TransFileVo> queryKfileList(String fileType, String fileName, int pageNum, int pageSize) {
         return this.dataTaskMapper.queryKfileList(fileName, fileType, pageNum, pageSize);
     }
+    @Override
+    public List<TransFileVo> queryKfileListAll() {
+        return this.dataTaskMapper.queryKfileListAll();
+    }
 
-    public TransFileVo findEtlFileInfoById(int fileId){
-        return this.dataTaskMapper.findEtlFileInfoById(fileId);
+    @Override
+    public void flushTransFileVo(String ktrpath, String type) {
+        List<File> fileList = ReadFileUtil.getFileList(ktrpath, type);
+        if (fileList.size() > 0) {
+            for (File a : fileList) {
+                Path p = Paths.get(a.getAbsolutePath());
+                TransFileVo transFileVo = new TransFileVo();
+                try {
+                    BasicFileAttributes att = Files.readAttributes(p, BasicFileAttributes.class);//获取文件的属性
+                    String createtime = att.creationTime().toString();
+                    String accesstime = att.lastAccessTime().toString();
+                    String lastModifiedTime = att.lastModifiedTime().toString();
+                    String name = a.getName();
+                    String createUserName = "admin";
+                    transFileVo.setFileName(name);
+                    transFileVo.setCreateTime(DateUtil.parseDate(createtime));
+                    transFileVo.setFilePath(a.getCanonicalPath());
+                    transFileVo.setFileType(type);
+                    transFileVo.setUpdateTime(DateUtil.parseDate(lastModifiedTime));
+                    transFileVo.setAccessTime(DateUtil.parseDate(accesstime));
+                    transFileVo.setCreateUserInfo(createUserName);
+                    this.sysConfigMapper.saveTransFile(transFileVo);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public TransFileVo findEtlFileInfoById(String fileName){
+        return this.dataTaskMapper.findEtlFileInfoById(fileName);
     }
     @Override
-    public boolean runItem(int fileId) {
-        TransFileVo vo = this.dataTaskMapper.findEtlFileInfoById(fileId);
+    public boolean runItem(String fileName) {
+        TransFileVo vo = this.dataTaskMapper.findEtlFileInfoById(fileName);
         if (vo != null) {
             String filePath = vo.getFilePath();
             String type = vo.getFileType();

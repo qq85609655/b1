@@ -7,7 +7,6 @@ import java.util.Date;
  */
 public class TransFileVo {
 
-    private int fileId;
     private String fileName;//文件名称
     private String filePath;//绝对路径
     private Date createTime;//创建时间
@@ -15,15 +14,10 @@ public class TransFileVo {
     private String createUserInfo; //创建人信息
     private Date accessTime;
 
+    private String scheduleInfo;
+
     private String fileType;//1 ktr  2 kjb
 
-    public int getFileId() {
-        return fileId;
-    }
-
-    public void setFileId(int fileId) {
-        this.fileId = fileId;
-    }
 
     public String getFileName() {
         return fileName;
@@ -82,5 +76,11 @@ public class TransFileVo {
         this.fileType = fileType;
     }
 
+    public String getScheduleInfo() {
+        return scheduleInfo;
+    }
 
+    public void setScheduleInfo(String scheduleInfo) {
+        this.scheduleInfo = scheduleInfo;
+    }
 }

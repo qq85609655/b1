@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.gtafe.data.center.system.menu.vo.MenuParamVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -38,20 +39,16 @@ public class MenuController extends BaseController {
     @Resource
     private MenuService menuServiceImpl;
 
-    @RequestMapping(path = "/queryList", method = RequestMethod.GET)
+    @RequestMapping(path = "/queryList", method = RequestMethod.POST)
     @ApiOperation(value = "查询菜單", notes = "查询菜單列表")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "查询列表成功，返回值是分页信息，list属性是返回的列表数据，其他是分页相关数据")})
-    public PageInfo<MenuVo> queryList(
-            @ApiParam(name = "menuName", value = "菜单名称", required = false, defaultValue = "") @RequestParam(value = "menuName", required = false, defaultValue = "") String menuName,
-            @ApiParam(name = "pageNum", value = "页码", required = false, defaultValue = "1") @RequestParam(value = "pageNum", required = false, defaultValue = "1") int pageNum,
-            @ApiParam(name = "pageSize", value = "每一页数据量", required = false, defaultValue = "10") @RequestParam(value = "pageSize", required = false, defaultValue = "10") int pageSize) {
-        List<MenuVo> result = menuServiceImpl.queryList(menuName, pageNum, pageSize);
+    public PageInfo<MenuVo> queryList(@RequestBody MenuParamVo vo) {
+        List<MenuVo> result = menuServiceImpl.queryList(vo.getMenuName(), vo.getPageNum(), vo.getPageSize());
         LOGGER.debug("Result: ", result.size());
         return new PageInfo<MenuVo>(result);
     }
 
     /**
-     *
      * @param vo
      * @param id
      * @return
@@ -73,7 +70,7 @@ public class MenuController extends BaseController {
     public MenuInfo getMenuTree() {
         return menuServiceImpl.getMenuTree();
     }
-    
+
     /**
      * 菜单列表，移除顶级节点
      *
@@ -83,18 +80,18 @@ public class MenuController extends BaseController {
     public List<MenuInfo> getMenuInfos() {
         return menuServiceImpl.getMenuInfos();
     }
-    
+
     /**
      * 获取权限码列表
      * 主要功能:     <br>
      * 注意事项:无  <br>
+     *
      * @return
      */
     @RequestMapping(value = "/queryMenuAuthCodes", method = RequestMethod.GET)
     public MenuAuthCodeInfo queryMenuAuthCodes() {
         return menuServiceImpl.queryMenuAuthCodes();
     }
-    
-    
-    
+
+
 }

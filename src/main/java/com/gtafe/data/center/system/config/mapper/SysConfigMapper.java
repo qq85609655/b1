@@ -46,8 +46,10 @@ public interface SysConfigMapper {
             "kjb_files_path kjbFilesPath from sys_config where id=1")
     SysConfigVo sysConfig();
 
-    @Insert("insert into t_trans_file_info(file_id,file_name,create_time,update_time,create_user_info,access_time,file_type,file_path)" +
-            " values(#{vo.fileId},#{vo.fileName},#{vo.createTime},#{vo.updateTime},#{vo.createUserInfo},#{vo.accessTime},#{vo.fileType},#{vo.filePath})")
+    @Insert("insert into t_trans_file_info(file_name,create_time,update_time," +
+            "create_user_info,access_time,file_type,file_path,schedule_info)" +
+            " values(#{vo.fileName},#{vo.createTime},#{vo.updateTime}," +
+            "#{vo.createUserInfo},#{vo.accessTime},#{vo.fileType},#{vo.filePath},#{scheduleInfo})")
     void saveTransFile(@Param("vo") TransFileVo transFileVo);
 
     @Delete("delete from t_trans_file_info where file_type= #{fileType}")

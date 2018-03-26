@@ -58,11 +58,6 @@ public class SysUserController extends BaseController {
     /**
      * 查詢列表
      *
-     * @param keyWord
-     * @param state
-     * @param orgIds
-     * @param pageNum
-     * @param pageSize
      * @return /api/sysuser/queryList?
      * state=-1
      * &orgId=1

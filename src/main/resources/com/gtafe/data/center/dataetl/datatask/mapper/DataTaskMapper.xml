@@ -51,13 +51,13 @@
 
     <select id="queryKfileList" resultType="com.gtafe.data.center.dataetl.datatask.vo.TransFileVo">
         SELECT
-        t.file_id fileId,
         t.file_name fileName,
         t.file_path filePath,
         t.file_type fileType,
         t.create_time createTime,
         t.update_time updateTime,
-        t.access_time accessTime
+        t.access_time accessTime,
+        t.schedule_info scheduleInfo
         from t_trans_file_info t
         where 1=1
         <if test="fileName != null and fileName.trim().length() > 0">

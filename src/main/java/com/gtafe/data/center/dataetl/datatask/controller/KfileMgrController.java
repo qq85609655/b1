@@ -43,12 +43,12 @@ public class KfileMgrController extends BaseController {
     /**
      * 手动执行ktr任务
      *
-     * @param fileId
+     * @param fileName
      * @return
      */
     @RequestMapping(path = "/runIt", method = RequestMethod.GET)
-    public boolean runIt(int fileId) {
-        return this.dataTaskServiceImpl.runItem(fileId);
+    public boolean runIt(String  fileName) {
+        return this.dataTaskServiceImpl.runItem(fileName);
     }
 
     @RequestMapping(path = "/downIt", method = RequestMethod.GET)

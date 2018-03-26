@@ -4,6 +4,7 @@ import com.gtafe.data.center.dataetl.datasource.mapper.DatasourceMapper;
 import com.gtafe.data.center.dataetl.datasource.utils.ConnectDB;
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
 import com.gtafe.data.center.dataetl.datatask.mapper.DataTaskMapper;
+import com.gtafe.data.center.dataetl.datatask.service.DataTaskService;
 import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
 import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
 import com.gtafe.data.center.dataetl.schedule.mapper.EtlMapper;
@@ -11,6 +12,7 @@ import com.gtafe.data.center.runadmin.etlerrorlog.mapper.KettleLogMapper;
 import com.gtafe.data.center.runadmin.etlerrorlog.vo.KettleLogVO;
 import com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus;
 import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
+import com.gtafe.data.center.system.config.service.SysConfigService;
 import com.gtafe.data.center.system.config.vo.SysConfigVo;
 import com.gtafe.framework.base.utils.DateUtil;
 import com.gtafe.framework.base.utils.ReadFileUtil;
@@ -40,9 +42,14 @@ public class ScanTransFileJob {
     Logger logger = LoggerFactory.getLogger(ScanTransFileJob.class);
     @Autowired
     private SysConfigMapper sysConfigMapper;
+    @Resource
+    private SysConfigService sysConfigServiceImpl;
+
+
+    @Autowired
+    DataTaskService dataTaskServiceImpl;
 
     @Scheduled(cron = "0 0 0/1 * * *")
-    // @Scheduled(cron = "0 02 17 ? * *")
     public void ScanTransFileJob() {
         System.out.println("開始執行任務....");
         this.doTask();
@@ -61,66 +68,8 @@ public class ScanTransFileJob {
                 logger.info("需要联系管理员 配置 kjb文件保存路径!");
                 return;
             }
-
-            List<File> ktrfileList = ReadFileUtil.getFileList(ktrpath, "ktr");
-            logger.info("扫描到ktr文件的数量为" + ktrfileList.size() + " 个。");
-            if (ktrfileList.size() > 0) {
-                int i = 1;
-                for (File a : ktrfileList) {
-                    Path p = Paths.get(a.getAbsolutePath());
-                    TransFileVo transFileVo = new TransFileVo();
-                    try {
-                        BasicFileAttributes att = Files.readAttributes(p, BasicFileAttributes.class);//获取文件的属性
-                        String createtime = att.creationTime().toString();
-                        String accesstime = att.lastAccessTime().toString();
-                        String lastModifiedTime = att.lastModifiedTime().toString();
-                        String name = a.getName();
-                        String createUserName = "admin";
-                        transFileVo.setFileId(i);
-                        transFileVo.setFileName(name);
-                        transFileVo.setCreateTime(DateUtil.parseDate(createtime));
-                        transFileVo.setFilePath(a.getCanonicalPath());
-                        transFileVo.setFileType("ktr");
-                        transFileVo.setUpdateTime(DateUtil.parseDate(lastModifiedTime));
-                        transFileVo.setAccessTime(DateUtil.parseDate(accesstime));
-                        transFileVo.setCreateUserInfo(createUserName);
-                        i++;
-                        this.sysConfigMapper.saveTransFile(transFileVo);
-                    } catch (IOException e1) {
-                        logger.info(e1.getLocalizedMessage());
-                    }
-                }
-            }
-            List<File> kjbfileList = ReadFileUtil.getFileList(kjbPath, "kjb");
-            logger.info("扫描到  kjb 文件的数量为" + ktrfileList.size() + " 个。");
-            if (kjbfileList.size() > 0) {
-                int i = 1;
-                for (File a : kjbfileList) {
-                    Path p = Paths.get(a.getAbsolutePath());
-                    TransFileVo transFileVo = new TransFileVo();
-                    try {
-                        BasicFileAttributes att = Files.readAttributes(p, BasicFileAttributes.class);//获取文件的属性
-                        String createtime = att.creationTime().toString();
-                        String accesstime = att.lastAccessTime().toString();
-                        String lastModifiedTime = att.lastModifiedTime().toString();
-                        String name = a.getName();
-                        String createUserName = "admin";
-                        transFileVo.setFileId(i);
-                        transFileVo.setFileName(name);
-                        transFileVo.setCreateTime(DateUtil.parseDate(createtime));
-                        transFileVo.setFilePath(a.getCanonicalPath());
-                        transFileVo.setFileType("kjb");
-                        transFileVo.setUpdateTime(DateUtil.parseDate(lastModifiedTime));
-                        transFileVo.setAccessTime(DateUtil.parseDate(accesstime));
-                        transFileVo.setCreateUserInfo(createUserName);
-                        i++;
-                        this.sysConfigMapper.saveTransFile(transFileVo);
-                    } catch (IOException e1) {
-                        // e1.printStackTrace();
-                        logger.info(e1.getLocalizedMessage());
-                    }
-                }
-            }
+            dataTaskServiceImpl.flushTransFileVo(ktrpath,"ktr");
+            dataTaskServiceImpl.flushTransFileVo(kjbPath,"kjb");
         }
         System.out.println("扫描任务完毕!");
     }
