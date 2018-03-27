@@ -1,13 +1,18 @@
 package com.gtafe.data.center.information.code.service.impl;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
 
+import com.gtafe.data.center.information.code.vo.CenterTableVo;
 import com.gtafe.framework.base.exception.OrdinaryException;
+import com.gtafe.framework.base.utils.GenUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -318,5 +323,49 @@ public class CodeStandardServiceImpl implements CodeStandardService {
         logInfo.setOperContent("删除" + getName(sourceId, pNodeId) + "代码信息:代码类编号为" + infoVo.getCode() + ",名称为:" + infoVo.getName());
         this.logServiceImpl.saveLog(logInfo);
         return result;
+    }
+
+
+    @Override
+    public List<CenterTableVo> queryAllCenterTableList(String tableName, String tableType, int pageNum, int pageSize) {
+        return this.codeStandardMapper.queryAllCenterTableList(tableName, tableType, pageNum, pageSize);
+    }
+
+    /**
+     * 根据表名，查询表
+     */
+    public Map<String, String> queryTable(String tableName) {
+        Map<String, String> tableInfo = new HashMap<String, String>();
+
+        return tableInfo;
+    }
+
+    /**
+     * 生成代码文件
+     *
+     * @param tableNames
+     * @return
+     */
+    @Override
+    public byte[] generatorCode(List<String> tableNames) throws Exception {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ZipOutputStream zip = new ZipOutputStream(outputStream);
+
+        for (String tableName : tableNames) {
+            // 查询表信息
+            Map<String, String> table = queryTable(tableName);
+            // 查询列信息
+            List<Map<String, String>> columns = queryColumns(tableName);
+            // 生成代码
+            GenUtils.generatorCode(table, columns, zip);
+        }
+        IOUtils.closeQuietly(zip);
+        return outputStream.toByteArray();
+    }
+
+    private List<Map<String, String>> queryColumns(String tableName) {
+        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+
+        return list;
     }
 }

@@ -134,6 +134,7 @@
           <element id="library" level="project" name="Gradle: org.apache.xmlbeans:xmlbeans:2.6.0" />
           <element id="library" level="project" name="Gradle: net.bytebuddy:byte-buddy:1.6.14" />
           <element id="library" level="project" name="Gradle: stax:stax-api:1.0.1" />
+          <element id="file-copy" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-configuration/commons-configuration/1.10/2b36e4adfb66d966c5aef2d73deb6be716389dc9/commons-configuration-1.10.jar" />
         </element>
       </element>
     </root>

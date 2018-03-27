@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.List;
 
 public class DateUtil {
+
+    public final static String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
     public static Date parseDate(String dateStr, String format) {
         Date date = null;
         try {

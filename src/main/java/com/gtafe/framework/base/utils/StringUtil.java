@@ -241,6 +241,21 @@ public class StringUtil {
         return result;
     }
 
+    public static List<String> splitListString(String str) {
+        List<String> result = new ArrayList<String>();
+        if (isBlank(str)) {
+            return result;
+        }
+        String splitsign = ",";
+        String[] strs = str.trim().split(splitsign);
+        if (strs != null) {
+            for (String s : strs) {
+                result.add(s);
+            }
+        }
+        return result;
+    }
+
 
     /**
      * 利用MD5进行加密

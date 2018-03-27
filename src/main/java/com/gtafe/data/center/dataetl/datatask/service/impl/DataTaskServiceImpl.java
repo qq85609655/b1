@@ -399,6 +399,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
 
     @Override
     public void flushTransFileVo(String ktrpath, String type) {
+        this.sysConfigMapper.truncateTransFile(type);
         List<File> fileList = ReadFileUtil.getFileList(ktrpath, type);
         if (fileList.size() > 0) {
             for (File a : fileList) {
@@ -418,6 +419,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
                     transFileVo.setUpdateTime(DateUtil.parseDate(lastModifiedTime));
                     transFileVo.setAccessTime(DateUtil.parseDate(accesstime));
                     transFileVo.setCreateUserInfo(createUserName);
+                    transFileVo.setScheduleInfo("0 0/60 * * * ? *");
                     this.sysConfigMapper.saveTransFile(transFileVo);
                 } catch (IOException e1) {
                     e1.printStackTrace();

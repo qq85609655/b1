@@ -87,11 +87,16 @@ public interface DataTaskMapper extends BaseMapper {
                                             @Param("pageSizeKey") int pageSize,
                                             @Param("busType") int busType);
 
-    List<TransFileVo> queryKfileList(@Param("fileName") String fileName, @Param("fileType") String fileType,  @Param("pageNumKey")int pageNum, @Param("pageSizeKey")int pageSize);
+    List<TransFileVo> queryKfileList(@Param("fileName") String fileName,
+                                     @Param("fileType") String fileType,
+                                     @Param("pageNumKey") int pageNum,
+                                     @Param("pageSizeKey") int pageSize);
 
-    @Select("select file_path,file_id,schedule_info from t_trans_file_info where file_name=#{fileName}")
+    @Select("select file_path filePath,schedule_info scheduleInfo,file_name fileName," +
+            "update_time updateTime from t_trans_file_info where file_name=#{fileName}")
     TransFileVo findEtlFileInfoById(@Param("fileName") String fileName);
 
-    @Select("select file_path,file_id,schedule_info from t_trans_file_info")
+    @Select("select file_path filePath,file_name fileName,schedule_info scheduleInfo," +
+            "file_type fileType,update_time updateTime  from t_trans_file_info")
     List<TransFileVo> queryKfileListAll();
 }

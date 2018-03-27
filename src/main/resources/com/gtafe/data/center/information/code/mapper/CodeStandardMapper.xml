@@ -47,7 +47,7 @@
         n.name nodeName
         FROM
         info_codestandard_code c
-         INNER JOIN  info_codestandard_node n on c.node_id=n.node_id
+        INNER JOIN info_codestandard_node n on c.node_id=n.node_id
         WHERE
         c.node_id IN (
         SELECT
@@ -78,7 +78,7 @@
         n.name nodeName
         FROM
         info_codestandard_code c
-        INNER JOIN  info_codestandard_node n on c.node_id=n.node_id
+        INNER JOIN info_codestandard_node n on c.node_id=n.node_id
         WHERE
         c.node_id IN (
         SELECT
@@ -103,7 +103,7 @@
         n.name nodeName
         FROM
         info_codestandard_code c
-        INNER JOIN  info_codestandard_node n on c.node_id=n.node_id
+        INNER JOIN info_codestandard_node n on c.node_id=n.node_id
         WHERE
         c.node_id =#{parentId}
         <if test="keyWord != null and keyWord.trim().length() > 0">
@@ -307,5 +307,45 @@ and t1.node_id=#{parentId}
         c. NAME,
         c.description
         from info_codestandard_code  c where c.code_id =#{codeId}
+    </select>
+
+
+    <select id="queryAllCenterTableList" resultType="com.gtafe.data.center.information.code.vo.CenterTableVo">
+        SELECT
+        TABLE_CATALOG tableCatalog,
+        TABLE_SCHEMA tableSchema,
+        `TABLE_NAME` tableName,
+        TABLE_TYPE tableType,
+        `ENGINE` ENGINE,
+        VERSION version,
+        ROW_FORMAT rowFormat,
+        TABLE_ROWS tableRows,
+        AVG_ROW_LENGTH avgRowLength,
+        DATA_LENGTH dataLength,
+        MAX_DATA_LENGTH maxDataLength,
+        INDEX_LENGTH indexLength,
+        DATA_FREE dataFree,
+        AUTO_INCREMENT autoIncrement,
+        CREATE_TIME createTime,
+        DATE_FORMAT(CREATE_TIME,'%m-%d-%Y %h:%i %p') createTime_,
+        DATE_FORMAT(UPDATE_TIME,'%m-%d-%Y %h:%i %p') updateTime_,
+        UPDATE_TIME updateTime,
+        CHECK_TIME checkTime,
+        TABLE_COLLATION tableCollation,
+        `CHECKSUM` checkSum,
+        CREATE_OPTIONS createOptions,
+        TABLE_COMMENT tableComment
+        FROM
+        information_schema.`TABLES`
+        WHERE
+        TABLE_SCHEMA = 'center_db'
+        <if test="tableName !=null and tableName.trim().length() > 0">
+            and `TABLE_NAME` LIKE CONCAT('%', #{tableName}, '%')
+        </if>
+        <if test="tableType !=null">
+            and TABLE_TYPE = #{tableType}
+        </if>
+        ORDER BY
+        Update_time DESC
     </select>
 </mapper>

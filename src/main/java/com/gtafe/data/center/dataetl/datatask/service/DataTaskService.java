@@ -54,6 +54,7 @@ public interface DataTaskService {
     boolean startLocalKettleNow();
 
     List<TransFileVo> queryKfileList(String fileType, String fileName, int pageNum, int pageSize);
+
     List<TransFileVo> queryKfileListAll();
 
     boolean runItem(String fileName);
