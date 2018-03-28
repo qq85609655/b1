@@ -16,6 +16,72 @@ public class SysConfigVo {
 
     private String sysName;//系统名称
 
+    //考慮將中心庫的配置寫入系統參數配置中 更加有意義。
+    private String dbType;
+    private String dbName;
+    private String tableSpaces;
+    private String port;
+    private String username;
+    private String password;
+    private String ipAddress;
+
+
+    public String getDbType() {
+        return dbType;
+    }
+
+    public void setDbType(String dbType) {
+        this.dbType = dbType;
+    }
+
+    public String getDbName() {
+        return dbName;
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+
+    public String getTableSpaces() {
+        return tableSpaces;
+    }
+
+    public void setTableSpaces(String tableSpaces) {
+        this.tableSpaces = tableSpaces;
+    }
+
+    public String getPort() {
+        return port;
+    }
+
+    public void setPort(String port) {
+        this.port = port;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getIpAddress() {
+        return ipAddress;
+    }
+
+    public void setIpAddress(String ipAddress) {
+        this.ipAddress = ipAddress;
+    }
+
     public String getSysType() {
         return sysType;
     }
@@ -160,5 +226,34 @@ public class SysConfigVo {
 
     public void setLogoInfo(String logoInfo) {
         this.logoInfo = logoInfo;
+    }
+
+    @Override
+    public String toString() {
+        return "SysConfigVo{" +
+                "id=" + id +
+                ", emailHost='" + emailHost + '\'' +
+                ", emailUser='" + emailUser + '\'' +
+                ", emailPwd='" + emailPwd + '\'' +
+                ", emailSmtpAddr='" + emailSmtpAddr + '\'' +
+                ", emailSmtpPort=" + emailSmtpPort +
+                ", sysName='" + sysName + '\'' +
+                ", dbType='" + dbType + '\'' +
+                ", dbName='" + dbName + '\'' +
+                ", tableSpaces='" + tableSpaces + '\'' +
+                ", port='" + port + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", ipAddress='" + ipAddress + '\'' +
+                ", sysType='" + sysType + '\'' +
+                ", schoolName='" + schoolName + '\'' +
+                ", sysLogoUrl='" + sysLogoUrl + '\'' +
+                ", copyRight='" + copyRight + '\'' +
+                ", logoInfo='" + logoInfo + '\'' +
+                ", kettleInstallPath='" + kettleInstallPath + '\'' +
+                ", ktrFilesPath='" + ktrFilesPath + '\'' +
+                ", kjbFilesPath='" + kjbFilesPath + '\'' +
+                ", sfInit=" + sfInit +
+                '}';
     }
 }

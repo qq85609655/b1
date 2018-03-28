@@ -1,5 +1,7 @@
 package com.gtafe.framework.base.listener;
 
+import com.gtafe.data.center.system.config.vo.SysConfigVo;
+
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,6 +33,8 @@ public class GTAServletContextListener implements ServletContextListener{
         servletContext.setAttribute("userOnlineMap", new ConcurrentHashMap<String,String>());
       //  this.initCasProperties();
     }
+
+
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {

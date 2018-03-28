@@ -39,18 +39,41 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
     private SysConfigService sysConfigServiceImpl;
 
     /**
+     * dbType:data.dbType,
+     * dbName: data.dbName,
+     * tableSpaces: data.tableSpaces,
+     * port: data.port,
+     * username: data.username,
+     * password: data.password,
+     * ipAddress: data.ipAddress
+     */
+    private void initCenterDb() {
+        ConnectDB connectDB = new ConnectDB();
+        //首先看是否配置中心库链接。如果没有 则配置系统数据库 创建一个新的数据库center_db;
+        //并将配置信息保存至数据库中。
+        SysConfigVo vo = this.sysConfigServiceImpl.queryCenterDbInfo();
+        String dbType=vo.getDbType();
+        if(StringUtil.isNotBlank(dbType)){
+            //根据配置 检查中心库是否可用？如果不可用 就默认以当前数据库 创建一个库
+            if(dbType.equals("1")){
+            }
+        }
+    }
+
+    /**
      * 当一个ApplicationContext被初始化或刷新触发
      */
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         try {
+            this.initCenterDb();
             sysConfigServiceImpl.flushSystemInfo(true);
         } catch (Exception e) {
             LOGGER.error("系统信息初始化异常!", e);
             System.exit(1);
         }
 
-        List<DatasourceVO> datasourceVOs = this.datasourceServiceImpl.queryCenterData();
+       /* List<DatasourceVO> datasourceVOs = this.datasourceServiceImpl.queryCenterData();
         if (datasourceVOs == null || datasourceVOs.isEmpty()) {
             LOGGER.error("请检查 系统表 【data_etl_dataconnection】是否 配置中心库数据!");
             System.exit(1);
@@ -65,7 +88,7 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
         }
 
 
-        LOGGER.info("完美！");
+        LOGGER.info("完美！");*/
 
         //读取 ktr文件  kjb文件 存入 数据库中，
         SysConfigVo vo = this.sysConfigServiceImpl.getBasicSysConfigVO();

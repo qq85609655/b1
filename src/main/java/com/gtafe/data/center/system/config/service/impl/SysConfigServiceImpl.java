@@ -280,4 +280,10 @@ public class SysConfigServiceImpl extends BaseService implements SysConfigServic
     public void deleteAllFilesInfo(String fileType) {
         this.sysConfigMapper.truncateTransFile(fileType);
     }
+
+    @Override
+    public SysConfigVo queryCenterDbInfo(){
+        return  this.sysConfigMapper.queryCenterDbInfo();
+
+    }
 }

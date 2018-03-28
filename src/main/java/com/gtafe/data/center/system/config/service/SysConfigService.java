@@ -44,4 +44,6 @@ public interface SysConfigService {
     void saveTransFile(TransFileVo transFileVo);
 
     void deleteAllFilesInfo(String fileType);
+
+    SysConfigVo queryCenterDbInfo();
 }

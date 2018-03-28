@@ -1,6 +1,6 @@
 package com.gtafe.data.center.dlms.a;
 
-public interface IBank {
+public interface IBank1 {
     /**
      * 申请办卡
      */

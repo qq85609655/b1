@@ -1,6 +1,6 @@
 package com.gtafe.data.center.study;
 
-public class WXAdvanceObservable extends WXPublicObservable {
+public class WXAdvanceObservable1 extends WXPublicObservable {
     private String article;
 
     public String getArticle() {

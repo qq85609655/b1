@@ -1,6 +1,6 @@
 package com.gtafe.data.center.dlms.a;
 
-public class BankWorker implements IBank {
+public class BankWorker implements IBank1 {
     private Man man;
     public BankWorker(Man man){
         this.man=man;

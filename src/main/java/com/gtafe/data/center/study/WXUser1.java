@@ -1,8 +1,8 @@
 package com.gtafe.data.center.study;
 
-public class WXUser implements IWXUser {
+public class WXUser1 implements IWXUser1 {
     private String name;
-    public WXUser(String name){
+    public WXUser1(String name){
         this.name=name;
     }
     @Override

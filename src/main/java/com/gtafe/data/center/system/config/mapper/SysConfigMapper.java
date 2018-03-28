@@ -54,4 +54,15 @@ public interface SysConfigMapper {
 
     @Delete("delete from t_trans_file_info where file_type= #{fileType}")
     void truncateTransFile(@Param("fileType") String fileType);
+
+    @Select("select " +
+            "centerdb_dbType dbType," +
+            "centerdb_dbName dbName," +
+            "centerdb_tableSpaces tableSpaces," +
+            "centerdb_port port," +
+            "centerdb_username username," +
+            "centerdb_password password," +
+            "centerdb_ipAddress ipAddress" +
+            " from sys_config ")
+    SysConfigVo queryCenterDbInfo();
 }

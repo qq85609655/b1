@@ -6,8 +6,8 @@ public class Test2 {
         //被观察者
         PullWXAdvanceObservable wxAdvanceObservable = new PullWXAdvanceObservable();
         //观察者
-        WXUser user = new WXUser("peakmain");
-        WXUser user1 = new WXUser("喜洋洋");
+        WXUser2 user = new WXUser2("peakmain");
+        WXUser2 user1 = new WXUser2("喜洋洋");
         //注册
         wxAdvanceObservable.register(user);
         wxAdvanceObservable.register(user1);
