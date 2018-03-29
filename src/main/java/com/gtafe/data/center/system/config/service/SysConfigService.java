@@ -1,9 +1,13 @@
 package com.gtafe.data.center.system.config.service;
 
 import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
+import com.gtafe.data.center.information.code.vo.CenterTableVo;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gtafe.data.center.system.config.vo.SysConfigVo;
+
+import java.sql.Connection;
+import java.util.List;
 
 /**
  * 系統參數設置
@@ -48,4 +52,8 @@ public interface SysConfigService {
     SysConfigVo queryCenterDbInfo();
 
     void saveCenterDbConfig(SysConfigVo vo);
+
+    List<CenterTableVo> findByConnection(SysConfigVo vo, Connection connection);
+
+    boolean saveIntoVo(List<CenterTableVo> tableVos);
 }

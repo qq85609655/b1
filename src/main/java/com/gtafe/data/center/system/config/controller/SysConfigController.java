@@ -33,7 +33,8 @@ public class SysConfigController extends BaseController {
 
     @RequestMapping("queryEntity")
     public SysConfigVo queryEntity() {
-        return this.sysConfigServiceImpl.getCacheSysConfigVO();
+       // return this.sysConfigServiceImpl.getCacheSysConfigVO();
+        return this.sysConfigServiceImpl.getBasicSysConfigVO();
       //  return this.sysConfigServiceImpl.getSysConfigVO();
     }
 

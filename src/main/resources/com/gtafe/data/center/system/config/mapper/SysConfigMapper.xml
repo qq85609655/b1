@@ -17,7 +17,14 @@
         email_smtp_port emailSmtpPort,
         kettle_install_path kettleInstallPath,
         ktr_files_path ktrFilesPath,
-        kjb_files_path kjbFilesPath
+        kjb_files_path kjbFilesPath,
+        centerdb_dbType dbType,
+        centerdb_dbName dbName,
+        centerdb_tableSpaces tableSpaces,
+        centerdb_port port,
+        centerdb_username username,
+        centerdb_password password,
+        centerdb_ipAddress ipAddress
         <if test="logo">
             ,logo_info logoInfo
         </if>

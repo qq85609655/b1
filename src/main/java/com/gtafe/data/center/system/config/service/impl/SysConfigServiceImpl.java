@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import javax.annotation.Resource;
 import javax.mail.internet.MimeMessage;
 
 import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
+import com.gtafe.data.center.information.code.vo.CenterTableVo;
 import com.gtafe.data.center.information.data.mapper.DataStandardItemMapper;
 import com.gtafe.data.center.information.data.vo.DataStandardItemVo;
 import org.apache.commons.codec.binary.Base64;
@@ -282,13 +284,43 @@ public class SysConfigServiceImpl extends BaseService implements SysConfigServic
     }
 
     @Override
-    public SysConfigVo queryCenterDbInfo(){
-        return  this.sysConfigMapper.queryCenterDbInfo();
+    public SysConfigVo queryCenterDbInfo() {
+        return this.sysConfigMapper.queryCenterDbInfo();
 
     }
 
     @Override
-    public void saveCenterDbConfig(SysConfigVo vo){
+    public void saveCenterDbConfig(SysConfigVo vo) {
         sysConfigMapper.saveCenterDbConfig(vo);
+    }
+
+    /**
+     * 根据vo 判断数据库类型 然后 读取 表信息
+     *
+     * @param vo
+     * @param connection
+     * @return
+     */
+    @Override
+    public List<CenterTableVo> findByConnection(SysConfigVo vo, Connection connection) {
+        List<CenterTableVo> list = new ArrayList<CenterTableVo>();
+        String sql = "";
+        String dbType = vo.getDbType();
+        if (dbType.equals("1")) {
+            sql = "SELECT table_name FROM information_schema.tables WHERE table_schema='"
+                    + vo.getDbName()
+                    + "' AND table_type='base table'";
+        } else if (dbType.equals("2")) {
+            sql = "select table_name from user_tables";
+        } else if (dbType.equals("3")) {
+            sql = "select name from sys.tables go";
+
+        }
+        return list;
+    }
+
+    @Override
+    public boolean saveIntoVo(List<CenterTableVo> tableVos) {
+        return false;
     }
 }
