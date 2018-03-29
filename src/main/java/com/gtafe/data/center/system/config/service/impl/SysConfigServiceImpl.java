@@ -286,4 +286,9 @@ public class SysConfigServiceImpl extends BaseService implements SysConfigServic
         return  this.sysConfigMapper.queryCenterDbInfo();
 
     }
+
+    @Override
+    public void saveCenterDbConfig(SysConfigVo vo){
+        sysConfigMapper.saveCenterDbConfig(vo);
+    }
 }

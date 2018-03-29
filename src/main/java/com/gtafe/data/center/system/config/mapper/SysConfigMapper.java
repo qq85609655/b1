@@ -65,4 +65,14 @@ public interface SysConfigMapper {
             "centerdb_ipAddress ipAddress" +
             " from sys_config ")
     SysConfigVo queryCenterDbInfo();
+
+    @Update("update sys_config set " +
+            "centerdb_dbType=#{vo.dbType}," +
+            "centerdb_dbName=#{vo.dbName}," +
+            "centerdb_tableSpaces=#{vo.tableSpaces}," +
+            "centerdb_port=#{vo.port}," +
+            "centerdb_username=#{vo.username}," +
+            "centerdb_password=#{vo.password}," +
+            "centerdb_ipAddress=#{vo.ipAddress}")
+    void saveCenterDbConfig(@Param("vo") SysConfigVo vo);
 }

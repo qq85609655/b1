@@ -3,6 +3,7 @@ package com.gtafe.framework.base.utils;
 import com.gtafe.data.center.dataetl.datasource.utils.ConnectDB;
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
 import com.gtafe.data.center.information.data.vo.DataStandardItemVo;
+import com.gtafe.data.center.system.config.vo.SysConfigVo;
 //import sun.misc.BASE64Encoder;
 
 import java.io.BufferedReader;
@@ -22,7 +23,7 @@ import java.util.regex.Pattern;
  * 字符串的一些实用操作
  */
 public class StringUtil {
-    public static  int checkConnection(Map<Integer, Object[]> connMap, int id) {
+    public static int checkConnection(Map<Integer, Object[]> connMap, int id) {
         if (!connMap.containsKey(id)) {
             return 2;
         }
@@ -89,17 +90,18 @@ public class StringUtil {
         }
         return result;
     }
-    
+
     public static String join(List<?> list) {
         return join(list, ",");
     }
+
     public static String join(List<?> list, String splitsign) {
-        if(list == null || list.isEmpty()) {
+        if (list == null || list.isEmpty()) {
             return "";
         }
         StringBuffer sb = new StringBuffer();
-        for(int i=0;i<list.size();i++) {
-            if(i>0) {
+        for (int i = 0; i < list.size(); i++) {
+            if (i > 0) {
                 sb.append(splitsign);
             }
             sb.append(list.get(i));
@@ -220,7 +222,7 @@ public class StringUtil {
                 }
             } else if (aa > 10 && aa < 19) {
                 return "bigint";
-            } else  {
+            } else {
                 return "decimal";
             }
         }
@@ -273,7 +275,6 @@ public class StringUtil {
         String newstr = base64en.encode(md5.digest(str.getBytes("utf-8")));
         return newstr;
     }*/
-
     public final static String MD5(String s) {
         char hexDigits[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                 'a', 'b', 'c', 'd', 'e', 'f'};
@@ -1010,8 +1011,8 @@ public class StringUtil {
         if (StringUtil.isNotBlank(dataLength)) {
             String s[] = dataLength.split(",");
             if (s.length > 1) {
-                if(Integer.parseInt(s[0])>65){
-                    dataLength="65";
+                if (Integer.parseInt(s[0]) > 65) {
+                    dataLength = "65";
                 }
                 res = res.append(dataLength);
             } else {
@@ -1023,10 +1024,10 @@ public class StringUtil {
         res = res.append(")");
         return res.toString();
     }
-    
+
     public static String dropTableSql(String tableName, int dbType) {
-        if(dbType == 1) {
-            return "drop table if exists "+tableName;
+        if (dbType == 1) {
+            return "drop table if exists " + tableName;
         }
         return null;
     }
@@ -1061,5 +1062,32 @@ public class StringUtil {
             }
         }
         return sbb.toString();
+    }
+
+    public static ConnectDB getEntityBySysConfig(SysConfigVo vo) {
+        ConnectDB connectDB = new ConnectDB();
+        if (vo.getDbType().equals("2")) {
+            connectDB.driver = "oracle.jdbc.driver.OracleDriver";
+            connectDB.url = "jdbc:oracle:thin:@" + vo.getIpAddress() + ":"
+                    + vo.getPort() + ":"
+                    + vo.getDbName();
+            connectDB.username = vo.getUsername();
+            connectDB.pwd = vo.getPassword();
+        } else if (vo.getDbType().equals("3")) {
+            connectDB.driver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+            connectDB.url = "jdbc:sqlserver://" + vo.getIpAddress() + ":"
+                    + vo.getPort() + ";DatabaseName="
+                    + vo.getDbName();
+            connectDB.username = vo.getUsername();
+            connectDB.pwd = vo.getPassword();
+        } else {
+            connectDB.driver = "com.mysql.jdbc.Driver";
+            connectDB.url = "jdbc:mysql://" + vo.getIpAddress() + ":"
+                    + vo.getPort() + "/"
+                    + vo.getDbName();
+            connectDB.username = vo.getUsername();
+            connectDB.pwd = vo.getPassword();
+        }
+        return connectDB;
     }
 }

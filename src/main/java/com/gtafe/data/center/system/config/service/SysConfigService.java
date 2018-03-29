@@ -46,4 +46,6 @@ public interface SysConfigService {
     void deleteAllFilesInfo(String fileType);
 
     SysConfigVo queryCenterDbInfo();
+
+    void saveCenterDbConfig(SysConfigVo vo);
 }
