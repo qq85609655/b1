@@ -2,7 +2,8 @@ package com.gtafe.data.center.information.code.mapper;
 
 import java.util.List;
 
-import com.gtafe.data.center.information.code.vo.CenterTableVo;
+import com.gtafe.data.center.information.code.vo.MysqlTableVo;
+import com.gtafe.data.center.information.code.vo.TableEntity;
 import org.apache.ibatis.annotations.*;
 
 import com.gtafe.data.center.information.code.vo.CodeInfoVo;
@@ -59,8 +60,8 @@ public interface CodeStandardMapper {
     List<CodeInfoVo> queryCodeALL(@Param("nodeId") int nodeId);
 
 
-    List<CenterTableVo> queryAllCenterTableList(@Param("tableName") String tableName,
-                                                @Param("tableType") String tableType,
-                                                @Param("pageNumKey") int pageNum,
-                                                @Param("pageSizeKey") int pageSize);
+    List<TableEntity> queryAllCenterTableList(@Param("tableName") String tableName,
+                                              @Param("tableType") String tableType,
+                                              @Param("pageNumKey") int pageNum,
+                                              @Param("pageSizeKey") int pageSize);
 }

@@ -13,13 +13,13 @@ import javax.annotation.Resource;
 import javax.mail.internet.MimeMessage;
 
 import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
-import com.gtafe.data.center.information.code.vo.CenterTableVo;
+import com.gtafe.data.center.information.code.vo.MysqlTableVo;
+import com.gtafe.data.center.information.code.vo.TableEntity;
 import com.gtafe.data.center.information.data.mapper.DataStandardItemMapper;
 import com.gtafe.data.center.information.data.vo.DataStandardItemVo;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gtafe.data.center.common.common.constant.LogConstant;
-import com.gtafe.data.center.dataetl.datasource.service.IDatasourceService;
 import com.gtafe.data.center.information.data.mapper.DataStandardMapper;
 import com.gtafe.data.center.information.data.service.DataTableService;
 import com.gtafe.data.center.information.data.vo.DataStandardVo;
@@ -302,8 +301,8 @@ public class SysConfigServiceImpl extends BaseService implements SysConfigServic
      * @return
      */
     @Override
-    public List<CenterTableVo> findByConnection(SysConfigVo vo, Connection connection) {
-        List<CenterTableVo> list = new ArrayList<CenterTableVo>();
+    public List<TableEntity> findByConnection(SysConfigVo vo, Connection connection) {
+        List<TableEntity> list = new ArrayList<TableEntity>();
         String sql = "";
         String dbType = vo.getDbType();
         if (dbType.equals("1")) {
@@ -320,7 +319,7 @@ public class SysConfigServiceImpl extends BaseService implements SysConfigServic
     }
 
     @Override
-    public boolean saveIntoVo(List<CenterTableVo> tableVos) {
+    public boolean saveIntoVo(List<TableEntity> tableVos) {
         return false;
     }
 }

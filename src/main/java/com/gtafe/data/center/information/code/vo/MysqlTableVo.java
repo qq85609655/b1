@@ -26,7 +26,7 @@ import java.util.Date;
  * 2.对数据表优化：
  * optimeze table `table_name`;
  */
-public class CenterTableVo {
+public class MysqlTableVo {
 
     /**
      * 数据表登记目录
@@ -155,7 +155,7 @@ public class CenterTableVo {
 
     @Override
     public String toString() {
-        return "CenterTableVo{" +
+        return "MysqlTableVo{" +
                 "tableCatalog='" + tableCatalog + '\'' +
                 ", tableSchema='" + tableSchema + '\'' +
                 ", tableName='" + tableName + '\'' +

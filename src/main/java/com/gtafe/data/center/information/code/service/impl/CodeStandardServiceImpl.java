@@ -9,7 +9,8 @@ import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
 
-import com.gtafe.data.center.information.code.vo.CenterTableVo;
+import com.gtafe.data.center.information.code.vo.MysqlTableVo;
+import com.gtafe.data.center.information.code.vo.TableEntity;
 import com.gtafe.framework.base.exception.OrdinaryException;
 import com.gtafe.framework.base.utils.GenUtils;
 import org.apache.commons.io.IOUtils;
@@ -327,7 +328,7 @@ public class CodeStandardServiceImpl implements CodeStandardService {
 
 
     @Override
-    public List<CenterTableVo> queryAllCenterTableList(String tableName, String tableType, int pageNum, int pageSize) {
+    public List<TableEntity> queryAllCenterTableList(String tableName, String tableType, int pageNum, int pageSize) {
         return this.codeStandardMapper.queryAllCenterTableList(tableName, tableType, pageNum, pageSize);
     }
 

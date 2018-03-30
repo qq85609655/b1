@@ -2,9 +2,10 @@ package com.gtafe.data.center.information.code.service;
 
 import java.util.List;
 
-import com.gtafe.data.center.information.code.vo.CenterTableVo;
+import com.gtafe.data.center.information.code.vo.MysqlTableVo;
 import com.gtafe.data.center.information.code.vo.CodeInfoVo;
 import com.gtafe.data.center.information.code.vo.CodeNodeVo;
+import com.gtafe.data.center.information.code.vo.TableEntity;
 
 public interface CodeStandardService {
     /**
@@ -39,7 +40,7 @@ public interface CodeStandardService {
 
     boolean deleteCodeVoByNodeId(int sourceId, int nodeId, int userId);
 
-    List<CenterTableVo> queryAllCenterTableList(String tableName, String tableType, int pageNum, int pageSize);
+    List<TableEntity> queryAllCenterTableList(String tableName, String tableType, int pageNum, int pageSize);
 
     byte[] generatorCode(List<String> tableNamesList) throws Exception;
 }

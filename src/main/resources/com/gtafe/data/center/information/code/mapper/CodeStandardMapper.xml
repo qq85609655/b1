@@ -310,7 +310,7 @@ and t1.node_id=#{parentId}
     </select>
 
 
-    <select id="queryAllCenterTableList" resultType="com.gtafe.data.center.information.code.vo.CenterTableVo">
+    <select id="queryAllCenterTableList" resultType="com.gtafe.data.center.information.code.vo.MysqlTableVo">
         SELECT
         TABLE_CATALOG tableCatalog,
         TABLE_SCHEMA tableSchema,

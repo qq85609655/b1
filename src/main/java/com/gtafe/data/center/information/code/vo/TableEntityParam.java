@@ -2,7 +2,7 @@ package com.gtafe.data.center.information.code.vo;
 
 import com.gtafe.data.center.common.common.vo.PageParam;
 
-public class CenterTableParam extends PageParam {
+public class TableEntityParam extends PageParam {
     private String tableName;
 
     private String tableType;
