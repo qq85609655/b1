@@ -343,6 +343,60 @@ public class CodeStandardServiceImpl implements CodeStandardService {
         return this.codeStandardMapper.queryAllCenterTableList(tableName, tableType, pageNum, pageSize);
     }
 
+    private List<Map<String, String>> queryColumns(String tableName) {
+        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        SysConfigVo vo = this.sysConfigMapper.queryCenterDbInfo();
+        if (vo != null) {
+            ConnectDB connectDB = StringUtil.getEntityBySysConfig(vo);
+            Connection connection = null;
+            if (connectDB.getConn() != null) {
+                try {
+                    connection = connectDB.getConn();
+                    Statement st = connection.createStatement();
+                    String dbType = vo.getDbType();
+                    if (dbType.equals("1")) {
+                        String sql = "select column_name columnName, data_type dataType, column_comment columnComment, column_key columnKey, extra from information_schema.columns\n" +
+                                "  where table_name = '" + tableName + "' and table_schema = (select database()) order by ordinal_position";
+                        ResultSet rs = st.executeQuery(sql);
+                        while (rs.next()) {
+                            Map<String, String> mm = new HashMap<String, String>();
+                            String columnName = rs.getString(1);
+                            String dataType = rs.getString(2);
+                            String columnComment = rs.getString(3);
+                            String columnKey = rs.getString(4);
+                            String extra = rs.getString(5);
+                            if (StringUtil.isNotBlank(columnName)) {
+                                mm.put("columnName", columnName);
+                            }
+                            if (StringUtil.isNotBlank(dataType)) {
+                                mm.put("dataType", dataType);
+                            }
+                            if (StringUtil.isNotBlank(columnComment)) {
+                                mm.put("columnComment", columnComment);
+                            }
+                            if (StringUtil.isNotBlank(columnKey)) {
+                                mm.put("columnKey", columnKey);
+                            }
+                            if (StringUtil.isNotBlank(extra)) {
+                                mm.put("extra", extra);
+                            }
+                            list.add(mm);
+                        }
+                        connectDB.closeDbConn(connection);
+                        connection.close();
+                        rs.close();
+                        st.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                } finally {
+                    connectDB.closeDbConn(connection);
+                }
+            }
+        }
+        return list;
+    }
+
     /**
      * 根据表名，查询表
      */
@@ -354,31 +408,38 @@ public class CodeStandardServiceImpl implements CodeStandardService {
             Connection connection = null;
             if (connectDB.getConn() != null) {
                 try {
+                    connection = connectDB.getConn();
                     Statement st = connection.createStatement();
                     String dbType = vo.getDbType();
                     String sql = "select table_name tableName, engine, table_comment tableComment, create_time createTime from information_schema.tables \n" +
                             " where table_schema = (select database()) and table_name = '" + tableName + "'";
                     ResultSet rs = st.executeQuery(sql);
                     while (rs.next()) {
-                        String tableName_=rs.getString(1);
-                        String engine=rs.getString(2);
-                        String comment=rs.getString(3);
-                        String createTime=rs.getString(4);
-                        if(StringUtil.isNotBlank(tableName_)){
-                            tableInfo.put("tableName",tableName_);
+                        String tableName_ = rs.getString(1);
+                        String engine = rs.getString(2);
+                        String comment = rs.getString(3);
+                        String createTime = rs.getString(4);
+                        if (StringUtil.isNotBlank(tableName_)) {
+                            tableInfo.put("tableName", tableName_);
                         }
-                        if(StringUtil.isNotBlank(engine)){
-                            tableInfo.put("engine",engine);
+                        if (StringUtil.isNotBlank(engine)) {
+                            tableInfo.put("engine", engine);
                         }
-                        if(StringUtil.isNotBlank(comment)){
-                            tableInfo.put("comment",comment);
+                        if (StringUtil.isNotBlank(comment)) {
+                            tableInfo.put("comment", comment);
                         }
-                        if(StringUtil.isNotBlank(createTime)){
-                            tableInfo.put("createTime",createTime);
+                        if (StringUtil.isNotBlank(createTime)) {
+                            tableInfo.put("createTime", createTime);
                         }
                     }
+                    rs.close();
+                    st.close();
+                    connectDB.closeDbConn(connection);
+                    connection.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
+                } finally {
+                    connectDB.closeDbConn(connection);
                 }
 
 
@@ -410,9 +471,4 @@ public class CodeStandardServiceImpl implements CodeStandardService {
         return outputStream.toByteArray();
     }
 
-    private List<Map<String, String>> queryColumns(String tableName) {
-        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-
-        return list;
-    }
 }
