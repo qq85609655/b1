@@ -1,6 +1,10 @@
 package com.gtafe.data.center.information.code.service.impl;
 
 import java.io.ByteArrayOutputStream;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,10 +13,14 @@ import java.util.zip.ZipOutputStream;
 
 import javax.annotation.Resource;
 
+import com.gtafe.data.center.dataetl.datasource.utils.ConnectDB;
 import com.gtafe.data.center.information.code.vo.MysqlTableVo;
 import com.gtafe.data.center.information.code.vo.TableEntity;
+import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
+import com.gtafe.data.center.system.config.vo.SysConfigVo;
 import com.gtafe.framework.base.exception.OrdinaryException;
 import com.gtafe.framework.base.utils.GenUtils;
+import com.gtafe.framework.base.utils.StringUtil;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +44,9 @@ public class CodeStandardServiceImpl implements CodeStandardService {
     private CodeStandardMapper codeStandardMapper;
     @Autowired
     private LogService logServiceImpl;
+
+    @Resource
+    private SysConfigMapper sysConfigMapper;
 
     @Override
     public List<CodeInfoVo> queryCodeList(String keyWord, int nodeId, int sourceId,
@@ -337,7 +348,42 @@ public class CodeStandardServiceImpl implements CodeStandardService {
      */
     public Map<String, String> queryTable(String tableName) {
         Map<String, String> tableInfo = new HashMap<String, String>();
+        SysConfigVo vo = this.sysConfigMapper.queryCenterDbInfo();
+        if (vo != null) {
+            ConnectDB connectDB = StringUtil.getEntityBySysConfig(vo);
+            Connection connection = null;
+            if (connectDB.getConn() != null) {
+                try {
+                    Statement st = connection.createStatement();
+                    String dbType = vo.getDbType();
+                    String sql = "select table_name tableName, engine, table_comment tableComment, create_time createTime from information_schema.tables \n" +
+                            " where table_schema = (select database()) and table_name = '" + tableName + "'";
+                    ResultSet rs = st.executeQuery(sql);
+                    while (rs.next()) {
+                        String tableName_=rs.getString(1);
+                        String engine=rs.getString(2);
+                        String comment=rs.getString(3);
+                        String createTime=rs.getString(4);
+                        if(StringUtil.isNotBlank(tableName_)){
+                            tableInfo.put("tableName",tableName_);
+                        }
+                        if(StringUtil.isNotBlank(engine)){
+                            tableInfo.put("engine",engine);
+                        }
+                        if(StringUtil.isNotBlank(comment)){
+                            tableInfo.put("comment",comment);
+                        }
+                        if(StringUtil.isNotBlank(createTime)){
+                            tableInfo.put("createTime",createTime);
+                        }
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
+
+            }
+        }
         return tableInfo;
     }
 

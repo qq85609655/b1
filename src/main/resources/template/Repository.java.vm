@@ -1,0 +1,14 @@
+package com.gtainterfaces.facecore.repository;
+
+import com.gtainterfaces.facecore.entity.${className}Entity;
+import org.springframework.data.repository.PagingAndSortingRepository;
+
+/**
+ * ${comments}
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+public interface ${className}Repository extends PagingAndSortingRepository<${className}Entity, String> {
+}

@@ -1,0 +1,24 @@
+package com.gtainterfaces.facecore.component;
+
+import com.gtainterfaces.facecore.entity.${className}Entity;
+import com.gtainterfaces.facecore.repository.${className}Repository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Component;
+/**
+ * ${comments}
+ *
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@Component
+public class ${className}Component {
+    @Autowired
+    private ${className}Repository ${classname}Repository;
+
+    public Page<${className}Entity> findAll(Pageable pageable) {
+        return ${classname}Repository.findAll(pageable);
+    }
+}
