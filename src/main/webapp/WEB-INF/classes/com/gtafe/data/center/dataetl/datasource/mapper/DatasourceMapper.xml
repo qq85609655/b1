@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.dataetl.datasource.mapper.DatasourceMapper">
+    <select id="queryDatasourceList" resultType="com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO">
+       SELECT
+            b.name dbTypeName,
+            a.id  id,
+		    a.name name,
+		    a.dbtype dbType,
+		    a.db_name dbName,
+		    a.host host,
+		    a.port port,
+		    a.username username,
+		    a.password password,
+		    a.remark remark,
+		    a.table_space tableSpaces,
+		    a.index_space indexSpaces,
+		    a.creator creator,
+		    a.createtime createtime,
+		    a.updater updater,
+		    a.updatetime updatetime
+		    
+		FROM
+		    data_etl_dataconnection a,data_etl_dbtype b
+		    where a.dbtype = b.code
+		<if test="dbType != null">
+         and a.dbtype = #{dbType}
+        </if>
+        <if test="nameOrDBName != null">
+            and (a.name like CONCAT('%', #{nameOrDBName}, '%') OR a.db_name like CONCAT('%', #{nameOrDBName}, '%') )
+        </if>
+
+        <if test="isCenter != null">
+            and  a.is_center = #{isCenter}
+        </if>
+        order by a.updatetime desc
+    </select>
+    
+    <delete id="datasourceDelete">
+        delete from data_etl_dataconnection where id = #{id}
+    </delete>
+    
+    <insert id="datasourceAdd" parameterType="com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO">
+     INSERT INTO data_etl_dataconnection (
+	    name,
+        dbtype ,
+        db_name ,
+        host ,
+        port ,
+        username ,
+        password ,
+        remark ,
+        table_space ,
+        index_space ,
+			    creator,
+			    createtime,
+			    updater,
+			    updatetime
+			)
+			VALUES
+			    (
+			    #{name},
+			    #{dbType},
+			    #{dbName},
+			    #{host},
+			    #{port},
+			    #{username},
+			    #{password},
+			    #{remark},
+			    #{tableSpaces},
+			    #{indexSpaces},
+			    #{creator},
+			    SYSDATE(),
+			    #{updater},
+			    SYSDATE()
+	       )
+    
+    </insert>
+    
+    <update id="datasourceUpdate" parameterType="com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO">
+     UPDATE data_etl_dataconnection
+		SET dbtype = #{dbType},
+		db_name = #{dbName},
+		host = #{host},
+		 port = #{port},
+		  username = #{username},
+		   password = #{password},
+		    remark = #{remark},
+		    table_space = #{tableSpaces},
+		    index_space = #{indexSpaces},
+		 updatetime = SYSDATE()
+		WHERE
+		  id = #{id}
+    </update>
+    
+    <select id="queryIfExistById" resultType="com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO">
+        SELECT
+            a.id  id,
+		    a.name name,
+		    a.dbtype dbType,
+		    a.db_name dbName,
+		    a.host host,
+		    a.port port,
+		    a.username username,
+		    a.password password,
+		    a.remark remark,
+		    a.table_space tableSpaces,
+		    a.index_space indexSpaces,
+		    a.creator creator,
+		    a.createtime createtime,
+		    a.updater updater,
+		    a.updatetime updatetime 
+		FROM
+		    data_etl_dataconnection a
+        WHERE a.id = #{id}
+    </select>
+    
+    <select id="queryDatasourceInfoById" resultType="com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO">
+      SELECT
+            a.id  id,
+		    a.name name,
+		    a.dbtype dbType,
+		    b.name dbTypeName,
+		    a.db_name dbName,
+		    a.host host,
+		    a.port port,
+		    a.username username,
+		    a.password password,
+		    a.remark remark,
+		    a.table_space tableSpaces,
+		    a.index_space indexSpaces,
+		    a.creator creator,
+		    a.createtime createtime,
+		    a.updater updater,
+		    a.updatetime updatetime
+		FROM
+		    data_etl_dataconnection a
+		    left join data_etl_dbtype b
+		    on a.dbtype = b.code
+		     where a.id = #{id}
+    </select>
+    
+    <select id="queryDatasourceIfExist" parameterType="String" resultType="int">
+       select count(1) from data_etl_dataconnection a where a.name = #{name}
+    </select>
+
+</mapper>

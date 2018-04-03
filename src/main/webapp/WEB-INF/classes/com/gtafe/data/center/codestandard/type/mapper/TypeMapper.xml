@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.codestandard.type.mapper.TypeMapper">
+	<!-- 根据setId获取代码类型信息 -->
+	<select id="queryTypeInfo" resultType="com.gtafe.data.center.codestandard.type.vo.TypeVO">
+		SELECT *
+		from
+		code_standard_type t, code_standard_set st, code_standard_source s
+		where
+		t.set_id = st.set_id AND st.sourceid = s.sourceid
+		AND
+		t.set_id=#{setId} AND
+		s.sourceid = #{sourceId} 
+	</select>
+	<!-- 根据code获取代码类型信息 -->
+	<select id="queryTypeInfoByCode" resultType="com.gtafe.data.center.codestandard.type.vo.TypeVO">
+		SELECT * from
+		code_standard_type where set_id=#{setId} and type_id=#{typeId} and
+		`code`=#{code} 
+		order by  updatetime desc
+	</select>
+	<!-- 根据typeId查看该代码类型是否存在引用 -->
+	<select id="isTypeCiteRelation" resultType="java.lang.Integer">
+		SELECT
+		count(1)
+		FROM
+		code_standard_code c
+		WHERE
+		c.type_id = #{typeId}
+		LIMIT 1
+	</select>
+	<!-- 新增代码类型信息 -->
+	<insert id="saveTypeInfo" parameterType="com.gtafe.data.center.codestandard.type.vo.TypeVO">
+		INSERT INTO
+		code_standard_type (
+		set_id,
+		`code`,
+		`name`,
+		creator,
+		createtime,
+		updater,
+		updatetime
+		)
+		VALUES
+		(#{setId},#{code},#{name},#{creator},SYSDATE(),#{updater},
+		SYSDATE())
+	</insert>
+	<!-- 修改代码类型信息 set_id=#{setId} and type_id=#{typeId} -->
+	<update id="updateTypeInfo" parameterType="com.gtafe.data.center.codestandard.type.vo.TypeVO">
+		UPDATE
+		code_standard_type 
+		SET  `name`=#{name},
+		updatetime=SYSDATE() 
+		where
+		code=#{code}
+	</update>
+	<!-- 删除代码类型信息 -->
+	<delete id="deleteTypeInfo" parameterType="com.gtafe.data.center.codestandard.type.vo.TypeVO">
+		DELETE from
+		code_standard_type where set_id=#{setId} and type_id=#{typeId}
+	</delete>
+	<!-- 批量新增代码类型 -->
+	<insert id="saveTypeBatch">
+		INSERT INTO
+		code_standard_type (
+		set_id,
+		`code`,
+		`name`,
+		creator,
+		createtime,
+		updater,
+		updatetime
+		)
+		VALUES
+		<foreach collection="batchTypeVOs" item="typeVO" separator=",">
+			(#{setId},#{typeVO.code},#{typeVO.name},#{typeVO.creator},SYSDATE(),#{typeVO.updater},
+			SYSDATE())
+		</foreach>
+
+	</insert>
+</mapper>

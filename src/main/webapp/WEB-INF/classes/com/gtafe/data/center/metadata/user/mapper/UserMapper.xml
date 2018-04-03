@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper  namespace="com.gtafe.data.center.metadata.user.mapper.UserMapper">
+
+	<select id="login" parameterType="com.gtafe.data.center.metadata.user.vo.AcountInfoVO" resultType="com.gtafe.data.center.metadata.user.vo.ResultVO">
+	SELECT
+		    count(1) as counts
+		FROM
+		    userinfo
+		WHERE
+		    account = #{account} and password= #{password}
+	</select>
+
+
+
+	<select id="getVo" parameterType="com.gtafe.data.center.metadata.user.vo.AcountInfoVO" resultType="com.gtafe.data.center.metadata.user.vo.ResultVO">
+		SELECT
+		count(1) as counts
+		FROM
+		userinfo
+		WHERE
+		account = #{account}
+	</select>
+	
+</mapper>
