@@ -1,9 +1,9 @@
-package com.gtainterfaces.facecore.interfaces;
+package ${package}.controller;
 
-import com.gtainterfaces.facecore.common.StringUtil;
-import com.gtainterfaces.facecore.common.WebResult;
-import com.gtainterfaces.facecore.component.${className}Component;
-import com.gtainterfaces.facecore.entity.${className}Entity;
+import ${package}.common.StringUtil;
+import${package}.common.WebResult;
+import ${package}.component.${className}Component;
+import ${package}.entity.${className}Entity;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class ${className}Controller {
             for (${className}Entity entity : pages) {
                 JSONObject object = new JSONObject();
                 #foreach ($column in $columns)
-                    object.element("${column.attrName}", StringUtil.checkIsNull(${classname}Entity.get${column.attrName}));
+                    object.element("${column.attrName}", StringUtil.checkIsNull(${classname}Entity.get${column.attrName}()));
                 #end
                 arr.add(object);
             }

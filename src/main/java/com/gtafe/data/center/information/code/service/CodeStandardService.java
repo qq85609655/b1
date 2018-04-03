@@ -43,4 +43,6 @@ public interface CodeStandardService {
     List<TableEntity> queryAllCenterTableList(String tableName, String tableType, int pageNum, int pageSize);
 
     byte[] generatorCode(List<String> tableNamesList) throws Exception;
+
+    boolean generatorCode2(List<String> tableNamesList);
 }

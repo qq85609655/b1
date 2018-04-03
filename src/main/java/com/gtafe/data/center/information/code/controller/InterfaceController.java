@@ -84,16 +84,15 @@ public class InterfaceController extends BaseController {
      */
     @RequestMapping("/code/{tableName}")
     public void code(@PathVariable(value = "tableName", required = false) String tableName, HttpServletResponse response)
-            throws ResourceNotFoundException, ParseErrorException, Exception {
+            throws Exception {
         List<String> tableNamesList = StringUtil.splitListString(tableName);
         byte[] data = codeStandardServiceImpl.generatorCode(tableNamesList);
         response.reset();
-      //  response.setHeader("Content-Disposition", "attachment; filename=\"InterfaceCode-" + DateUtil.format(new Date(), "yyyyMMddHHMMss") + ".zip\"");
-        response.setHeader("Content-Disposition", "attachment; filename=\"InterfaceCode.zip\"");
+        response.setHeader("Content-Disposition", "attachment; filename=\"InterfaceCode-" + DateUtil.format(new Date(), "yyyyMMddHHMMss") + ".zip\"");
         response.addHeader("Content-Length", "" + data.length);
         response.setContentType("application/octet-stream; charset=UTF-8");
-
         IOUtils.write(data, response.getOutputStream());
     }
+
 
 }

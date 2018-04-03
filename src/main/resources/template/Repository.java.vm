@@ -1,6 +1,6 @@
-package com.gtainterfaces.facecore.repository;
+package ${package}.repository;
 
-import com.gtainterfaces.facecore.entity.${className}Entity;
+import ${package}.entity.${className}Entity;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**

@@ -120,11 +120,14 @@ public class GenUtils {
 
             try {
                 // 添加到zip
-                zip.putNextEntry(new ZipEntry(getFileName(template, tableEntity.getClassName(), config.getString("package"))));
+                String fileName=getFileName(template, tableEntity.getClassName(), config.getString("package"));
+                System.out.println(fileName);
+                zip.putNextEntry(new ZipEntry(fileName));
                 IOUtils.write(sw.toString(), zip, "UTF-8");
                 IOUtils.closeQuietly(sw);
                 zip.closeEntry();
             } catch (IOException e) {
+                e.printStackTrace();
                 throw new RRException("渲染模板失败，表名：" + tableEntity.getTableName(), e);
             }
         }
@@ -171,7 +174,6 @@ public class GenUtils {
             return packagePath + "entity" + File.separator + className + "Entity.java";
         }
 
-
         if (template.contains("Controller.java.vm")) {
             return packagePath + "controller" + File.separator + className + "Controller.java";
         }
@@ -183,7 +185,6 @@ public class GenUtils {
         if (template.contains("Repository.java.vm")) {
             return packagePath + "respository" + File.separator + className + "Repository.java";
         }
-
 
         return null;
     }
