@@ -1,5 +1,7 @@
 package com.gtafe.data.center.information.data.service;
 
+import com.gtafe.data.center.information.code.vo.TableEntity;
+
 import java.util.List;
 
 public interface DataTableService {
@@ -15,4 +17,6 @@ public interface DataTableService {
      * @date 2017年12月20日
      */
     public boolean createTables(List<String> subclassCodes);
+
+    boolean saveIntoCenterTables(List<TableEntity> tableVos);
 }

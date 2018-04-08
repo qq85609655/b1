@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -306,22 +309,69 @@ public class SysConfigServiceImpl extends BaseService implements SysConfigServic
     public List<TableEntity> findByConnection(SysConfigVo vo, Connection connection) {
         List<TableEntity> list = new ArrayList<TableEntity>();
         String sql = "";
-        String dbType = vo.getDbType();
-        if (dbType.equals("1")) {
-            sql = "SELECT table_name FROM information_schema.tables WHERE table_schema='"
-                    + vo.getDbName()
-                    + "' AND table_type='base table'";
-        } else if (dbType.equals("2")) {
-            sql = "select table_name from user_tables";
-        } else if (dbType.equals("3")) {
-            sql = "select name from sys.tables go";
-
+        Statement stmt = null;
+        try {
+            stmt = connection.createStatement();
+            String dbType = vo.getDbType();
+            if (dbType.equals("1")) {
+                sql = "SELECT table_name tableName,TABLE_TYPE tableType," +
+                        " DATE_FORMAT(CREATE_TIME,'%m-%d-%Y %h:%i %p') create_date," +
+                        " DATE_FORMAT(UPDATE_TIME,'%m-%d-%Y %h:%i %p') modify_date" +
+                        " FROM information_schema.tables WHERE table_schema='"
+                        + vo.getDbName() + "' AND table_type='base table'";
+            } else if (dbType.equals("2")) {
+                sql = "select table_name,'user_table',to_char(sysdate,'yyyy-mm-dd hh24:mi:ss') create_date," +
+                        "to_char(sysdate,'yyyy-mm-dd hh24:mi:ss') modify_date from user_tables";
+            } else if (dbType.equals("3")) {
+                sql = "select name,type_desc,create_date,modify_date from sys.tables go";
+            }
+            LOGGER.info(sql);
+            ResultSet rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                TableEntity tableEntity = new TableEntity();
+                String tableName = (String) rs.getString(1);
+                String tableType = (String) rs.getString(2);
+                String createDate = (String) rs.getString(3);
+                String updateDate = (String) rs.getString(4);
+                LOGGER.info(tableName);
+                LOGGER.info(tableType);
+                LOGGER.info(createDate);
+                LOGGER.info(updateDate);
+                if (StringUtil.isNotBlank(tableName)) {
+                    tableEntity.setTableName(tableName);
+                }
+                if (StringUtil.isNotBlank(tableType)) {
+                    tableEntity.setTableType(tableType);
+                }
+                if (StringUtil.isNotBlank(createDate)) {
+                    tableEntity.setCreateDate(createDate);
+                }
+                if (StringUtil.isNotBlank(updateDate)) {
+                    tableEntity.setUpdateDate(updateDate);
+                }
+                list.add(tableEntity);
+            }
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null)
+                    connection.close();
+            } catch (SQLException se) {
+            }
+            try {
+                if (connection != null)
+                    connection.close();
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
         }
         return list;
     }
 
     @Override
     public boolean saveIntoVo(List<TableEntity> tableVos) {
-        return false;
+        return this.dataTableServiceImpl.saveIntoCenterTables(tableVos);
     }
 }

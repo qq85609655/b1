@@ -61,7 +61,7 @@ public interface CodeStandardMapper {
 
 
     List<TableEntity> queryAllCenterTableList(@Param("tableName") String tableName,
-                                              @Param("tableType") String tableType,
+                                       //       @Param("tableType") String tableType,
                                               @Param("pageNumKey") int pageNum,
                                               @Param("pageSizeKey") int pageSize);
 }

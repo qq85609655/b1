@@ -339,8 +339,8 @@ public class CodeStandardServiceImpl implements CodeStandardService {
 
 
     @Override
-    public List<TableEntity> queryAllCenterTableList(String tableName, String tableType, int pageNum, int pageSize) {
-        return this.codeStandardMapper.queryAllCenterTableList(tableName, tableType, pageNum, pageSize);
+    public List<TableEntity> queryAllCenterTableList(String tableName, int pageNum, int pageSize) {
+        return this.codeStandardMapper.queryAllCenterTableList(tableName, pageNum, pageSize);
     }
 
     private List<Map<String, String>> queryColumns(String tableName) {
@@ -485,6 +485,7 @@ public class CodeStandardServiceImpl implements CodeStandardService {
         return bbb;
     }
 */
+
     /**
      * 生成代码文件
      *
@@ -493,7 +494,7 @@ public class CodeStandardServiceImpl implements CodeStandardService {
      */
     @Override
     public byte[] generatorCode(List<String> tableNames) throws Exception {
-       ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ZipOutputStream zip = new ZipOutputStream(outputStream);
 
         for (String tableName : tableNames) {
@@ -504,7 +505,7 @@ public class CodeStandardServiceImpl implements CodeStandardService {
             // 生成代码
             GenUtils.generatorCode(table, columns, zip);
         }
-       IOUtils.closeQuietly(zip);
+        IOUtils.closeQuietly(zip);
         return outputStream.toByteArray();
     }
 

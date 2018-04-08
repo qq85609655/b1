@@ -50,11 +50,6 @@ public class InterfaceController extends BaseController {
         } else {
             param.setTableName(null);
         }
-        if (StringUtils.isNotBlank(tableType)) {
-            param.setTableType(tableType);
-        } else {
-            param.setTableType(null);
-        }
         //根据中心库链接配置 先读取中心库所有的表信息 保存入库 然后 再查询出来
         SysConfigVo vo = this.sysConfigServiceImpl.queryCenterDbInfo();
         if (vo != null) {
@@ -69,8 +64,9 @@ public class InterfaceController extends BaseController {
                     }
                 }
             }
+            connectDB.closeDbConn(connection);
         }
-        List<TableEntity> result = codeStandardServiceImpl.queryAllCenterTableList(param.getTableName(), param.getTableType(), param.getPageNum(), param.getPageSize());
+        List<TableEntity> result = codeStandardServiceImpl.queryAllCenterTableList(param.getTableName(), param.getPageNum(), param.getPageSize());
         LOGGER.debug("Result: ", result.size());
         return new PageInfo<TableEntity>(result);
     }

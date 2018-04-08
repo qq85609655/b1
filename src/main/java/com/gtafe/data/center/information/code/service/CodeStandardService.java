@@ -10,23 +10,25 @@ import com.gtafe.data.center.information.code.vo.TableEntity;
 public interface CodeStandardService {
     /**
      * 查询代码标准列表
+     *
      * @author 汪逢建
      * @date 2017年11月8日
      */
-    public List<CodeInfoVo> queryCodeList(String keyWord,int nodeId, int sourceId, int nodeType, int pageNum, int pageSize);
-    
+    public List<CodeInfoVo> queryCodeList(String keyWord, int nodeId, int sourceId, int nodeType, int pageNum, int pageSize);
+
     /**
      * 查询代码标准树
+     *
      * @author 汪逢建
      * @date 2017年11月6日
      */
     public CodeNodeVo queryCodeNodeTree(int sourceId);
 
     public CodeNodeVo queryCodeNodeTree2(String parentId);
-    
-    public boolean updateCodeVo(int sourceId, CodeInfoVo voList, int userId) ;
-    
-    public boolean deleteCodeVo( int sourceId,  int codeId, int userId) ;
+
+    public boolean updateCodeVo(int sourceId, CodeInfoVo voList, int userId);
+
+    public boolean deleteCodeVo(int sourceId, int codeId, int userId);
 
     public boolean saveNodeVos(int sourceId, int nodeId, List<CodeNodeVo> voList, int userId);
 
@@ -40,7 +42,7 @@ public interface CodeStandardService {
 
     boolean deleteCodeVoByNodeId(int sourceId, int nodeId, int userId);
 
-    List<TableEntity> queryAllCenterTableList(String tableName, String tableType, int pageNum, int pageSize);
+    List<TableEntity> queryAllCenterTableList(String tableName, int pageNum, int pageSize);
 
     byte[] generatorCode(List<String> tableNamesList) throws Exception;
 

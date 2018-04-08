@@ -10,9 +10,12 @@
 package com.gtafe.data.center.dataetl.datasource.mapper;
 
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
+import com.gtafe.data.center.information.code.vo.TableEntity;
 import com.gtafe.framework.base.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.poi.ss.formula.functions.T;
 
 import java.util.List;
 
@@ -41,4 +44,9 @@ public interface DatasourceMapper extends BaseMapper {
 
     @Select("SELECT id, host,username,password,dbType,db_name dbName,port FROM data_etl_dataconnection  WHERE is_center = 1")
     List<DatasourceVO> queryCenterData();
+
+    boolean saveIntoCenterTables(TableEntity tableVo);
+
+    @Delete("delete from t_center_tables where tableName is not null")
+    void trankAll();
 }

@@ -184,4 +184,12 @@
        select count(1) from data_etl_dataconnection a where a.name = #{name}
     </select>
 
+
+	<insert id="saveIntoCenterTables" parameterType="com.gtafe.data.center.information.code.vo.TableEntity">
+		INSERT INTO t_center_tables(tableName, tableType, createDate, updateDate) VALUES
+			(
+			#{tableName}, #{tableType}, #{createDate}, #{updateDate}
+			)
+	</insert>
+
 </mapper>

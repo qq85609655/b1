@@ -309,8 +309,23 @@ and t1.node_id=#{parentId}
         from info_codestandard_code  c where c.code_id =#{codeId}
     </select>
 
+    <select id="queryAllCenterTableList" resultType="com.gtafe.data.center.information.code.vo.TableEntity">
+        SELECT
+        tableName,
+        tableType,
+        createDate,
+        updateDate
+        FROM
+        t_center_tables
+        WHERE 1=1
+        <if test="tableName !=null and tableName.trim().length() > 0">
+            and `tableName` LIKE CONCAT('%', #{tableName}, '%')
+        </if>
+        ORDER BY
+        createDate DESC
+    </select>一
 
-    <select id="queryAllCenterTableList" resultType="com.gtafe.data.center.information.code.vo.MysqlTableVo">
+    <select id="queryAllCenterTableList2" resultType="com.gtafe.data.center.information.code.vo.MysqlTableVo">
         SELECT
         TABLE_CATALOG tableCatalog,
         TABLE_SCHEMA tableSchema,
