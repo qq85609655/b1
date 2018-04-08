@@ -471,7 +471,7 @@ public class CodeStandardServiceImpl implements CodeStandardService {
         return outputStream.toByteArray();
     }*/
 
-    @Override
+ /*   @Override
     public boolean generatorCode2(List<String> tableNames)  {
         boolean bbb=false;
         for (String tableName : tableNames) {
@@ -484,7 +484,7 @@ public class CodeStandardServiceImpl implements CodeStandardService {
         }
         return bbb;
     }
-
+*/
     /**
      * 生成代码文件
      *

@@ -10,7 +10,7 @@
           <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/../../src/main/webapp/WEB-INF/web.xml" />
         </descriptors>
         <webroots>
-          <root url="file://E:\projects\GTA_DATACENTER\service\src\main\webapp" relative="/" />
+          <root url="file://D:\zgwork\service\src\main\webapp" relative="/" />
         </webroots>
       </configuration>
     </facet>
@@ -71,6 +71,7 @@
     <orderEntry type="library" name="Gradle: com.alibaba:fastjson:1.1.40" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.velocity:velocity:1.7" level="project" />
     <orderEntry type="library" name="Gradle: com.belerweb:pinyin4j:2.5.1" level="project" />
+    <orderEntry type="library" name="Gradle: io.swagger:swagger-annotations:1.5.16" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: javax.servlet:javax.servlet-api:3.1.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Gradle: javax.servlet.jsp:javax.servlet.jsp-api:2.3.1" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-api:2.9.0" level="project" />
@@ -96,7 +97,6 @@
     <orderEntry type="library" name="Gradle: com.fasterxml.woodstox:woodstox-core:5.0.3" level="project" />
     <orderEntry type="library" name="Gradle: org.codehaus.woodstox:stax2-api:3.1.4" level="project" />
     <orderEntry type="library" name="Gradle: com.github.jsqlparser:jsqlparser:1.0" level="project" />
-    <orderEntry type="library" name="Gradle: io.swagger:swagger-annotations:1.5.13" level="project" />
     <orderEntry type="library" name="Gradle: org.reflections:reflections:0.9.11" level="project" />
     <orderEntry type="library" name="Gradle: com.google.guava:guava:20.0" level="project" />
     <orderEntry type="library" name="Gradle: com.fasterxml:classmate:1.3.3" level="project" />

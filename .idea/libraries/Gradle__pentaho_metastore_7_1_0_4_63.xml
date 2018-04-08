@@ -1,11 +1,11 @@
 <component name="libraryTable">
   <library name="Gradle: pentaho:metastore:7.1.0.4-63">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/pentaho/metastore/7.1.0.4-63/f7bcd935d2a3b6f67a822638b0ea6d663da7a2be/metastore-7.1.0.4-63.jar!/" />
+      <root url="jar://D:/gradle-4.6/caches/modules-2/files-2.1/pentaho/metastore/7.1.0.4-63/f7bcd935d2a3b6f67a822638b0ea6d663da7a2be/metastore-7.1.0.4-63.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/pentaho/metastore/7.1.0.4-63/537e92c5d3874dfb128b1ec75514e9f6fb02c017/metastore-7.1.0.4-63-sources.jar!/" />
+      <root url="jar://D:/gradle-4.6/caches/modules-2/files-2.1/pentaho/metastore/7.1.0.4-63/537e92c5d3874dfb128b1ec75514e9f6fb02c017/metastore-7.1.0.4-63-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

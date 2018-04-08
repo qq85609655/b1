@@ -44,5 +44,4 @@ public interface CodeStandardService {
 
     byte[] generatorCode(List<String> tableNamesList) throws Exception;
 
-    boolean generatorCode2(List<String> tableNamesList);
 }

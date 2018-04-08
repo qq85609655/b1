@@ -1,7 +1,7 @@
 package ${package}.controller;
 
 import ${package}.common.StringUtil;
-import${package}.common.WebResult;
+import ${package}.common.WebResult;
 import ${package}.component.${className}Component;
 import ${package}.entity.${className}Entity;
 import net.sf.json.JSONArray;
@@ -55,6 +55,5 @@ public class ${className}Controller {
             return WebResult.error(e + "");
         }
     }
-
 
 }
