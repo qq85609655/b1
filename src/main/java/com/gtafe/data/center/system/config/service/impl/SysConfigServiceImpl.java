@@ -138,6 +138,7 @@ public class SysConfigServiceImpl extends BaseService implements SysConfigServic
 
     @Override
     public boolean updateSys(SysConfigVo vo) {
+        LOGGER.info(vo.toString());
         sysConfigMapper.updateSys(vo);
         this.sysConfigMapper.updateSystemNameToMenu(vo.getSysName());
         this.sysConfigMapper.updateSchoolNameToOrg(vo.getSchoolName());
@@ -145,6 +146,7 @@ public class SysConfigServiceImpl extends BaseService implements SysConfigServic
         logInfo.setModuleId(LogConstant.Module_System);
         logInfo.setOperType("修改");
         logInfo.setOperContent("修改系统信息：" + vo.getSysName() + "/" + vo.getSchoolName());
+
         this.logServiceImpl.saveLog(logInfo);
         return true;
     }

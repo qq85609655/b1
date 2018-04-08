@@ -3,6 +3,7 @@ package com.gtafe.framework.base.listener;
 import com.gtafe.data.center.dataetl.datasource.service.IDatasourceService;
 import com.gtafe.data.center.dataetl.datasource.utils.ConnectDB;
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
+import com.gtafe.data.center.dataetl.datatask.service.DataTaskService;
 import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
 import com.gtafe.data.center.system.config.service.SysConfigService;
 import com.gtafe.data.center.system.config.vo.SysConfigVo;
@@ -12,6 +13,7 @@ import com.gtafe.framework.base.utils.ReadFileUtil;
 import com.gtafe.framework.base.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
@@ -65,7 +67,7 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
         //并将配置信息保存至数据库中。
         boolean f = false;
         SysConfigVo vo = this.sysConfigServiceImpl.queryCenterDbInfo();
-        if(vo!=null) {
+        if (vo != null) {
             String dbType = vo.getDbType();
             //所有的几个关键参数都不能为空
             if (StringUtil.isNotBlank(dbType) && StringUtil.isNotBlank(vo.getIpAddress()) && StringUtil.isNotBlank(vo.getPassword())
@@ -125,14 +127,17 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
         return flag;
     }
 
+    @Autowired
+    DataTaskService dataTaskServiceImpl;
+
     /**
      * 当一个ApplicationContext被初始化或刷新触发
      */
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         try {
-            this.initCenterDb();
             this.sysConfigServiceImpl.flushSystemInfo(true);
+            this.initCenterDb();
             this.initKfiles();
         } catch (Exception e) {
             LOGGER.error("系统信息初始化异常!", e);
@@ -140,103 +145,20 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
         }
     }
 
-    /* List<DatasourceVO> datasourceVOs = this.datasourceServiceImpl.queryCenterData();
-      if (datasourceVOs == null || datasourceVOs.isEmpty()) {
-          LOGGER.error("请检查 系统表 【data_etl_dataconnection】是否 配置中心库数据!");
-          System.exit(1);
-      }
-      DatasourceVO datasourceVO = datasourceVOs.get(0);
-      ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
-      if (null != connectDB.getConn()) {
-
-      } else {
-          LOGGER.error("请检查 系统表 【data_etl_dataconnection】 中心库表配置是否正确!");
-          System.exit(1);
-      }
-      */
     private void initKfiles() {
         //读取 ktr文件  kjb文件 存入 数据库中，
         SysConfigVo vo = this.sysConfigServiceImpl.getBasicSysConfigVO();
-
-        String kettleInstallPath = vo.getKettleInstallPath();
         String ktrPath = vo.getKtrFilesPath();
         String kjbPath = vo.getKjbFilesPath();
 
-        if (StringUtil.isNotBlank(kettleInstallPath)) {
-            LOGGER.info("没有配置本地kettle 的安装路径 ");
-        } else {
-            String filePath = "d:\\kettle";
-            File file = new File(filePath);
-            file.mkdirs();//创建文件夹 用于后期存放kettle 安装路径
-        }
-
         if (!StringUtil.isNotBlank(ktrPath)) {
-            LOGGER.info("没有配置本地ktr文件的保存路径 ");
-            File file2 = new File(ktrPath);
-            file2.mkdirs();//创建文件夹
-        } else {
-            List<File> ktrFiles = ReadFileUtil.getFileList(ktrPath, "ktr");
-
-            if (ktrFiles.size() > 0) {
-                this.sysConfigServiceImpl.deleteAllFilesInfo("ktr");
-                for (File a : ktrFiles) {
-                    Path p = Paths.get(a.getAbsolutePath());
-                    TransFileVo transFileVo = new TransFileVo();
-                    try {
-                        BasicFileAttributes att = Files.readAttributes(p, BasicFileAttributes.class);//获取文件的属性
-                        String createtime = att.creationTime().toString();
-                        String accesstime = att.lastAccessTime().toString();
-                        String lastModifiedTime = att.lastModifiedTime().toString();
-                        String name = a.getName();
-                        String createUserName = "admin";
-                        transFileVo.setFileName(name);
-                        transFileVo.setCreateTime(DateUtil.parseDate(createtime));
-                        transFileVo.setFilePath(a.getCanonicalPath());
-                        transFileVo.setFileType("ktr");
-                        transFileVo.setUpdateTime(DateUtil.parseDate(lastModifiedTime));
-                        transFileVo.setAccessTime(DateUtil.parseDate(accesstime));
-                        transFileVo.setCreateUserInfo(createUserName);
-                        transFileVo.setScheduleInfo("0 0/60 * * * ? *");
-                        this.sysConfigServiceImpl.saveTransFile(transFileVo);
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }
+            LOGGER.info("没有配置本地ktrPath路径 ");
         }
+        dataTaskServiceImpl.flushTransFileVo(ktrPath, "ktr");
 
         if (!StringUtil.isNotBlank(kjbPath)) {
-            LOGGER.info("没有配置本地kjb文件的存放路径 ");
-            File file2 = new File(kjbPath);
-            file2.mkdirs();//创建文件夹
-        } else {
-            List<File> kjbFiles = ReadFileUtil.getFileList(kjbPath, "kjb");
-            if (kjbFiles.size() > 0) {
-                this.sysConfigServiceImpl.deleteAllFilesInfo("kjb");
-                for (File a : kjbFiles) {
-                    Path p = Paths.get(a.getAbsolutePath());
-                    TransFileVo transFileVo = new TransFileVo();
-                    try {
-                        BasicFileAttributes att = Files.readAttributes(p, BasicFileAttributes.class);//获取文件的属性
-                        String createtime = att.creationTime().toString();
-                        String accesstime = att.lastAccessTime().toString();
-                        String lastModifiedTime = att.lastModifiedTime().toString();
-                        String name = a.getName();
-                        String createUserName = "admin";
-                        transFileVo.setFileName(name);
-                        transFileVo.setCreateTime(DateUtil.parseDate(createtime));
-                        transFileVo.setFilePath(a.getCanonicalPath());
-                        transFileVo.setFileType("kjb");
-                        transFileVo.setUpdateTime(DateUtil.parseDate(lastModifiedTime));
-                        transFileVo.setAccessTime(DateUtil.parseDate(accesstime));
-                        transFileVo.setCreateUserInfo(createUserName);
-                        transFileVo.setScheduleInfo("0 0/60 * * * ? *");
-                        this.sysConfigServiceImpl.saveTransFile(transFileVo);
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }
+            LOGGER.info("没有配置本地kjbPath路径 ");
         }
+        dataTaskServiceImpl.flushTransFileVo(kjbPath, "kjb");
     }
 }
