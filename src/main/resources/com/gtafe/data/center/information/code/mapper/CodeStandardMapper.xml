@@ -323,9 +323,9 @@ and t1.node_id=#{parentId}
         </if>
         ORDER BY
         createDate DESC
-    </select>一
+    </select>
 
-    <select id="queryAllCenterTableList2" resultType="com.gtafe.data.center.information.code.vo.MysqlTableVo">
+   <!-- <select id="queryAllCenterTableList2" resultType="com.gtafe.data.center.information.code.vo.MysqlTableVo">
         SELECT
         TABLE_CATALOG tableCatalog,
         TABLE_SCHEMA tableSchema,
@@ -362,5 +362,5 @@ and t1.node_id=#{parentId}
         </if>
         ORDER BY
         Update_time DESC
-    </select>
+    </select>-->
 </mapper>
