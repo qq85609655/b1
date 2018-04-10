@@ -41,7 +41,22 @@ public interface EtlMapper {
     })
     DatasourceVO getDSById(int id);
 
-    @Select("select * from data_etl_dataconnection where is_center=1")
+    @Select("select * from sys_config where is_center=1")
+    @Results({
+            @Result(column = "id",property = "id"),
+            @Result(column = "name",property = "centerdb_dbName"),
+            @Result(column = "dbtype",property = "centerdb_dbType"),
+            @Result(column = "db_name",property = "centerdb_dbName"),
+            @Result(column = "host",property = "centerdb_ipAddress"),
+            @Result(column = "port",property = "centerdb_port"),
+            @Result(column = "username",property = "centerdb_username"),
+            @Result(column = "password",property = "centerdb_password")
+    })
+    DatasourceVO getCenterDS();
+
+
+
+    @Select("select * from sys_config where is_center=1")
     @Results({
             @Result(column = "id",property = "id"),
             @Result(column = "name",property = "name"),
@@ -52,7 +67,17 @@ public interface EtlMapper {
             @Result(column = "username",property = "username"),
             @Result(column = "password",property = "password")
     })
-    DatasourceVO getCenterDS();
+    DatasourceVO getCenterDS2();
+
+
+
+
+
+
+
+
+
+
 
 
     @Select("select * from data_etl_task where task_id=#{id}")

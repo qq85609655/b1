@@ -46,7 +46,7 @@ public class OutputTable extends BaseStep {
             return null;
         }
 
-        if (conditions==null || conditions.size()==0) {
+        if (conditions == null || conditions.size() == 0) {
             TableOutputMeta tableOutput = new TableOutputMeta();
             tableOutput.setDatabaseMeta(Utils.InitDatabaseMeta(ds));
 
@@ -69,12 +69,12 @@ public class OutputTable extends BaseStep {
             }
             tableOutput.setFieldStream(sourceFields);
             tableOutput.setFieldDatabase(targetFields);
-
             return initStep(tableOutput);
-        }else {
+        } else {
             InsertUpdateMeta insertUpdateMeta = new InsertUpdateMeta();
             insertUpdateMeta.setDatabaseMeta(Utils.InitDatabaseMeta(ds));
-      //      insertUpdateMeta.setUpdateBypassed(true);
+            //只插入不更新
+            //insertUpdateMeta.setUpdateBypassed(true);
 
             String targetTableName;
             if (ds.getDbType() == 2) {
