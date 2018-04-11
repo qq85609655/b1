@@ -9,6 +9,8 @@ public class TableFieldVo {
     private int primarykey;//0非主键，1主键
     private int nullable;//0不可空，1可空
     private int ruleType = 1;//规则类型,数据来源类型
+    private String isAutoCreate;//主键是否自增
+
     public String getField() {
         return field;
     }
@@ -56,5 +58,13 @@ public class TableFieldVo {
     }
     public void setRuleType(int ruleType) {
         this.ruleType = ruleType;
+    }
+
+    public String getIsAutoCreate() {
+        return isAutoCreate;
+    }
+
+    public void setIsAutoCreate(String isAutoCreate) {
+        this.isAutoCreate = isAutoCreate;
     }
 }

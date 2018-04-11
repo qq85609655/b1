@@ -10,6 +10,7 @@ import org.pentaho.di.trans.steps.tableoutput.TableOutputMeta;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 /*
 输出表
@@ -118,6 +119,7 @@ public class OutputTable extends BaseStep {
 
 
     }
+
 
 
 }
