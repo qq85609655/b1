@@ -627,7 +627,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
         sql.append(" if(COLUMN_KEY = 'PRI' , 1 , 0),");
         sql.append(" COLUMN_COMMENT,");
         sql.append(" if(COLUMN_KEY = 'NO' , 0 , 1),");
-        sql.append(" CASE WHEN extra = 'auto_increment' THEN 'true' ELSE 'false' END  AS autoAdd ");
+        sql.append(" CASE WHEN extra = 'auto_increment' THEN 'Y' ELSE 'N' END  AS autoAdd ");
         sql.append(" FROM INFORMATION_SCHEMA.COLUMNS ");
         sql.append(" WHERE TABLE_NAME = '" + tableName.toLowerCase() + "' and TABLE_SCHEMA='" + dbName + "'");
         sql.append(" order by ORDINAL_POSITION asc");
