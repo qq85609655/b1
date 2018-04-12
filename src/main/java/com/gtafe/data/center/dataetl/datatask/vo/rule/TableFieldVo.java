@@ -67,4 +67,19 @@ public class TableFieldVo {
     public void setIsAutoCreate(String isAutoCreate) {
         this.isAutoCreate = isAutoCreate;
     }
+
+    @Override
+    public String toString() {
+        return "TableFieldVo{" +
+                "field='" + field + '\'' +
+                ", comment='" + comment + '\'' +
+                ", dataType='" + dataType + '\'' +
+                ", length=" + length +
+                ", decimalLength=" + decimalLength +
+                ", primarykey=" + primarykey +
+                ", nullable=" + nullable +
+                ", ruleType=" + ruleType +
+                ", isAutoCreate='" + isAutoCreate + '\'' +
+                '}';
+    }
 }

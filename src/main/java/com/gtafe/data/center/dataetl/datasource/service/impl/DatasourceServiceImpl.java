@@ -20,6 +20,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.gtafe.data.center.information.code.vo.TableEntity;
+import net.bytebuddy.asm.Advice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -231,6 +233,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
     public List<TableFieldVo> queryTableFields(DatasourceVO datasourceVO,
                                                String table) throws Exception {
         List<TableFieldVo> result = new ArrayList<TableFieldVo>();
+        List<TableFieldVo> tableFieldVoList = new ArrayList<TableFieldVo>();
         ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
         Connection connection = null;
         try {
@@ -240,28 +243,26 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
             }
             Statement st = connection.createStatement();
             String sql = "";
-            String sql2 = "";
+         //   String sql2 = "";
             if (2 == datasourceVO.getDbType()) {
                 // oracle 的sql 生成
                 sql = genSqlStringOracle(table);
-                sql2=checkAutoCreateSql4Oracle(table);
             } else if (3 == datasourceVO.getDbType()) {
                 // sqlserver 的sql生成
                 sql = genSqlStringSqlServer(table);
-                sql2=checkAutoCreateSql4MsSqlServer(table);
             } else {
                 // mysql sql语句生成
                 sql = genSqlStringMySql(table, datasourceVO.getDbName());
-                sql2=checkAutoCreateSql4Mysql(table,datasourceVO.getDbName());
             }
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info(sql);
-            }
+
             LOGGER.info(sql);
             ResultSet rs = st.executeQuery(sql);
+         //   String primarykey2 = "";
+         //   String keyType = "";
             while (rs.next()) {
                 TableFieldVo field = new TableFieldVo();
                 field.setField(rs.getString(1));
+
                 field.setDataType(rs.getString(2));
                 int type = rs.getInt(6);
                 if (type == 1) {
@@ -273,20 +274,36 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                     field.setDecimalLength(0L);
                 }
                 String primarykey = rs.getString(7);
+                LOGGER.info("当前是不是主键哦：" + primarykey);
                 field.setPrimarykey(primarykey != null && "1".equals(primarykey) ? 1 : 0);
+      /*          if (primarykey != null && "1".equals(primarykey)) {
+                    primarykey2 = rs.getString(1);
+                }
+                if (primarykey != null && "1".equals(primarykey)) {
+                    keyType = rs.getString(2);
+                }
+*/
                 String comment = rs.getString(8);
                 field.setComment(comment == null ? "" : comment);
                 String nullable = rs.getString(9);
                 field.setNullable(nullable != null && "0".equals(nullable) ? 0 : 1);
-
-                String isAutoCreate="";
-
-                field.setIsAutoCreate(isAutoCreate);
-
-
+                String isAutoAdd = rs.getString(10);
+                LOGGER.info(isAutoAdd);
+                field.setIsAutoCreate(isAutoAdd);//默认设置为N 非自增
                 result.add(field);
             }
-
+           /* //对主键单独来查询是否 自增 并修改 isAutoCreate
+            String isAutoCreate = "";
+            LOGGER.info("keyType====" + keyType);
+            LOGGER.info("primarykey2====" + primarykey2);
+            isAutoCreate = this.getKeyInfo(table, primarykey2, datasourceVO.getDbName(), datasourceVO.getDbType() + "", connection, keyType);
+            for (TableFieldVo vo : result) {
+                if (vo.getPrimarykey() == 1) {
+                    vo.setIsAutoCreate(isAutoCreate);
+                }
+                tableFieldVoList.add(vo);
+                LOGGER.info(vo.toString());
+            }*/
             connection.close();
             connection = null;
         } catch (SQLException e) {
@@ -296,114 +313,65 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                 connection.close();
             }
         }
-        return result;
+        return tableFieldVoList;
     }
 
-    private String checkAutoCreateSql4Oracle(String tableName) {
-        String sql = "select c.column_name columnName, case when cu.column_name is null then 'false' else 'true' end as pkColumn,'false' as  autoAdd  \n" +
-                "    , c.data_type jdbcType  , cmts.comments descr  \n" +
-                "from user_tab_columns  c  \n" +
-                "left join user_constraints au on c.table_name = au.table_name and au.constraint_type = 'P'  \n" +
-                "left join user_cons_columns cu on cu.constraint_name = au.constraint_name and c.column_name = cu.column_name  \n" +
-                "left join user_col_comments cmts on cmts.table_name = c.table_name and cmts.column_name = c.column_name   \n" +
-                "where c.table_name = UPPER('" + tableName + "') ";
-        return sql;
-    }
-
-    private String checkAutoCreateSql4Mysql(String tableName, String tableSchema) {
-        String sql = "SELECT a.column_Name AS columnName  ,CASE WHEN p.column_Name IS NULL THEN 'false' ELSE 'true' END  AS pkColumn  \n" +
-                "    ,CASE WHEN a.extra = 'auto_increment' THEN 'true' ELSE 'false' END  AS autoAdd,a.data_type jdbcType, column_COMMENT descr    \n" +
-                "FROM information_schema.COLUMNS  a  \n" +
-                "LEFT JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS p ON a.table_schema = p.table_schema AND a.table_name = p.TABLE_NAME AND a.COLUMN_NAME = p.COLUMN_NAME AND p.constraint_name='PRIMARY'  \n" +
-                "WHERE a.table_schema ='" + tableSchema + "' AND a.table_name = '" + tableName + "'   \n" +
-                "ORDER BY a.ordinal_position    ";
-        return sql;
-    }
-
-
-    private String checkAutoCreateSql4MsSqlServer(String tableName) {
-        String sql = "SELECT t1.name columnName,case when  t4.id is null then 'false' else 'true' end as pkColumn,   \n" +
-                "    case when  COLUMNPROPERTY( t1.id,t1.name,'IsIdentity') = 1 then 'true' else 'false' end as  autoAdd  \n" +
-                "    ,t5.name jdbcType   \n" +
-                "    ,isnull(t6.value,'') descr   \n" +
-                "FROM SYSCOLUMNS t1  \n" +
-                "left join SYSOBJECTS t2 on  t2.parent_obj = t1.id  AND t2.xtype = 'PK'   \n" +
-                "left join SYSINDEXES t3 on  t3.id = t1.id  and t2.name = t3.name    \n" +
-                "left join SYSINDEXKEYS t4 on t1.colid = t4.colid and t4.id = t1.id and t4.indid = t3.indid  \n" +
-                "left join systypes  t5 on  t1.xtype=t5.xtype  \n" +
-                "left join sys.extended_properties t6   on  t1.id=t6.major_id   and   t1.colid=t6.minor_id ";
-        return sql;
-    }
-
-    private String getKeyInfo4MsSqlServer(String tableName) {
-        String sql = "SELECT\n" +
-                "\tobj.name AS 表名,\n" +
-                "\tcol.colorder AS 序号,\n" +
-                "\tcol.name AS 列名,\n" +
-                "\tISNULL(ep.[value], '') AS 列说明,\n" +
-                "\tt.name AS 数据类型,\n" +
-                "\tcol.length AS 长度,\n" +
-                "\tISNULL(\n" +
-                "\t\tCOLUMNPROPERTY(col.id, col.name, 'Scale'),\n" +
-                "\t\t0\n" +
-                "\t) AS 小数位数,\n" +
-                "\tCASE\n" +
-                "WHEN COLUMNPROPERTY(\n" +
-                "\tcol.id,\n" +
-                "\tcol.name,\n" +
-                "\t'IsIdentity'\n" +
-                ") = 1 THEN\n" +
-                "\t'1'\n" +
-                "ELSE\n" +
-                "\t''\n" +
-                "END AS 标识,\n" +
-                " CASE\n" +
-                "WHEN EXISTS (\n" +
-                "\tSELECT\n" +
-                "\t\t1\n" +
-                "\tFROM\n" +
-                "\t\tdbo.sysindexes si\n" +
-                "\tINNER JOIN dbo.sysindexkeys sik ON si.id = sik.id\n" +
-                "\tAND si.indid = sik.indid\n" +
-                "\tINNER JOIN dbo.syscolumns sc ON sc.id = sik.id\n" +
-                "\tAND sc.colid = sik.colid\n" +
-                "\tINNER JOIN dbo.sysobjects so ON so.name = si.name\n" +
-                "\tAND so.xtype = 'PK'\n" +
-                "\tWHERE\n" +
-                "\t\tsc.id = col.id\n" +
-                "\tAND sc.colid = col.colid\n" +
-                ") THEN\n" +
-                "\t'1'\n" +
-                "ELSE\n" +
-                "\t''\n" +
-                "END AS 主键,\n" +
-                " CASE\n" +
-                "WHEN col.isnullable = 1 THEN\n" +
-                "\t'1'\n" +
-                "ELSE\n" +
-                "\t''\n" +
-                "END AS 允许空,\n" +
-                " ISNULL(comm. TEXT, '') AS 默认值\n" +
-                "FROM\n" +
-                "\tdbo.syscolumns col\n" +
-                "LEFT JOIN dbo.systypes t ON col.xtype = t.xusertype\n" +
-                "INNER JOIN dbo.sysobjects obj ON col.id = obj.id\n" +
-                "AND obj.xtype = 'U'\n" +
-                "AND obj.status >= 0\n" +
-                "LEFT JOIN dbo.syscomments comm ON col.cdefault = comm.id\n" +
-                "LEFT JOIN sys.extended_properties ep ON col.id = ep.major_id\n" +
-                "AND col.colid = ep.minor_id\n" +
-                "AND ep.name = 'MS_Description'\n" +
-                "LEFT JOIN sys.extended_properties epTwo ON obj.id = epTwo.major_id\n" +
-                "AND epTwo.minor_id = 0\n" +
-                "AND epTwo.name = 'MS_Description'\n" +
-                "WHERE\n" +
-                "\tobj.name = '" + tableName + "' --表名\n" +
-                "ORDER BY\n" +
-                "\tcol.colorder;";
-
-        return sql;
-    }
+  /*  private String getKeyInfo(String tableName, String key, String schema, String dbType, Connection connection, String keyType) throws SQLException {
+        String sql = "";
+        Statement st = connection.createStatement();
+        if ("1".equals(dbType)) {
+            sql = "SELECT\n" +
+                    "COUNT(1) c\n" +
+                    "FROM\n" +
+                    "\tinformation_schema. COLUMNS a\n" +
+                    "WHERE\n" +
+                    "\ta.extra = 'auto_increment'\n" +
+                    "AND TABLE_NAME = '" + schema + "'\n" +
+                    "AND TABLE_SCHEMA = '" + tableName + "'\n" +
+                    "AND COLUMN_NAME = '" + key + "'";
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                long c = Long.parseLong((String) rs.getString(1));
+                if (c == 1) {
+                    //说明是自增的主键哦
+                    return "Y";
+                }
+            }
+            rs.close();
+        } else if ("2".equals(dbType)) {
+            //oracle 数据库由于主键自增这块 需要创建sequence 和触发器一起 才能得知 是否自增，
+            // 而且 sequence 和触发器的定义对于表的主键 无法一一对应，所以程序无法准确界定。
+            if (keyType.toLowerCase().equals("int")) {//根据主键的类型来界定是否自增： 如果是int 型 默认就是自增了
+                return "Y";
+            }
+            return "N";
+        } else if ("3".equals(dbType)) {
+            sql = "SELECT DISTINCT\n" +
+                    "\tcol.name,\n" +
+                    "\tCASE\n" +
+                    "WHEN COLUMNPROPERTY(\n" +
+                    "\tcol.id,\n" +
+                    "\tcol.name,\n" +
+                    "\t'IsIdentity'\n" +
+                    ") = 1 THEN\n" +
+                    "\t'1'\n" +
+                    "ELSE\n" +
+                    "\t''\n" +
+                    "END AS 标识\n" +
+                    "FROM\n" +
+                    "\tdbo.syscolumns col where col.name='" + key + "'";
+            ResultSet rs = st.executeQuery(sql);
+            while (rs.next()) {
+                String a = (String) rs.getString(2);
+                if (a.equals("1")) {
+                    //说明是自增的主键哦
+                    return "Y";
+                }
+            }
+            rs.close();
+        }
+        return "N";
+    }*/
 
     private void handleNumberLength(TableFieldVo field, ResultSet rs, int dbType) throws SQLException {
         //String lengthStr = rs.getString(3);
@@ -413,7 +381,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
         String decimalLength = rs.getString(5);
         long decimalLen = decimalLength != null ? Long.parseLong(decimalLength) : 0L;
         if (dbType != 2) {
-            //非oracle数据库
+            //非oracle数据库S
             field.setLength(len);
             field.setDecimalLength(decimalLen);
             return;
@@ -472,7 +440,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
             return "";
         }
         StringBuilder sql = new StringBuilder(1024);
-        sql.append(" select    COLS.COLUMN_NAME,");
+        sql.append(" select COLS.COLUMN_NAME,");
         sql.append(" COLS.DATA_TYPE,");
         sql.append(" case when COLS.DATA_TYPE in ('NCHAR','NVARCHAR2') then COLS.DATA_LENGTH/2 ");
         sql.append(" when COLS.DATA_TYPE in ('LONG') then 2*1024*1024*1024 ");//2G字节
@@ -482,8 +450,8 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
         sql.append(" case when COLS.DATA_TYPE in ('NUMBER','INTEGER','FLOAT','BINARY_FLOAT','BINARY_DOUBLE') then 1 else 0 end ,");
         sql.append(" DECODE(CTS.COLUMN_NAME, NULL, 0, 1),");
         sql.append(" COMMENTS.COMMENTS, ");
-        sql.append(" decode (cols.NULLABLE,'N',0,1) ");
-
+        sql.append(" decode (cols.NULLABLE,'N',0,1), ");
+        sql.append(" decode (cols.DATA_TYPE,'NUMBER','Y','INTEGER','Y','N') autoAdd ");
         sql.append(" from user_tab_cols COLS,");
         sql.append("  (select CCOLS.table_name, CCOLS.column_name");
         sql.append(" FROM USER_CONS_COLUMNS CCOLS, USER_CONSTRAINTS CONS");
@@ -539,6 +507,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
         sql.append(" ),");
         sql.append(" CAST (ep. VALUE AS NVARCHAR(1000)),");
         sql.append(" CASE WHEN col.is_nullable=0 THEN 0 ELSE 1 END");
+        sql.append(" CASE WHEN COLUMNPROPERTY(col.object_id, col.name, 'IsIdentity') = 1 THEN '1' ELSE '' END   autoAdd ");
         sql.append(" FROM sys.objects obj");
         sql.append(" INNER JOIN sys.columns col ON obj.object_id = col.object_id");
         sql.append(" LEFT JOIN sys.types t ON t.user_type_id = col.user_type_id");
@@ -571,8 +540,9 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
         sql.append(" case when DATA_TYPE in ('tinyint','smallint','mediumint','int','integer','bigint','float','double','decimal','numeric','real') then 1 else 0 end ,");
         sql.append(" if(COLUMN_KEY = 'PRI' , 1 , 0),");
         sql.append(" COLUMN_COMMENT,");
-        sql.append(" if(COLUMN_KEY = 'NO' , 0 , 1)");
-        sql.append(" FROM INFORMATION_SCHEMA.COLUMNS");
+        sql.append(" if(COLUMN_KEY = 'NO' , 0 , 1),");
+        sql.append(" CASE WHEN extra = 'auto_increment' THEN 'true' ELSE 'false' END  AS autoAdd ");
+        sql.append(" FROM INFORMATION_SCHEMA.COLUMNS ");
         sql.append(" WHERE TABLE_NAME = '" + tableName.toLowerCase() + "' and TABLE_SCHEMA='" + dbName + "'");
         sql.append(" order by ORDINAL_POSITION asc");
         return sql.toString();
