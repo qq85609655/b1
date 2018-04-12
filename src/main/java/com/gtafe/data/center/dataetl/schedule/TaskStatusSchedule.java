@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
+import com.gtafe.data.center.system.config.vo.SysConfigVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +40,16 @@ public class TaskStatusSchedule {
 
     @Resource
     private DatasourceMapper datasourceMapper;
+
+    @Resource
+    private SysConfigMapper sysConfigMapper;
     Logger logger = LoggerFactory.getLogger(TaskStatusSchedule.class);
 
 
     /**
      * 定时任务 每十分钟扫描一次转换任务： 针对机器和运行任务进行组装结果
      */
-    @Scheduled(cron = "0 0/2 * * * *")
+    @Scheduled(cron = "0 0/60 * * * *")
     // @Scheduled(cron = "0 02 17 ? * *")
     public void refrashTaskStatus() {
 
@@ -59,12 +64,13 @@ public class TaskStatusSchedule {
         etlMapper.cleanAllStatus();
         // 扫描所有有效的转换任务
         List<DataTaskVo> dataTaskVolist = etlMapper.getAllTask();
-        List<DatasourceVO> centerList = this.datasourceMapper.queryCenterData();
+        //  List<DatasourceVO> centerList = this.datasourceMapper.queryCenterData();
+
         // 中心库
-        DatasourceVO centerVo = centerList.get(0);
+        SysConfigVo centerVo = this.sysConfigMapper.queryCenterDbInfo();
         int centerStatus = 2;
         int thirdStatus = 2;
-        ConnectDB tDb = StringUtil.getEntityBy(centerVo);
+        ConnectDB tDb = StringUtil.getEntityBySysConfig(centerVo);
         Connection connection = null;
         try {
             connection = tDb.getConn();
@@ -72,7 +78,7 @@ public class TaskStatusSchedule {
                 centerStatus = 1;// ok
                 System.out.println("中心庫鏈接ok!");
             } else {
-                boolean machineFlag = StringUtil.ping(centerVo.getHost(), 1, 2);
+                boolean machineFlag = StringUtil.ping(centerVo.getIpAddress(), 1, 2);
                 if (machineFlag) {
                     centerStatus = 2; // database is ok
                     System.out.println("中心庫機器ok ,但是數據庫連不上了!");
@@ -88,7 +94,7 @@ public class TaskStatusSchedule {
 
         // 1:首先判断是否数据库能取得链接 如果可以 则机器也ok了，然后需要读取转换日志，获取最近一次异常日志
         // 如果没有异常日志，则显示 一起正常
-        System.out.println("讀取出來所有的有效任務的數量為:"+dataTaskVolist.size()+"個..");
+        //  System.out.println("讀取出來所有的有效任務的數量為:" + dataTaskVolist.size() + "個..");
         for (DataTaskVo vo : dataTaskVolist) {
             EtlTaskStatus etlTaskStatus = new EtlTaskStatus();
             etlTaskStatus.setTaskId(vo.getTaskId());

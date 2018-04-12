@@ -13,6 +13,8 @@ import com.gtafe.data.center.dataetl.schedule.mapper.EtlMapper;
 import com.gtafe.data.center.runadmin.etlerrorlog.mapper.KettleLogMapper;
 import com.gtafe.data.center.runadmin.etlerrorlog.vo.KettleLogVO;
 import com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus;
+import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
+import com.gtafe.data.center.system.config.vo.SysConfigVo;
 import com.gtafe.framework.base.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,7 +132,7 @@ public class NodeWatchServiceImpl extends BaseController implements NodeWatchSer
             int errorSize = size - successSize;
             result.setNodeWatchVos(nodeList);*/
 
-            List<EtlTaskStatus> statusList = this.dataTaskMapper.queryTaskStatusList(orgIds, -1, 19,0);
+            List<EtlTaskStatus> statusList = this.dataTaskMapper.queryTaskStatusList(orgIds, -1, 19, 0);
             if (statusList.isEmpty()) {
                 result.setTotalCounts(0);
                 result.setErrorCounts(0);
@@ -162,6 +164,7 @@ public class NodeWatchServiceImpl extends BaseController implements NodeWatchSer
         }
         return result;
     }
+
     @Autowired
     EtlMapper etlMapper;
 
@@ -169,26 +172,31 @@ public class NodeWatchServiceImpl extends BaseController implements NodeWatchSer
     private KettleLogMapper kettleLogMapper;
 
     @Resource
+    private SysConfigMapper sysConfigMapper;
+
+    @Resource
     private DatasourceMapper datasourceMapper;
+
     @Override
     public String doRefrashTaskStatus() {
         // 清空状态表数据
         etlMapper.cleanAllStatus();
         // 扫描所有有效的转换任务
         List<DataTaskVo> dataTaskVolist = etlMapper.getAllTask();
-        List<DatasourceVO> centerList = this.datasourceMapper.queryCenterData();
+   /*     List<DatasourceVO> centerList = this.datasourceMapper.queryCenterData();
         // 中心库
-        DatasourceVO centerVo = centerList.get(0);
+        DatasourceVO centerVo = centerList.get(0);*/
         int centerStatus = 2;
         int thirdStatus = 2;
-        ConnectDB tDb = StringUtil.getEntityBy(centerVo);
+        SysConfigVo vos = sysConfigMapper.queryCenterDbInfo();
+        ConnectDB tDb = StringUtil.getEntityBySysConfig(vos);
         Connection connection = null;
         try {
             connection = tDb.getConn();
             if (connection != null) {
                 centerStatus = 1;// ok
             } else {
-                boolean machineFlag = StringUtil.ping(centerVo.getHost(), 1, 2);
+                boolean machineFlag = StringUtil.ping(vos.getIpAddress(), 1, 2);
                 if (machineFlag) {
                     centerStatus = 2; // database is ok
                 } else {
@@ -268,7 +276,7 @@ public class NodeWatchServiceImpl extends BaseController implements NodeWatchSer
                 etlTaskStatus.setSourceStatusName(sourceDesc.toString());
                 etlTaskStatus.setTargetStatus(thirdStatus);
                 etlTaskStatus.setTargetStatusName(targetDesc.toString());
-                etlTaskStatus.setSourceConnectionId(centerVo.getId());
+                etlTaskStatus.setSourceConnectionId(0);
                 etlTaskStatus.setTargetConnectionId(vo.getThirdConnectionId());
             } else {
                 //發佈
@@ -292,7 +300,7 @@ public class NodeWatchServiceImpl extends BaseController implements NodeWatchSer
                 etlTaskStatus.setSourceStatus(thirdStatus);
                 etlTaskStatus.setSourceStatusName(targetDesc.toString());
                 etlTaskStatus.setSourceConnectionId(vo.getThirdConnectionId());
-                etlTaskStatus.setTargetConnectionId(centerVo.getId());
+                etlTaskStatus.setTargetConnectionId(0);
             }
 
             etlTaskStatus.setErrorInfo(error.toString());

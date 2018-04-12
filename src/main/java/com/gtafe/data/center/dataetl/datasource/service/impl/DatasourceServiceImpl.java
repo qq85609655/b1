@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.gtafe.data.center.dataetl.datatask.vo.rule.TableFieldVV;
 import com.gtafe.data.center.information.code.vo.TableEntity;
 import net.bytebuddy.asm.Advice;
 import org.slf4j.Logger;
@@ -221,7 +222,6 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
             } else {
                 return tbs;
             }
-
         } catch (SQLException e) {
             LOGGER.error("SQLException");
         } finally {
@@ -230,10 +230,10 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
         return tbs;
     }
 
+
     public List<TableFieldVo> queryTableFields(DatasourceVO datasourceVO,
                                                String table) throws Exception {
         List<TableFieldVo> result = new ArrayList<TableFieldVo>();
-        List<TableFieldVo> tableFieldVoList = new ArrayList<TableFieldVo>();
         ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
         Connection connection = null;
         try {
@@ -243,7 +243,6 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
             }
             Statement st = connection.createStatement();
             String sql = "";
-         //   String sql2 = "";
             if (2 == datasourceVO.getDbType()) {
                 // oracle 的sql 生成
                 sql = genSqlStringOracle(table);
@@ -254,15 +253,11 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                 // mysql sql语句生成
                 sql = genSqlStringMySql(table, datasourceVO.getDbName());
             }
-
             LOGGER.info(sql);
             ResultSet rs = st.executeQuery(sql);
-         //   String primarykey2 = "";
-         //   String keyType = "";
             while (rs.next()) {
                 TableFieldVo field = new TableFieldVo();
                 field.setField(rs.getString(1));
-
                 field.setDataType(rs.getString(2));
                 int type = rs.getInt(6);
                 if (type == 1) {
@@ -276,13 +271,6 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                 String primarykey = rs.getString(7);
                 LOGGER.info("当前是不是主键哦：" + primarykey);
                 field.setPrimarykey(primarykey != null && "1".equals(primarykey) ? 1 : 0);
-      /*          if (primarykey != null && "1".equals(primarykey)) {
-                    primarykey2 = rs.getString(1);
-                }
-                if (primarykey != null && "1".equals(primarykey)) {
-                    keyType = rs.getString(2);
-                }
-*/
                 String comment = rs.getString(8);
                 field.setComment(comment == null ? "" : comment);
                 String nullable = rs.getString(9);
@@ -292,6 +280,115 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                 field.setIsAutoCreate(isAutoAdd);//默认设置为N 非自增
                 result.add(field);
             }
+            connection.close();
+            connection = null;
+        } catch (SQLException e) {
+            LOGGER.error("SQLException", e);
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return result;
+    }
+
+
+    public TableFieldVV queryTableFields2(DatasourceVO datasourceVO,
+                                          String table) throws Exception {
+        TableFieldVV vv = new TableFieldVV();
+        List<TableFieldVo> result = new ArrayList<TableFieldVo>();
+        ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
+        Connection connection = null;
+        StringBuilder keyComment = new StringBuilder("");
+        try {
+            connection = connectDB.getConn();
+            if (null == connection) {
+                return vv;
+            }
+            Statement st = connection.createStatement();
+            String sql = "";
+            if (2 == datasourceVO.getDbType()) {
+                // oracle 的sql 生成
+                LOGGER.info("========================oracle===============");
+                sql = genSqlStringOracle(table);
+            } else if (3 == datasourceVO.getDbType()) {
+                // sqlserver 的sql生成
+                LOGGER.info("=========================sqlserver==============");
+                sql = genSqlStringSqlServer(table);
+            } else {
+                // mysql sql语句生成
+                LOGGER.info("=========================mysql==============");
+                sql = genSqlStringMySql(table, datasourceVO.getDbName());
+            }
+            LOGGER.info(sql);
+            ResultSet rs = st.executeQuery(sql);
+            int keyCount = 0;
+            int keyAutoAddCount = 0;
+            while (rs.next()) {
+                TableFieldVo field = new TableFieldVo();
+                field.setField(rs.getString(1));
+                field.setDataType(rs.getString(2));
+                int type = rs.getInt(6);
+                if (type == 1) {
+                    LOGGER.info(type + "");
+                    this.handleNumberLength(field, rs, datasourceVO.getDbType());
+                } else {
+                    String length = rs.getString(3);
+                    long len = length != null ? Long.parseLong(length) : 0L;
+                    field.setLength(len);
+                    field.setDecimalLength(0L);
+                }
+                String primarykey = rs.getString(7);
+                LOGGER.info("当前是不是主键哦：" + primarykey);
+                field.setPrimarykey(primarykey != null && "1".equals(primarykey) ? 1 : 0);
+                String comment = rs.getString(8);
+                field.setComment(comment == null ? "" : comment);
+                String nullable = rs.getString(9);
+                field.setNullable(nullable != null && "0".equals(nullable) ? 0 : 1);
+                String isAutoAdd = rs.getString(10);
+                LOGGER.info(isAutoAdd);
+                field.setIsAutoCreate(isAutoAdd);//默认设置为N 非自增
+
+                if (primarykey != null && "1".equals(primarykey)) {
+                    keyCount++;
+                }
+                if (isAutoAdd.equals("Y")) {//主键是自增的话 就不需要再放到前台去。。。
+                    keyAutoAddCount++;
+                    continue;
+                }
+                result.add(field);
+            }
+            if (keyAutoAddCount > 0 && keyCount > 0) {
+                keyComment.append("<font color=RED>注意:当前选择的目标表主键是自增的,所以不需要选择，系统自动给隐藏了！</font>");
+            } else {
+                keyComment.append("<font color=RED>注意:当前选择的目标表 主键是非自增的 或者无主键存在！所以必须要指定值！</font>");
+            }
+            vv.setTableFieldVoList(result);
+            vv.setKeyComment(keyComment.toString());
+            vv.setKetAutoAddCount(keyAutoAddCount);
+            connection.close();
+            connection = null;
+        } catch (SQLException e) {
+            LOGGER.error("SQLException", e);
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+        return vv;
+    }
+
+
+
+      /*          if (primarykey != null && "1".equals(primarykey)) {
+                    primarykey2 = rs.getString(1);
+                }
+                if (primarykey != null && "1".equals(primarykey)) {
+                    keyType = rs.getString(2);
+                }
+*/
+
+
            /* //对主键单独来查询是否 自增 并修改 isAutoCreate
             String isAutoCreate = "";
             LOGGER.info("keyType====" + keyType);
@@ -304,19 +401,8 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                 tableFieldVoList.add(vo);
                 LOGGER.info(vo.toString());
             }*/
-            connection.close();
-            connection = null;
-        } catch (SQLException e) {
-            LOGGER.error("SQLException", e);
-        } finally {
-            if (connection != null) {
-                connection.close();
-            }
-        }
-        return tableFieldVoList;
-    }
-
-  /*  private String getKeyInfo(String tableName, String key, String schema, String dbType, Connection connection, String keyType) throws SQLException {
+  /*
+  private String getKeyInfo(String tableName, String key, String schema, String dbType, Connection connection, String keyType) throws SQLException {
         String sql = "";
         Statement st = connection.createStatement();
         if ("1".equals(dbType)) {
@@ -423,11 +509,11 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
 
     }
 
-    @Override
+ /*   @Override
     public List<DatasourceVO> queryCenterData() {
         return this.datasourceMapper.queryCenterData();
     }
-
+*/
     /**
      * 主要功能:   生成 oracle 取得表字段的SQL语句  <br>
      * 注意事项:无  <br>
@@ -506,8 +592,8 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
         sql.append(" AND ic.column_id = col.column_id");
         sql.append(" ),");
         sql.append(" CAST (ep. VALUE AS NVARCHAR(1000)),");
-        sql.append(" CASE WHEN col.is_nullable=0 THEN 0 ELSE 1 END");
-        sql.append(" CASE WHEN COLUMNPROPERTY(col.object_id, col.name, 'IsIdentity') = 1 THEN '1' ELSE '' END   autoAdd ");
+        sql.append(" CASE WHEN col.is_nullable=0 THEN 0 ELSE 1 END ,");
+        sql.append(" CASE WHEN COLUMNPROPERTY(col.object_id, col.name, 'IsIdentity') = 1 THEN 'Y' ELSE 'N' END   autoAdd ");
         sql.append(" FROM sys.objects obj");
         sql.append(" INNER JOIN sys.columns col ON obj.object_id = col.object_id");
         sql.append(" LEFT JOIN sys.types t ON t.user_type_id = col.user_type_id");

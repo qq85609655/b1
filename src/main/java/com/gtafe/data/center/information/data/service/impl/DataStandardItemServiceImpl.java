@@ -9,6 +9,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
+import com.gtafe.data.center.system.config.vo.SysConfigVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -49,6 +51,9 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
     @Resource
     private LogService logServiceImpl;
 
+
+    @Resource
+    private SysConfigMapper sysConfigMapper;
 
     static PreparedStatement ps = null;
     static ResultSet rs = null;
@@ -125,50 +130,51 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
             }
         }
         //根据子集编号自动编号 ++1
-        String subclassCode=itemVo.getSubclassCode();
-        String itemCode="";
-            //取最大的id 对应的itemCode 自动+1
-            String maxItemCode=this.dataStandardItemMapper.getMaxItemCode(subclassCode);
-            if(StringUtil.isNotBlank(maxItemCode)){
-                String [] a=maxItemCode.split(subclassCode);
-                if(a.length>1) {
-                    String numbers = a[1];
-                    if (StringUtil.isNotBlank(numbers)){
-                        Integer nn=Integer.parseInt(numbers);
-                        nn ++;
-                        if(nn>=1 && nn<9){
-                            itemCode=subclassCode+"00"+nn;
-                        }
-                        if(nn>=9 && nn<99){
-                            itemCode=subclassCode+"0"+nn;
-                        }
-                        if(nn>=99 && nn<999){
-                            itemCode=subclassCode+nn;
-                        }
+        String subclassCode = itemVo.getSubclassCode();
+        String itemCode = "";
+        //取最大的id 对应的itemCode 自动+1
+        String maxItemCode = this.dataStandardItemMapper.getMaxItemCode(subclassCode);
+        if (StringUtil.isNotBlank(maxItemCode)) {
+            String[] a = maxItemCode.split(subclassCode);
+            if (a.length > 1) {
+                String numbers = a[1];
+                if (StringUtil.isNotBlank(numbers)) {
+                    Integer nn = Integer.parseInt(numbers);
+                    nn++;
+                    if (nn >= 1 && nn < 9) {
+                        itemCode = subclassCode + "00" + nn;
+                    }
+                    if (nn >= 9 && nn < 99) {
+                        itemCode = subclassCode + "0" + nn;
+                    }
+                    if (nn >= 99 && nn < 999) {
+                        itemCode = subclassCode + nn;
                     }
                 }
-            }else{
-                itemCode=subclassCode+"001";
             }
-            itemVo.setItemCode(itemCode);
+        } else {
+            itemCode = subclassCode + "001";
+        }
+        itemVo.setItemCode(itemCode);
         this.dataStandardItemMapper.insertDataStandardItemVo(itemVo, sourceId, this.getUserId());
         LogInfo logInfo = new LogInfo();
         logInfo.setModuleId(LogConstant.Module_Standard_Item);
         logInfo.setOperType("新增");
-        logInfo.setOperContent("新增元数据:"+ itemVo.getItemCode()+"/"+itemVo.getItemName());
+        logInfo.setOperContent("新增元数据:" + itemVo.getItemCode() + "/" + itemVo.getItemName());
         this.logServiceImpl.saveLog(logInfo);
         this.rebuildTableByItem(itemVo.getSubclassCode(), sourceId);
         return true;
     }
-    
+
     /**
      * 检查是否存在资源任务使用数据表
+     *
      * @author 汪逢建
      * @date 2017年12月12日
      */
-    private void checkTaskUsing(String subclassCode,int sourceId){
+    private void checkTaskUsing(String subclassCode, int sourceId) {
         List<DataTaskVo> dataTaskVoList = this.dataTaskMapper.findTasksBySubclass(subclassCode);
-        if(!dataTaskVoList.isEmpty()) {
+        if (!dataTaskVoList.isEmpty()) {
             StringBuffer fbtask = new StringBuffer("");
             StringBuffer dytask = new StringBuffer("");
             for (DataTaskVo vo : dataTaskVoList) {
@@ -179,20 +185,20 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
                 }
             }
             StringBuffer error = new StringBuffer();
-            if(fbtask.length()>0) {
-                error.append("发布资源【").append(fbtask.substring(0,fbtask.length()-1)).append("】");
+            if (fbtask.length() > 0) {
+                error.append("发布资源【").append(fbtask.substring(0, fbtask.length() - 1)).append("】");
             }
-            if(dytask.length()>0) {
-                if(error.length()>0) {
+            if (dytask.length() > 0) {
+                if (error.length() > 0) {
                     dytask.append("，");
                 }
-                error.append("订阅资源【").append(dytask.substring(0,dytask.length()-1)).append("】");
+                error.append("订阅资源【").append(dytask.substring(0, dytask.length() - 1)).append("】");
             }
             String msg = "当前元数据相关的数据表被" + error.toString() + "引用，请先删除数据资源任务!";
             throw new OrdinaryException(msg);
         }
     }
-    
+
     @Override
     public boolean rebuildSubclassTable(String subclassCode) {
         this.rebuildTableByItem(subclassCode, 1);
@@ -209,7 +215,7 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
         String tableName = subclassVo.getTableName();
         LOGGER.info(tableName);
         res = createTable(subclassCode, tableName, sourceId);
-        LOGGER.info("ok 表["+tableName+"]已经创建了。。。");
+        LOGGER.info("ok 表[" + tableName + "]已经创建了。。。");
     }
 
     /**
@@ -227,23 +233,25 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
             //开始验证中心库中是否存在此表
             List<Integer> a = new ArrayList<>();
             a.add(0);
-            List<DatasourceVO> dvos = this.datasourceMapper.queryCenterData();
+            //   List<DatasourceVO> dvos = this.datasourceMapper.queryCenterData();
             //如果不存在 或者 配置多个中心库 或者 没配置
-            if (dvos == null || dvos.size() == 0 || dvos.isEmpty()) {
-                throw new OrdinaryException("请检查中心库配置！");
-            }
-            DatasourceVO datasourceVO = dvos.get(0);
-            LOGGER.info(datasourceVO.toString());
-            ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
+            // if (dvos == null || dvos.size() == 0 || dvos.isEmpty()) {
+            //  throw new OrdinaryException("请检查中心库配置！");
+            //}
+            SysConfigVo vo = sysConfigMapper.queryCenterDbInfo();
+            // LOGGER.info(datasourceVO.toString());
+            ConnectDB connectDB = StringUtil.getEntityBySysConfig(vo);
             Connection connection = connectDB.getConn();
             if (connection != null) {
                 //mysql
-                if (datasourceVO.getDbType() == 1) {
-                    sql = "SELECT COLUMN_NAME  FROM INFORMATION_SCHEMA. COLUMNS WHERE table_name = '" + tableName + "' AND table_schema = '" + datasourceVO.getDbName() + "'";
-                } else if (datasourceVO.getDbType() == 2) {
+                String dbType = vo.getDbType();
+                int dType = Integer.parseInt(dbType);
+                if (dType == 1) {
+                    sql = "SELECT COLUMN_NAME  FROM INFORMATION_SCHEMA. COLUMNS WHERE table_name = '" + tableName + "' AND table_schema = '" + vo.getDbName() + "'";
+                } else if (dType == 2) {
                     //oracle
                     sql = "select  COLS.COLUMN_NAME COLUMN_NAME from user_tab_cols COLS   where COLS.TABLE_NAME='" + tableName + "'";
-                } else if (datasourceVO.getDbType() == 3) {
+                } else if (dType == 3) {
                     //sqlserver
                     sql = "SELECT  CAST (col.name AS NVARCHAR(128)) COLUMN_NAME FROM sys.objects obj  WHERE obj.name ='" + tableName + "'";
                 }
@@ -258,14 +266,14 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
                         LOGGER.info("旧表已经删除！");
                     }
                     ps.close();
-                    sql = this.compactCreateTableSql(subclassCode, tableName, datasourceVO.getDbType(), sourceId);
+                    sql = this.compactCreateTableSql(subclassCode, tableName, dType, sourceId);
                     LOGGER.info("建表语句sql:" + sql);
                     ps = connection.prepareStatement(sql);
                     boolean b = ps.execute();
                     flag = b;
                 } catch (SQLException e) {
                     e.printStackTrace();
-                }finally {
+                } finally {
                     connectDB.closeDbConn(connection);
                 }
             }
@@ -277,7 +285,6 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
     /**
      * 组装 建表 语句
      *
-     * @param itemVO
      * @param tableName
      * @param dbType
      * @return
@@ -286,7 +293,6 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
         List<DataStandardItemVo> itemVOS = this.dataStandardItemMapper.queryItemListBy(subclassCode, sourceId);
         return StringUtil.createSql(tableName, itemVOS, dbType);
     }
-
 
 
     private boolean dropTable(String tableName, Connection connection) {
@@ -317,7 +323,7 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
         LogInfo logInfo = new LogInfo();
         logInfo.setModuleId(LogConstant.Module_Standard_Item);
         logInfo.setOperType("修改");
-        logInfo.setOperContent("修改元数据:"+ itemVo.getItemCode()+"/"+itemVo.getItemName()+"，"+itemVo.getItemComment());
+        logInfo.setOperContent("修改元数据:" + itemVo.getItemCode() + "/" + itemVo.getItemName() + "，" + itemVo.getItemComment());
         this.logServiceImpl.saveLog(logInfo);
         if (b) {
             this.rebuildTableByItem(itemVo.getSubclassCode(), sourceId);
@@ -328,24 +334,24 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
     @Override
     public boolean deleteItemVo(int sourceId, int id) {
         DataStandardItemVo dbVo = this.dataStandardItemMapper.getItemById(id);
-        if(dbVo == null) {
+        if (dbVo == null) {
             throw new OrdinaryException("元数据不存在，或已被删除！");
         }
         this.checkTaskUsing(dbVo.getSubclassCode(), sourceId);
-        
+
         List<DataStandardItemVo> vos = this.dataStandardItemMapper.querySubclassItemList(sourceId, dbVo.getSubclassCode(),
                 1, 1);
         DataStandardVo vo = this.dataStandardMapper.getDataStandardVo(dbVo.getSubclassCode());
         if (vos.size() == 0) {
             //没有元数据的话就得删除表了
-            List<DatasourceVO> dvos = this.datasourceMapper.queryCenterData();
+    /*        List<DatasourceVO> dvos = this.datasourceMapper.queryCenterData();
             //如果不存在 或者 配置多个中心库 或者 没配置
             if (dvos == null || dvos.size() == 0 || dvos.isEmpty()) {
                 throw new OrdinaryException("请检查中心库配置！");
             }
             DatasourceVO datasourceVO = dvos.get(0);
-            LOGGER.info(datasourceVO.toString());
-            ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
+            LOGGER.info(datasourceVO.toString());*/
+            ConnectDB connectDB = StringUtil.getEntityBySysConfig(sysConfigMapper.queryCenterDbInfo());
             Connection connection = connectDB.getConn();
             this.dropTable(vo.getTableName(), connection);
         }
@@ -354,7 +360,7 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
         LogInfo logInfo = new LogInfo();
         logInfo.setModuleId(LogConstant.Module_Standard_Item);
         logInfo.setOperType("删除");
-        logInfo.setOperContent("删除元数据:"+ dbVo.getItemCode()+"/"+dbVo.getItemName());
+        logInfo.setOperContent("删除元数据:" + dbVo.getItemCode() + "/" + dbVo.getItemName());
         this.logServiceImpl.saveLog(logInfo);
         return true;
     }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.gtafe.data.center.dataetl.datatask.vo.rule.TableFieldVV;
 import org.apache.ibatis.annotations.Param;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,6 @@ public class DatasourceController extends BaseController {
 
 
     /**
-     *
      * @param param
      * @return
      */
@@ -58,18 +58,18 @@ public class DatasourceController extends BaseController {
             param.setNameOrDBName(param.getNameOrDBName().trim());
         }
         List<DatasourceVO> result = datasourceServiceImpl.queryDatasourceList(
-            param.getDbType(), param.getNameOrDBName(), param.getPageNum(), param.getPageSize(), param.getOrgIds(),param.getIsCenter());
+                param.getDbType(), param.getNameOrDBName(), param.getPageNum(), param.getPageSize(), param.getOrgIds(), param.getIsCenter());
         LOGGER.debug("Result: ", result.size());
         return new PageInfo<DatasourceVO>(result);
     }
-    
+
     @RequestMapping(path = "/queryListAll", method = RequestMethod.GET)
     @ApiOperation(value = "查询数据源或初始化查询数据源", notes = "查询数据源或初始化查询数据源")
     public @ResponseBody
-    List<DatasourceVO> queryDatasourceListAll( @RequestParam(value = "orgIds", required = false) String orgIds) {
+    List<DatasourceVO> queryDatasourceListAll(@RequestParam(value = "orgIds", required = false) String orgIds) {
         return datasourceServiceImpl.queryDatasourceListAll(orgIds);
     }
-    
+
 
     /**
      * datasourceDelete:删除数据源信息. <br/>
@@ -105,7 +105,7 @@ public class DatasourceController extends BaseController {
     boolean datasourceAdd(
             @ApiParam(name = "datasourceVO", value = "数据源信息", required = true) @RequestBody DatasourceVO datasourceVO) {
         LOGGER.debug("Query datasource: datasourceVO = {}", datasourceVO.toString());
-        if(!this.testConnect(datasourceVO)){
+        if (!this.testConnect(datasourceVO)) {
             throw new OrdinaryException("数据库连接失败！");
         }
         return this.datasourceServiceImpl.datasourceAdd(datasourceVO);
@@ -114,7 +114,6 @@ public class DatasourceController extends BaseController {
     /**
      * datasourceUpdate:修改数据源信息. <br/>
      *
-     * @param id
      * @param datasourceVO
      * @return
      * @history
@@ -127,7 +126,7 @@ public class DatasourceController extends BaseController {
     public @ResponseBody
     boolean datasourceUpdate(
             @ApiParam(name = "datasourceVO", value = "数据源信息", required = true) @RequestBody DatasourceVO datasourceVO) {
-        if(!this.testConnect(datasourceVO)){
+        if (!this.testConnect(datasourceVO)) {
             throw new OrdinaryException("数据库连接失败！");
         }
         return this.datasourceServiceImpl.datasourceUpdate(datasourceVO);
@@ -177,18 +176,18 @@ public class DatasourceController extends BaseController {
             List<String> tbs = new ArrayList<String>();
             return tbs;
         }
-    }  
-    
+    }
+
     @RequestMapping(path = "/queryTableFields", method = RequestMethod.GET)
     public @ResponseBody
-    List<TableFieldVo> queryTableFields(
+    TableFieldVV queryTableFields(
             @ApiParam(name = "connectionId", value = "数据源id", required = true) @RequestParam(name = "connectionId") int connectionId,
             @ApiParam(name = "table", value = "表名称", required = true) @RequestParam(name = "tableName") String tableName) throws Exception {
         DatasourceVO datasourceVO = this.datasourceServiceImpl.queryDatasourceInfoById(connectionId);
         if (datasourceVO != null) {
-            return this.datasourceServiceImpl.queryTableFields(datasourceVO, tableName);
+            return this.datasourceServiceImpl.queryTableFields2(datasourceVO, tableName);
         } else {
-            return new ArrayList<TableFieldVo>();
+            return new TableFieldVV();
         }
     }
 

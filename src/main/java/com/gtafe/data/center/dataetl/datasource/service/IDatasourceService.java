@@ -13,6 +13,7 @@ package com.gtafe.data.center.dataetl.datasource.service;
 import java.util.List;
 
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
+import com.gtafe.data.center.dataetl.datatask.vo.rule.TableFieldVV;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.TableFieldVo;
 
 public interface IDatasourceService {
@@ -33,10 +34,12 @@ public interface IDatasourceService {
     DatasourceVO queryDatasourceInfoById(int id);
     
     List<String> queryTablesByDatasource(DatasourceVO datasourceVO);
-    
+
     List<TableFieldVo> queryTableFields(DatasourceVO datasourceVO,String table) throws Exception;
 
+    TableFieldVV queryTableFields2(DatasourceVO datasourceVO, String table) throws Exception;
 
-    List<DatasourceVO> queryCenterData();
+
+  //  List<DatasourceVO> queryCenterData();
 
 }

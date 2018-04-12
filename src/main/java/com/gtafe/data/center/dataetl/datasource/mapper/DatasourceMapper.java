@@ -42,8 +42,11 @@ public interface DatasourceMapper extends BaseMapper {
     int getCenterId(@Param("is_center") String isCenter);
 
 
-    @Select("SELECT id, host,username,password,dbType,db_name dbName,port FROM data_etl_dataconnection  WHERE is_center = 1")
-    List<DatasourceVO> queryCenterData();
+  /*  @Select("SELECT id, host,username,password,dbType,db_name dbName,port FROM data_etl_dataconnection  WHERE is_center = 1")
+    List<DatasourceVO> queryCenterData();*/
+
+
+
 
     boolean saveIntoCenterTables(TableEntity tableVo);
 

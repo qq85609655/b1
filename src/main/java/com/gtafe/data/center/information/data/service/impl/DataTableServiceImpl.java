@@ -11,6 +11,8 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.gtafe.data.center.information.code.vo.TableEntity;
+import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
+import com.gtafe.data.center.system.config.vo.SysConfigVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,9 @@ public class DataTableServiceImpl implements DataTableService {
     @Resource
     private DataStandardItemMapper dataStandardItemMapper;
 
+    @Resource
+    private SysConfigMapper sysConfigMapper;
+
     @Override
     public boolean createTable(String subclassCode) {
         return this.createTables(Arrays.asList(new String[]{subclassCode}));
@@ -56,11 +61,12 @@ public class DataTableServiceImpl implements DataTableService {
             }
             voList.add(subclassVo);
         }
-        List<DatasourceVO> dataSourceVos = this.datasourceMapper.queryCenterData();
+  /*      List<DatasourceVO> dataSourceVos = this.datasourceMapper.queryCenterData();
         if (dataSourceVos == null || dataSourceVos.isEmpty()) {
             throw new OrdinaryException("请检查中心库配置！");
-        }
-        ConnectDB connectDB = StringUtil.getEntityBy(dataSourceVos.get(0));
+        }*/
+        SysConfigVo v = sysConfigMapper.queryCenterDbInfo();
+        ConnectDB connectDB = StringUtil.getEntityBySysConfig(v);
         Connection conn = null;
         try {
             conn = connectDB.getConn();
@@ -68,7 +74,8 @@ public class DataTableServiceImpl implements DataTableService {
                 throw new OrdinaryException("连接中心库失败，请检查中心库配置！");
             }
             for (DataStandardVo dataVo : voList) {
-                this.createTablesExecute(dataVo, conn, dataSourceVos.get(0));
+                // this.createTablesExecute(dataVo, conn, dataSourceVos.get(0));
+                this.createTablesExecute(dataVo, conn, v);
             }
         } catch (Exception e) {
             LOGGER.error("创建数据表异常!", e);
@@ -88,17 +95,18 @@ public class DataTableServiceImpl implements DataTableService {
         return true;
     }
 
-    private boolean createTablesExecute(DataStandardVo dataVo, Connection conn, DatasourceVO datasourceVo) throws SQLException {
+    // private boolean createTablesExecute(DataStandardVo dataVo, Connection conn, DatasourceVO datasourceVo) throws SQLException {
+    private boolean createTablesExecute(DataStandardVo dataVo, Connection conn, SysConfigVo v) throws SQLException {
         List<DataStandardItemVo> itemVos = this.dataStandardItemMapper.queryItemListBy(dataVo.getCode(), dataVo.getSourceId());
         if (itemVos == null || itemVos.isEmpty()) {
             LOGGER.error("表[" + dataVo.getTableName() + "]没有元数据信息，不创建表！数据子类" + dataVo.getCode() + "/" + dataVo.getName());
             return true;
         }
-        int dbType = datasourceVo.getDbType();
+        int dbType = Integer.parseInt(v.getDbType());
         String tableName = dataVo.getTableName();
         String sql = "";
         if (dbType == 1) {
-            sql = "SELECT COLUMN_NAME  FROM INFORMATION_SCHEMA. COLUMNS WHERE table_name = '" + tableName + "' AND table_schema = '" + datasourceVo.getDbName() + "'";
+            sql = "SELECT COLUMN_NAME  FROM INFORMATION_SCHEMA. COLUMNS WHERE table_name = '" + tableName + "' AND table_schema = '" + v.getDbName() + "'";
         } else if (dbType == 2) {
             //oracle
             sql = "select  COLS.COLUMN_NAME COLUMN_NAME from user_tab_cols COLS   where COLS.TABLE_NAME='" + tableName + "'";
@@ -116,7 +124,7 @@ public class DataTableServiceImpl implements DataTableService {
         }
         rs.close();
         ps.close();
-        sql = this.concatCreateTableSql(dataVo, datasourceVo, itemVos);
+        sql = this.concatCreateTableSql(dataVo, v, itemVos);
         LOGGER.info("表[" + dataVo.getTableName() + "]创建开始。" + sql);
         ps = conn.prepareStatement(sql);
         ps.execute();
@@ -142,9 +150,9 @@ public class DataTableServiceImpl implements DataTableService {
         return true;
     }
 
-    private String concatCreateTableSql(DataStandardVo dataVo, DatasourceVO datasourceVo, List<DataStandardItemVo> itemVos) {
+    private String concatCreateTableSql(DataStandardVo dataVo, SysConfigVo vo, List<DataStandardItemVo> itemVos) {
         String tableName = dataVo.getTableName();
-        int dbType = datasourceVo.getDbType();
+        int dbType = Integer.parseInt(vo.getDbType());
         if (dbType != 1) {
             throw new OrdinaryException("未支持的中心库数据库类型[" + dbType + "]");
         }
