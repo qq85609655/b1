@@ -182,10 +182,11 @@ public class DatasourceController extends BaseController {
     public @ResponseBody
     TableFieldVV queryTableFields(
             @ApiParam(name = "connectionId", value = "数据源id", required = true) @RequestParam(name = "connectionId") int connectionId,
-            @ApiParam(name = "table", value = "表名称", required = true) @RequestParam(name = "tableName") String tableName) throws Exception {
+            @ApiParam(name = "table", value = "表名称", required = true) @RequestParam(name = "tableName") String tableName,
+            @ApiParam(name = "busType", value = "业务类型", required = true) @RequestParam(name = "busType") String busType) throws Exception {
         DatasourceVO datasourceVO = this.datasourceServiceImpl.queryDatasourceInfoById(connectionId);
         if (datasourceVO != null) {
-            return this.datasourceServiceImpl.queryTableFields2(datasourceVO, tableName);
+            return this.datasourceServiceImpl.queryTableFields2(datasourceVO, tableName,busType);
         } else {
             return new TableFieldVV();
         }

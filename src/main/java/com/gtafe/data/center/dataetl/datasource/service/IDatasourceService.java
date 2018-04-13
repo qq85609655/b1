@@ -37,7 +37,7 @@ public interface IDatasourceService {
 
     List<TableFieldVo> queryTableFields(DatasourceVO datasourceVO,String table) throws Exception;
 
-    TableFieldVV queryTableFields2(DatasourceVO datasourceVO, String table) throws Exception;
+    TableFieldVV queryTableFields2(DatasourceVO datasourceVO, String table, String busType) throws Exception;
 
 
   //  List<DatasourceVO> queryCenterData();

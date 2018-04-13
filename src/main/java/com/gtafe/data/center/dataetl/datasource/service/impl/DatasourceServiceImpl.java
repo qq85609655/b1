@@ -21,8 +21,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.gtafe.data.center.dataetl.datatask.vo.rule.TableFieldVV;
-import com.gtafe.data.center.information.code.vo.TableEntity;
-import net.bytebuddy.asm.Advice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -294,7 +292,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
 
 
     public TableFieldVV queryTableFields2(DatasourceVO datasourceVO,
-                                          String table) throws Exception {
+                                          String table, String busType) throws Exception {
         TableFieldVV vv = new TableFieldVV();
         List<TableFieldVo> result = new ArrayList<TableFieldVo>();
         ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
@@ -354,7 +352,9 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                 }
                 if (isAutoAdd.equals("Y")) {//主键是自增的话 就不需要再放到前台去。。。
                     keyAutoAddCount++;
-                    continue;
+                    if (busType.equals("2")) {
+                        continue;
+                    }
                 }
                 result.add(field);
             }
@@ -514,6 +514,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
         return this.datasourceMapper.queryCenterData();
     }
 */
+
     /**
      * 主要功能:   生成 oracle 取得表字段的SQL语句  <br>
      * 注意事项:无  <br>
