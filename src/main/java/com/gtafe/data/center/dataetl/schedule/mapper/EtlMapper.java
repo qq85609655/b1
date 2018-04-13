@@ -5,6 +5,7 @@ import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
 import com.gtafe.data.center.runadmin.etlerrorlog.vo.KettleLogVO;
 import com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus;
 
+import com.gtafe.data.center.system.config.vo.SysConfigVo;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.FetchType;
 import org.springframework.stereotype.Repository;
@@ -16,81 +17,68 @@ public interface EtlMapper {
 
     @Select("select * from data_etl_task where run_status=1")
     @Results({
-            @Result(column = "task_id",property = "taskId",id = true),
-            @Result(column = "task_name",property = "taskName"),
-            @Result(column = "third_connection_id",property = "thirdConnectionId"),
-            @Result(column = "third_tablename",property = "thirdTablename"),
-            @Result(column = "business_type",property = "businessType"),
-            @Result(column = "org_id",property = "orgId"),
-            @Result(column = "center_tablename",property = "centerTablename"),
-            @Result(column = "run_expression",property = "runEexpression"),
-            @Result(column = "updatetime",property = "updateTime")
+            @Result(column = "task_id", property = "taskId", id = true),
+            @Result(column = "task_name", property = "taskName"),
+            @Result(column = "third_connection_id", property = "thirdConnectionId"),
+            @Result(column = "third_tablename", property = "thirdTablename"),
+            @Result(column = "business_type", property = "businessType"),
+            @Result(column = "org_id", property = "orgId"),
+            @Result(column = "center_tablename", property = "centerTablename"),
+            @Result(column = "run_expression", property = "runEexpression"),
+            @Result(column = "updatetime", property = "updateTime")
     })
     List<DataTaskVo> getAllTask();
 
     @Select("select * from data_etl_dataconnection where id=#{id}")
     @Results({
-            @Result(column = "id",property = "id"),
-            @Result(column = "name",property = "name"),
-            @Result(column = "dbtype",property = "dbType"),
-            @Result(column = "db_name",property = "dbName"),
-            @Result(column = "host",property = "host"),
-            @Result(column = "port",property = "port"),
-            @Result(column = "username",property = "username"),
-            @Result(column = "password",property = "password")
+            @Result(column = "id", property = "id"),
+            @Result(column = "name", property = "name"),
+            @Result(column = "dbtype", property = "dbType"),
+            @Result(column = "db_name", property = "dbName"),
+            @Result(column = "host", property = "host"),
+            @Result(column = "port", property = "port"),
+            @Result(column = "username", property = "username"),
+            @Result(column = "password", property = "password")
     })
     DatasourceVO getDSById(int id);
 
-    @Select("select * from sys_config where is_center=1")
+    @Select("select * from sys_config ")
     @Results({
-            @Result(column = "id",property = "id"),
-            @Result(column = "name",property = "centerdb_dbName"),
-            @Result(column = "dbtype",property = "centerdb_dbType"),
-            @Result(column = "db_name",property = "centerdb_dbName"),
-            @Result(column = "host",property = "centerdb_ipAddress"),
-            @Result(column = "port",property = "centerdb_port"),
-            @Result(column = "username",property = "centerdb_username"),
-            @Result(column = "password",property = "centerdb_password")
+            @Result(property = "dbType", column = "centerdb_dbType"),
+            @Result(property = "dbName", column = "centerdb_dbName"),
+            @Result(property = "ipAddress", column = "centerdb_ipAddress"),
+            @Result(property = "port", column = "centerdb_port"),
+            @Result(property = "username", column = "centerdb_username"),
+            @Result(property = "password", column = "centerdb_password")
     })
-    DatasourceVO getCenterDS();
+    SysConfigVo getCenterDS();
 
 
-
-    @Select("select * from sys_config where is_center=1")
+    @Select("select * from data_etl_dataconnection where is_center=1")
     @Results({
-            @Result(column = "id",property = "id"),
-            @Result(column = "name",property = "name"),
-            @Result(column = "dbtype",property = "dbType"),
-            @Result(column = "db_name",property = "dbName"),
-            @Result(column = "host",property = "host"),
-            @Result(column = "port",property = "port"),
-            @Result(column = "username",property = "username"),
-            @Result(column = "password",property = "password")
+            @Result(column = "id", property = "id"),
+            @Result(column = "name", property = "name"),
+            @Result(column = "dbtype", property = "dbType"),
+            @Result(column = "db_name", property = "dbName"),
+            @Result(column = "host", property = "host"),
+            @Result(column = "port", property = "port"),
+            @Result(column = "username", property = "username"),
+            @Result(column = "password", property = "password")
     })
     DatasourceVO getCenterDS2();
 
 
-
-
-
-
-
-
-
-
-
-
     @Select("select * from data_etl_task where task_id=#{id}")
     @Results({
-            @Result(column = "task_id",property = "taskId"),
-            @Result(column = "task_name",property = "taskName"),
-            @Result(column = "third_connection_id",property = "thirdConnectionId"),
-            @Result(column = "third_tablename",property = "thirdTablename"),
-            @Result(column = "center_tablename",property = "centerTablename"),
-            @Result(column = "business_type",property = "businessType"),
-            @Result(column = "run_expression",property = "runEexpression"),
-            @Result(column = "run_status",property = "runStatus"),
-            @Result(column = "task_id",property = "steps",many = @Many(select = "getStepById",fetchType = FetchType.EAGER))
+            @Result(column = "task_id", property = "taskId"),
+            @Result(column = "task_name", property = "taskName"),
+            @Result(column = "third_connection_id", property = "thirdConnectionId"),
+            @Result(column = "third_tablename", property = "thirdTablename"),
+            @Result(column = "center_tablename", property = "centerTablename"),
+            @Result(column = "business_type", property = "businessType"),
+            @Result(column = "run_expression", property = "runEexpression"),
+            @Result(column = "run_status", property = "runStatus"),
+            @Result(column = "task_id", property = "steps", many = @Many(select = "getStepById", fetchType = FetchType.EAGER))
     })
     DataTaskVo getDataTaskById(int id);
 
@@ -105,7 +93,6 @@ public interface EtlMapper {
 
     @Delete("delete from data_etl_task_status where task_id is not null ")
     void cleanAllStatus();
- 
-    
-    
+
+
 }

@@ -262,7 +262,7 @@ public class StringUtil {
     /**
      * 利用MD5进行加密
      *
-     * @param str 待加密的字符串
+     * @param 待加密的字符串
      * @return 加密后的字符串
      * @throws NoSuchAlgorithmException     没有这种产生消息摘要的算法
      * @throws UnsupportedEncodingException
@@ -1089,5 +1089,20 @@ public class StringUtil {
             connectDB.pwd = vo.getPassword();
         }
         return connectDB;
+    }
+
+    public static DatasourceVO getBySysConfig(SysConfigVo vo) {
+        DatasourceVO vo1 = new DatasourceVO();
+        if (vo != null) {
+            vo1.setName(vo.getDbName());
+            vo1.setDbName(vo.getDbName());
+            vo1.setDbType(Integer.parseInt(vo.getDbType()));
+            vo1.setHost(vo.getIpAddress());
+            vo1.setUsername(vo.getUsername());
+            vo1.setPassword(vo.getPassword());
+            vo1.setPort(Integer.parseInt(vo.getPort()));
+            vo1.setTableSpaces(vo.getTableSpaces());
+        }
+        return vo1;
     }
 }

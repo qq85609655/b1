@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,20 +49,20 @@ public class EtlTrans {
     //源步骤，表输入步骤，输出步骤
     private StepMeta fromStep = null, inputStep = null, outputStep = null;
 
-    //@Value("${db.jdbc.logusername}")
-    private String logusername="root";
+    @Value("${db.jdbc.logusername}")
+    private String logusername ;//= "root";
 
-    //@Value("${db.jdbc.logpassword}")
-    private String logpassword="123456";
+    @Value("${db.jdbc.logpassword}")
+    private String logpassword;// = "GTA01230!!!";
 
-    //@Value("${db.jdbc.logip}")
-    private String logip="10.1.136.194";
+    @Value("${db.jdbc.logip}")
+    private String logip ;//= "10.10.130.147";
 
-   // @Value("${db.jdbc.logport}")
-    private int logport=3306;
+     @Value("${db.jdbc.logport}")
+    private int logport ;//= 3306;
 
     //@Value("${db.jdbc.logdbname}")
-    private String logdbname="gta_data_center";
+    private String logdbname = "gta_data_center";
 
     @Autowired
     EtlMapper etlMapper;
@@ -130,16 +131,16 @@ public class EtlTrans {
 
         //源表名和目标表名
         String sourceDBName, targetDBName;
-
+        SysConfigVo vo = etlMapper.getCenterDS();
         //根据业务类型定义数据源
         if (dataTask.getBusinessType() == 1) {
             sourceDS = etlMapper.getDSById(dataTask.getThirdConnectionId());
-            targetDS = etlMapper.getCenterDS();
+            targetDS = StringUtil.getBySysConfig(vo);
             sourceDBName = dataTask.getThirdTablename();
             targetDBName = dataTask.getCenterTablename();
         } else if (dataTask.getBusinessType() == 2) {
             targetDS = etlMapper.getDSById(dataTask.getThirdConnectionId());
-            sourceDS = etlMapper.getCenterDS();
+            sourceDS = StringUtil.getBySysConfig(vo);
             targetDBName = dataTask.getThirdTablename();
             sourceDBName = dataTask.getCenterTablename();
         } else {
@@ -192,7 +193,7 @@ public class EtlTrans {
 
             List<StepMeta> stepMeta = tranStep(stepType, String.valueOf(stepInfo.get(1)) + String.valueOf(stepInfo.get(0)), String.valueOf(stepInfo.get(0)), stepstr);
 
-            if (stepMeta .size()==0) {
+            if (stepMeta.size() == 0) {
                 etlMapper.stopErrorTask(taskId);
                 return;
             }
@@ -293,8 +294,8 @@ public class EtlTrans {
 
         trans.waitUntilFinished();
 
-        KettleLogVO kettleLogVO=etlMapper.taskStatus(trans.getLogChannelId());
-        if (kettleLogVO!=null && kettleLogVO.getErrors()>0) {
+        KettleLogVO kettleLogVO = etlMapper.taskStatus(trans.getLogChannelId());
+        if (kettleLogVO != null && kettleLogVO.getErrors() > 0) {
             etlMapper.stopErrorTask(taskId);
         }
         LOGGER.info("channelId===", trans.getLogChannelId());
