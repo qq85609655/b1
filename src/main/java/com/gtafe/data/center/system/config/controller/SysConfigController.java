@@ -38,12 +38,28 @@ public class SysConfigController extends BaseController {
       //  return this.sysConfigServiceImpl.getSysConfigVO();
     }
 
+
+
+
     @RequestMapping(path = "/updateEmail", method = RequestMethod.POST)
     public boolean updateEmail(@RequestBody SysConfigVo vo) throws Exception {
         boolean result =  this.sysConfigServiceImpl.updateEmail(vo);
         sysConfigServiceImpl.flushSystemInfo(false);
         return result;
     }
+
+
+
+
+
+    @RequestMapping(path = "/updateCenterDb", method = RequestMethod.POST)
+    public boolean updateCenterDb(@RequestBody SysConfigVo vo) throws Exception {
+        boolean result =  this.sysConfigServiceImpl.updateCenterDb(vo);
+        sysConfigServiceImpl.flushSystemInfo(false);
+        return result;
+    }
+
+
 
     @RequestMapping(path = "/updateSys", method = RequestMethod.POST)
     public boolean updateSys(@RequestBody SysConfigVo vo) throws Exception {

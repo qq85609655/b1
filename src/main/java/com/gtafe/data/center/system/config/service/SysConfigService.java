@@ -57,4 +57,6 @@ public interface SysConfigService {
     List<TableEntity> findByConnection(SysConfigVo vo, Connection connection);
 
     boolean saveIntoVo(List<TableEntity> tableVos);
+
+    boolean updateCenterDb(SysConfigVo vo);
 }

@@ -74,5 +74,7 @@ public interface SysConfigMapper {
             "centerdb_username=#{vo.username}," +
             "centerdb_password=#{vo.password}," +
             "centerdb_ipAddress=#{vo.ipAddress}")
-    void saveCenterDbConfig(@Param("vo") SysConfigVo vo);
+    boolean saveCenterDbConfig(@Param("vo") SysConfigVo vo);
+
+
 }

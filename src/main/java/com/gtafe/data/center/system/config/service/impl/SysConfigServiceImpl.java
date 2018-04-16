@@ -374,4 +374,10 @@ public class SysConfigServiceImpl extends BaseService implements SysConfigServic
     public boolean saveIntoVo(List<TableEntity> tableVos) {
         return this.dataTableServiceImpl.saveIntoCenterTables(tableVos);
     }
+
+
+    @Override
+    public boolean updateCenterDb(SysConfigVo vo) {
+        return this.sysConfigMapper.saveCenterDbConfig(vo);
+    }
 }
