@@ -538,7 +538,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
         sql.append(" DECODE(CTS.COLUMN_NAME, NULL, 0, 1),");
         sql.append(" COMMENTS.COMMENTS, ");
         sql.append(" decode (cols.NULLABLE,'N',0,1), ");
-        sql.append(" decode (cols.DATA_TYPE,'NUMBER','Y','INTEGER','Y','N') autoAdd ");
+        sql.append(" 'N'  autoAdd ");
         sql.append(" from user_tab_cols COLS,");
         sql.append("  (select CCOLS.table_name, CCOLS.column_name");
         sql.append(" FROM USER_CONS_COLUMNS CCOLS, USER_CONSTRAINTS CONS");
