@@ -202,18 +202,43 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                 Statement st = connection.createStatement();
                 String sql = "";
                 if (datasourceVO.getDbType() == 2) {
-                    sql = "select table_name from user_tables";
+                    sql = "select table_name tableName ,'TABLE' as typeStr from user_tables " +
+                            "union all " +
+                            "select view_name viewName,'VIEW' as typeStr from user_views " +
+                            "";
                 } else if (datasourceVO.getDbType() == 3) {
-                    sql = "select name from sys.tables go";
+                    sql = "select name,'TABLE' AS type from sys.tables\n" +
+                            "UNION\n" +
+                            "SELECT name,'VIEW' AS type from sys.views;\n" +
+                            " GO";
                 } else {
-                    sql = "SELECT table_name FROM information_schema.tables WHERE table_schema='"
-                            + datasourceVO.getDbName()
-                            + "' AND table_type='base table'";
+                    sql = "SELECT\n" +
+                            "\ttable_name,\n" +
+                            "TABLE_TYPE\n" +
+                            "FROM\n" +
+                            "\tinformation_schema. TABLES\n" +
+                            "WHERE\n" +
+                            "\ttable_schema = '" + datasourceVO.getDbName() + "'\n" +
+                            "AND table_type = 'base table'\n" +
+                            "UNION ALL\n" +
+                            "SELECT\n" +
+                            "\ttable_name,\n" +
+                            "TABLE_TYPE\n" +
+                            "FROM\n" +
+                            "\tinformation_schema. TABLES\n" +
+                            "WHERE\n" +
+                            "\ttable_schema = '" + datasourceVO.getDbName() + "'\n" +
+                            "AND table_type = 'VIEW'";
                 }
                 ResultSet rs = st.executeQuery(sql);
                 while (rs.next()) {
                     String name = rs.getString(1);
-                    tbs.add(name);
+                    String type = rs.getString(2);
+                    if (type.equals("VIEW")) {
+                        tbs.add(name + "#V");
+                    } else {
+                        tbs.add(name + "#T");
+                    }
                 }
                 connection.close();
                 return tbs;
@@ -292,7 +317,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
 
 
     public TableFieldVV queryTableFields2(DatasourceVO datasourceVO,
-                                          String table, String busType) throws Exception {
+                                          String table, String busType, String tType) throws Exception {
         TableFieldVV vv = new TableFieldVV();
         List<TableFieldVo> result = new ArrayList<TableFieldVo>();
         ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
@@ -350,18 +375,23 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                 if (primarykey != null && "1".equals(primarykey)) {
                     keyCount++;
                 }
-                if (isAutoAdd.equals("Y")) {//主键是自增的话 就不需要再放到前台去。。。
-                    keyAutoAddCount++;
-                    if (busType.equals("2")) {
-                        continue;
+
+                if (tType.equals("T")) {
+                    if (isAutoAdd.equals("Y")) {//主键是自增的话 就不需要再放到前台去。。。
+                        keyAutoAddCount++;
+                        if (busType.equals("2")) {
+                            continue;
+                        }
                     }
                 }
                 result.add(field);
             }
-            if (keyAutoAddCount > 0 && keyCount > 0) {
-                keyComment.append("<font color=RED>注意:当前选择的目标表主键是自增的,所以不需要选择，系统自动给隐藏了！</font>");
-            } else {
-                keyComment.append("<font color=RED>注意:当前选择的目标表 主键是非自增的 或者无主键存在！所以必须要指定值！</font>");
+            if (tType.equals("T")) {
+                if (keyAutoAddCount > 0 && keyCount > 0) {
+                    keyComment.append("<font color=RED>注意:当前选择的目标表主键是自增的,所以不需要选择，系统自动给隐藏了！</font>");
+                } else {
+                    keyComment.append("<font color=RED>注意:当前选择的目标表 主键是非自增的 或者无主键存在！所以必须要指定值！</font>");
+                }
             }
             vv.setTableFieldVoList(result);
             vv.setKeyComment(keyComment.toString());
