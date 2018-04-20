@@ -13,10 +13,17 @@ import java.util.List;
 //执行sql 脚本
 public class ExecuteSql extends BaseStep {
     String stepstr;
+    int busType;
 
     public ExecuteSql(int locationX, int locattionY, String name, String stepstr) {
         super(locationX, locattionY, name);
         this.stepstr = stepstr;
+    }
+
+    public ExecuteSql(int locationX, int locattionY, String name, String stepstr,int busType) {
+        super(locationX, locattionY, name);
+        this.stepstr = stepstr;
+        this.busType=busType;
     }
 
     public List<StepMeta> executeSqlStep() {

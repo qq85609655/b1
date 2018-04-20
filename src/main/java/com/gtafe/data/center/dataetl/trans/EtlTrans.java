@@ -50,16 +50,16 @@ public class EtlTrans {
     private StepMeta fromStep = null, inputStep = null, outputStep = null;
 
     @Value("${db.jdbc.logusername}")
-    private String logusername ;//= "root";
+    private String logusername;//= "root";
 
     @Value("${db.jdbc.logpassword}")
     private String logpassword;// = "GTA01230!!!";
 
     @Value("${db.jdbc.logip}")
-    private String logip ;//= "10.10.130.147";
+    private String logip;//= "10.10.130.147";
 
-     @Value("${db.jdbc.logport}")
-    private int logport ;//= 3306;
+    @Value("${db.jdbc.logport}")
+    private int logport;//= 3306;
 
     //@Value("${db.jdbc.logdbname}")
     private String logdbname = "gta_data_center";
@@ -129,16 +129,17 @@ public class EtlTrans {
         logDS.setPassword(logpassword);
         logDS.setDbName(logdbname);
 
+        int busType = dataTask.getBusinessType();
         //源表名和目标表名
         String sourceDBName, targetDBName;
         SysConfigVo vo = etlMapper.getCenterDS();
         //根据业务类型定义数据源
-        if (dataTask.getBusinessType() == 1) {
+        if (busType == 1) {
             sourceDS = etlMapper.getDSById(dataTask.getThirdConnectionId());
             targetDS = StringUtil.getBySysConfig(vo);
             sourceDBName = dataTask.getThirdTablename();
             targetDBName = dataTask.getCenterTablename();
-        } else if (dataTask.getBusinessType() == 2) {
+        } else if (busType == 2) {
             targetDS = etlMapper.getDSById(dataTask.getThirdConnectionId());
             sourceDS = StringUtil.getBySysConfig(vo);
             targetDBName = dataTask.getThirdTablename();
@@ -191,7 +192,7 @@ public class EtlTrans {
 
             int stepType = (int) stepInfo.get(2);
 
-            List<StepMeta> stepMeta = tranStep(stepType, String.valueOf(stepInfo.get(1)) + String.valueOf(stepInfo.get(0)), String.valueOf(stepInfo.get(0)), stepstr);
+            List<StepMeta> stepMeta = tranStep(stepType, String.valueOf(stepInfo.get(1)) + String.valueOf(stepInfo.get(0)), String.valueOf(stepInfo.get(0)), stepstr, busType,targetDS);
 
             if (stepMeta.size() == 0) {
                 etlMapper.stopErrorTask(taskId);
@@ -367,7 +368,7 @@ public class EtlTrans {
         return stepInfo;
     }
 
-    private List<StepMeta> tranStep(int stepType, String name, String stepId, String stepstr) {
+    private List<StepMeta> tranStep(int stepType, String name, String stepId, String stepstr, int busType,DatasourceVO targetDS) {
 
         List<StepMeta> stepMeta = new ArrayList<>();
 
@@ -457,6 +458,19 @@ public class EtlTrans {
                 UniqueRowsByHashSet uniqueRowsByHashSet = new UniqueRowsByHashSet(locationX, 100, name, stepstr);
                 stepMeta.add(uniqueRowsByHashSet.unique());
                 break;
+
+            //动态值映射
+            case 15:
+                    DynamicValueMapper dynamicValueMapper = new DynamicValueMapper(locationX, 100, name, stepstr, targetDS);
+                    stepMeta.addAll(dynamicValueMapper.valueMapperStep());
+                break;
+
+            // 执行sql 脚本
+            case 16:
+                ExecuteSql executeSql = new ExecuteSql(locationX, 100, name, stepstr,busType);
+                stepMeta.addAll(executeSql.executeSqlStep());
+                break;
+
             default:
 
         }
