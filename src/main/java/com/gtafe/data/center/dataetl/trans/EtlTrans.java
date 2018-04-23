@@ -61,8 +61,8 @@ public class EtlTrans {
     @Value("${db.jdbc.logport}")
     private int logport;//= 3306;
 
-    //@Value("${db.jdbc.logdbname}")
-    private String logdbname = "gta_data_center";
+    @Value("${db.jdbc.logdbname}")
+    private String logdbname;
 
     @Autowired
     EtlMapper etlMapper;
@@ -134,15 +134,15 @@ public class EtlTrans {
         String sourceDBName, targetDBName;
         SysConfigVo vo = etlMapper.getCenterDS();
         //根据业务类型定义数据源
-        if (busType == 1) {
+        if (busType == 1) {//发布 从 第三方库 表数据 到 中心库 表数据
             sourceDS = etlMapper.getDSById(dataTask.getThirdConnectionId());
             targetDS = StringUtil.getBySysConfig(vo);
-            sourceDBName = dataTask.getThirdTablename();
+            sourceDBName = dataTask.getThirdTablename().split("#")[0];
             targetDBName = dataTask.getCenterTablename();
-        } else if (busType == 2) {
+        } else if (busType == 2) { // 订阅 从中心库表数据 到 第三方库表数据
             targetDS = etlMapper.getDSById(dataTask.getThirdConnectionId());
             sourceDS = StringUtil.getBySysConfig(vo);
-            targetDBName = dataTask.getThirdTablename();
+            targetDBName = dataTask.getThirdTablename().split("#")[0];
             sourceDBName = dataTask.getCenterTablename();
         } else {
             etlMapper.stopErrorTask(taskId);
@@ -192,7 +192,7 @@ public class EtlTrans {
 
             int stepType = (int) stepInfo.get(2);
 
-            List<StepMeta> stepMeta = tranStep(stepType, String.valueOf(stepInfo.get(1)) + String.valueOf(stepInfo.get(0)), String.valueOf(stepInfo.get(0)), stepstr, busType,targetDS);
+            List<StepMeta> stepMeta = tranStep(stepType, String.valueOf(stepInfo.get(1)) + String.valueOf(stepInfo.get(0)), String.valueOf(stepInfo.get(0)), stepstr, busType, targetDS);
 
             if (stepMeta.size() == 0) {
                 etlMapper.stopErrorTask(taskId);
@@ -368,7 +368,7 @@ public class EtlTrans {
         return stepInfo;
     }
 
-    private List<StepMeta> tranStep(int stepType, String name, String stepId, String stepstr, int busType,DatasourceVO targetDS) {
+    private List<StepMeta> tranStep(int stepType, String name, String stepId, String stepstr, int busType, DatasourceVO targetDS) {
 
         List<StepMeta> stepMeta = new ArrayList<>();
 
@@ -460,14 +460,14 @@ public class EtlTrans {
                 break;
 
             //动态值映射
-            case 15:
-                    DynamicValueMapper dynamicValueMapper = new DynamicValueMapper(locationX, 100, name, stepstr, targetDS);
-                    stepMeta.addAll(dynamicValueMapper.valueMapperStep());
+            case 16:
+                DynamicValueMapper dynamicValueMapper = new DynamicValueMapper(locationX, 100, name, stepstr, targetDS);
+                stepMeta.addAll(dynamicValueMapper.valueMapperStep());
                 break;
 
             // 执行sql 脚本
-            case 16:
-                ExecuteSql executeSql = new ExecuteSql(locationX, 100, name, stepstr,busType);
+            case 15:
+                ExecuteSql executeSql = new ExecuteSql(locationX, 100, name, stepstr, busType);
                 stepMeta.addAll(executeSql.executeSqlStep());
                 break;
 

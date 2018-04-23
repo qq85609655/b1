@@ -91,7 +91,8 @@ public class Utils {
         Connection connection = connectDB.getConn();
         if (connection != null) {
             Statement st = connection.createStatement();
-            String sql = "select " + dynamicValueMappingVo.getSourceField() + " from  " + dynamicValueMappingVo.getReleaseTableName() + " ";
+            String sql = "select distinct " + dynamicValueMappingVo.getTargetFieldName() + " from  " + dynamicValueMappingVo.getReleaseTableName() + " ";
+            System.out.println("1====" + sql);
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
                 String str = (String) rs.getString(1);
@@ -120,10 +121,12 @@ public class Utils {
         if (connection != null) {
             Statement st = connection.createStatement();
             String sql = "select distinct  t." + dynamicValueMappingVo.getTargetFieldName() + " " +
-                    " from  " + dynamicValueMappingVo.getReleaseTableName() + " t where  t." + dynamicValueMappingVo.getReleaseFieldName() + "  " + dynamicValueMappingVo.getReleaseRalation() + str;
+                    " from  " + dynamicValueMappingVo.getReleaseTableName() + " t where  t." + dynamicValueMappingVo.getReleaseFieldName() + "  =  " + str;
+            System.out.println("2====" + sql);
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
                 res = rs.getString(1);
+                System.out.println("res====" + res);
                 if (StringUtil.isNotBlank(str)) {
                     break;
                 }
