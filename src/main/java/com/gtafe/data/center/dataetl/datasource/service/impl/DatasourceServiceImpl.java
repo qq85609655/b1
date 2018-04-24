@@ -193,7 +193,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
     }
 
     @Override
-    public List<String> queryTablesByDatasource(DatasourceVO datasourceVO) {
+    public List<String> queryTablesByDatasource(DatasourceVO datasourceVO, String busType) {
         List<String> tbs = new ArrayList<String>();
         ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
         try {
@@ -202,33 +202,52 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                 Statement st = connection.createStatement();
                 String sql = "";
                 if (datasourceVO.getDbType() == 2) {
-                    sql = "select table_name tableName ,'TABLE' as typeStr from user_tables " +
-                            "union all " +
-                            "select view_name viewName,'VIEW' as typeStr from user_views " +
-                            "";
+                    if (busType.equals("1")) {
+                        sql = "select table_name tableName ,'TABLE' as typeStr from user_tables " +
+                                "union all " +
+                                "select view_name viewName,'VIEW' as typeStr from user_views " +
+                                "";
+                    } else if (busType.equals("2")) {
+                        sql = "select table_name tableName ,'TABLE' as typeStr from user_tables ";
+                    }
                 } else if (datasourceVO.getDbType() == 3) {
-                    sql = "select name,'TABLE' AS type from sys.tables\n" +
-                            "UNION\n" +
-                            "SELECT name,'VIEW' AS type from sys.views;\n" +
-                            " GO";
+                    if (busType.equals("1")) {
+                        sql = "select name,'TABLE' AS type from sys.tables\n" +
+                                " UNION \n" +
+                                " SELECT name,'VIEW' AS type from sys.viewsj \n" +
+                                " ";
+                    } else {
+                        sql = "select name,'TABLE' AS type from sys.tables ";
+                    }
                 } else {
-                    sql = "SELECT\n" +
-                            "\ttable_name,\n" +
-                            "TABLE_TYPE\n" +
-                            "FROM\n" +
-                            "\tinformation_schema. TABLES\n" +
-                            "WHERE\n" +
-                            "\ttable_schema = '" + datasourceVO.getDbName() + "'\n" +
-                            "AND table_type = 'base table'\n" +
-                            "UNION ALL\n" +
-                            "SELECT\n" +
-                            "\ttable_name,\n" +
-                            "TABLE_TYPE\n" +
-                            "FROM\n" +
-                            "\tinformation_schema. TABLES\n" +
-                            "WHERE\n" +
-                            "\ttable_schema = '" + datasourceVO.getDbName() + "'\n" +
-                            "AND table_type = 'VIEW'";
+                    if (busType.equals("1")) {
+                        sql = "SELECT\n" +
+                                "\ttable_name,\n" +
+                                "TABLE_TYPE\n" +
+                                "FROM\n" +
+                                "\tinformation_schema. TABLES\n" +
+                                "WHERE\n" +
+                                "\ttable_schema = '" + datasourceVO.getDbName() + "'\n" +
+                                "AND table_type = 'base table'\n" +
+                                "UNION ALL\n" +
+                                "SELECT\n" +
+                                "\ttable_name,\n" +
+                                "TABLE_TYPE\n" +
+                                "FROM\n" +
+                                "\tinformation_schema. TABLES\n" +
+                                "WHERE\n" +
+                                "\ttable_schema = '" + datasourceVO.getDbName() + "'\n" +
+                                "AND table_type = 'VIEW'";
+                    } else if (busType.equals("2")) {
+                        sql = "SELECT\n" +
+                                "\t table_name,\n" +
+                                " TABLE_TYPE\n" +
+                                "FROM\n" +
+                                "\tinformation_schema. TABLES\n" +
+                                "WHERE\n" +
+                                "\ttable_schema = '" + datasourceVO.getDbName() + "'\n" +
+                                "AND table_type = 'base table'";
+                    }
                 }
                 ResultSet rs = st.executeQuery(sql);
                 while (rs.next()) {
@@ -246,7 +265,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                 return tbs;
             }
         } catch (SQLException e) {
-            LOGGER.error("SQLException");
+            LOGGER.error("SQLException"+e.getMessage());
         } finally {
 
         }

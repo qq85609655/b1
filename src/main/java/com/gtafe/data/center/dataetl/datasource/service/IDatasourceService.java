@@ -33,7 +33,7 @@ public interface IDatasourceService {
     
     DatasourceVO queryDatasourceInfoById(int id);
     
-    List<String> queryTablesByDatasource(DatasourceVO datasourceVO);
+    List<String> queryTablesByDatasource(DatasourceVO datasourceVO, String busType);
 
     List<TableFieldVo> queryTableFields(DatasourceVO datasourceVO,String table) throws Exception;
 

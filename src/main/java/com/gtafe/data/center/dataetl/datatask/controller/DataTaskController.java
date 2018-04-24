@@ -89,18 +89,7 @@ public class DataTaskController extends BaseController {
     @Resource
     private IDatasourceService datasourceServiceImpl;
 
-    /**
-     * 在保存前做一次 中心库 配置是否存在的 验证
-     */
-    public @ResponseBody
-    boolean checkBeforeInsert() {
-        List<DatasourceVO> dvos = this.datasourceServiceImpl.queryDatasourceList(null, "", 1, 1, null,null);
-        //如果不存在 或者 配置多个中心库 或者 没配置
-        if (dvos == null || dvos.size() == 0 || dvos.size() > 1) {
-            return false;
-        }
-        return true;
-    }
+
 
     /**
      * 新增资源任务

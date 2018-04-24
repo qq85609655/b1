@@ -23,8 +23,13 @@ import java.util.*;
 
 import javax.annotation.Resource;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gtafe.data.center.dataetl.datatask.vo.OSinfo;
 import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
+import com.gtafe.data.center.dataetl.datatask.vo.rule.ConvertRuleValuemapper;
+import com.gtafe.data.center.dataetl.datatask.vo.rule.rulevo.ValuemapperVo;
+import com.gtafe.data.center.dataetl.trans.Utils;
 import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
 import com.gtafe.data.center.system.config.vo.SysConfigVo;
 import com.gtafe.framework.base.utils.*;
@@ -95,8 +100,53 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         return taskVo;
     }
 
+    ObjectMapper mapper;
+
+    /**
+     * 针对 值映射 情况比较特殊
+     * 如果 发布的时候选了 值映射 那么 如果对应中心库的表字段 有对应的代码范围的话 需要根据去检束 是否存在
+     *
+     * @param businessType
+     * @param taskVo
+     */
+    public void checkValueMapper4TaskVo(int businessType, DataTaskVo taskVo) {
+        //循环判断是否存在 值映射的步骤
+        mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        for (String stepstr : taskVo.getSteps()) {
+            List stepInfo =  Utils.getStepInfo(stepstr);
+            if (stepInfo == null) {
+                throw new OrdinaryException(this.getName(businessType) + " 没有有效的转换步骤！");
+                return;
+            }
+
+        }
+        List<ValuemapperVo> valuemapperVos;
+        try {
+            valuemapperVos = mapper.readValue(stepstr, ConvertRuleValuemapper.class).getDataList();
+        } catch (IOException e) {
+
+        }
+
+        boolean hsValueMapping = false;
+
+        if (hsValueMapping) {
+
+        }
+
+        //如果有 找到对应的 字段 有没有关联的code类
+
+        //找到类之后 把对应的代码放到list 里面
+
+        //然后 再查询 用户输入的 是否合理
+
+
+    }
+
+
     @Override
     public int insertDataTaskVo(int businessType, DataTaskVo taskVo) {
+        this.checkValueMapper4TaskVo(businessType, taskVo);
         this.revisionDataTaskVo(businessType, taskVo);
         if (this.dataTaskMapper.checkTaskNameRepeat(null,
                 taskVo.getTaskName(), taskVo.getOrgId(), businessType) > 0) {
@@ -392,6 +442,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
     public List<TransFileVo> queryKfileList(String fileType, String fileName, int pageNum, int pageSize) {
         return this.dataTaskMapper.queryKfileList(fileName, fileType, pageNum, pageSize);
     }
+
     @Override
     public List<TransFileVo> queryKfileListAll() {
         return this.dataTaskMapper.queryKfileListAll();
@@ -428,9 +479,10 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         }
     }
 
-    public TransFileVo findEtlFileInfoById(String fileName){
+    public TransFileVo findEtlFileInfoById(String fileName) {
         return this.dataTaskMapper.findEtlFileInfoById(fileName);
     }
+
     @Override
     public boolean runItem(String fileName) {
         TransFileVo vo = this.dataTaskMapper.findEtlFileInfoById(fileName);
@@ -468,36 +520,37 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
 
     /**
      * 判断操作系统类型 如果是window 则先根据规则 删除定时任务，然后再创建一个新的定时任务
+     *
      * @param filePath
      * @return
      */
-    public boolean sendInTask(String filePath){
-        boolean flag=false;
-        if(OSinfo.getOSname().equals("Windows")){
-            File tempFile =new File(filePath.trim());
+    public boolean sendInTask(String filePath) {
+        boolean flag = false;
+        if (OSinfo.getOSname().equals("Windows")) {
+            File tempFile = new File(filePath.trim());
             String fileName = tempFile.getName();
             fileName = fileName.substring(0, fileName.lastIndexOf("."));
-            StringBuffer taskNameBuffer=new StringBuffer(fileName);
-            taskNameBuffer=  taskNameBuffer.append(UUID.randomUUID().toString().replace("-",""));
-            String command="schtasks /delete /tn "+taskNameBuffer+" /f";
+            StringBuffer taskNameBuffer = new StringBuffer(fileName);
+            taskNameBuffer = taskNameBuffer.append(UUID.randomUUID().toString().replace("-", ""));
+            String command = "schtasks /delete /tn " + taskNameBuffer + " /f";
             StringBuilder sb = new StringBuilder();
             Runtime runtime = Runtime.getRuntime();
             try {
                 String line = null;
                 Process process = runtime.exec(command);
-                BufferedReader  bufferedReader = new BufferedReader
+                BufferedReader bufferedReader = new BufferedReader
                         (new InputStreamReader(process.getInputStream()));
                 while ((line = bufferedReader.readLine()) != null) {
                     sb.append(line + "\n");
-                        System.out.println(line);
+                    System.out.println(line);
                 }
-                command="";
+                command = "";
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
             //再插入这个job
-        }else if(OSinfo.getOSname().equals("Linux")){
+        } else if (OSinfo.getOSname().equals("Linux")) {
 
         }
 
@@ -512,13 +565,13 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         //获取发布运行路径
 
         //解决路径中空格的问题
-          t= URLDecoder.decode(t,"utf-8");
+        t = URLDecoder.decode(t, "utf-8");
 
         int num = t.indexOf("test");//查找此项目跟目录位置
 
-        String path = t.substring(1, num).replace('/', '\\')+ "test\\static\\bat\\1.bat";//写bat文件路径
+        String path = t.substring(1, num).replace('/', '\\') + "test\\static\\bat\\1.bat";//写bat文件路径
 
-        String data ="";//"\"C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin\\mysqldump\" -u \"root\" -p\"root\" -P\"3306\" \"test\"> \""+ mysqlPathString + "\\" + fileNameString + ".sql\"";
+        String data = "";//"\"C:\\Program Files\\MySQL\\MySQL Server 5.7\\bin\\mysqldump\" -u \"root\" -p\"root\" -P\"3306\" \"test\"> \""+ mysqlPathString + "\\" + fileNameString + ".sql\"";
 
 //bat内容
 
@@ -528,7 +581,8 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
 
         txt.createNewFile();//创建文件
 
-        byte bytes[] = new byte[512]; bytes = data.getBytes();//写文件
+        byte bytes[] = new byte[512];
+        bytes = data.getBytes();//写文件
 
         int b = data.length();
 

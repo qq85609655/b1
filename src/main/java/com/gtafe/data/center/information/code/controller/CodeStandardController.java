@@ -80,6 +80,25 @@ public class CodeStandardController extends BaseController {
     }
 
 
+
+
+
+    @AuthAnnotation(value = {"032001", "033001"}, conditions = {"sourceId=1", "sourceId=2"})
+    @RequestMapping(path = "/queryCodeList4Reseacher", method = RequestMethod.POST)
+    public PageInfo<CodeInfoVo> queryCodeList4Reseacher(
+            @RequestParam(value = "sourceId", required = false) int sourceId,
+            @RequestParam(value = "parentId", required = false) String parentId,
+            @RequestBody CodeInfoParam param) {
+        if (param.getNodeType() < 0) {
+            throw new OrdinaryException("参数错误");
+        }
+        param.setSourceId(sourceId);
+        LOGGER.info("node_id=====" + param.getNodeId());
+        List<CodeInfoVo> result = codeStandardServiceImpl.queryCodeList2(param.getKeyWord(), param.getNodeId() + "", sourceId, param.getPageNum(), param.getPageSize());
+        return new PageInfo<CodeInfoVo>(result);
+    }
+
+
     /**
      * 查询代码标准树
      *

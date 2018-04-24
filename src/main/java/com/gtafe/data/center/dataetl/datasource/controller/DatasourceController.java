@@ -161,16 +161,17 @@ public class DatasourceController extends BaseController {
      * @author wuhu.zhu
      * @since JDK 1.7
      */
-    @RequestMapping(path = "/{id}", method = RequestMethod.GET)
+    @RequestMapping(path = "/{id}/{busType}", method = RequestMethod.GET)
     @ApiOperation(value = "根据数据源查询所有表信息", notes = "根据数据源查询所有表信息")
     @ApiResponses(value = {@ApiResponse(code = 200, message = "查询列表成功，返回值是所有信息，list属性是返回的列表数据")})
     public @ResponseBody
     List<String> queryTablesByDatasource(
-            @ApiParam(name = "id", value = "数据源对应的唯一序号", required = true) @PathVariable(name = "id") int id) {
+            @ApiParam(name = "id", value = "数据源对应的唯一序号", required = true) @PathVariable(name = "id") int id,
+            @PathVariable(name = "busType") String busType) {
         LOGGER.debug("Query datasource id = {}", id);
         DatasourceVO datasourceVO = this.datasourceServiceImpl.queryDatasourceInfoById(id);
         if (datasourceVO != null) {
-            return this.datasourceServiceImpl.queryTablesByDatasource(datasourceVO);
+            return this.datasourceServiceImpl.queryTablesByDatasource(datasourceVO, busType);
 
         } else {
             List<String> tbs = new ArrayList<String>();
@@ -187,7 +188,7 @@ public class DatasourceController extends BaseController {
             @ApiParam(name = "busType", value = "业务类型", required = true) @RequestParam(name = "busType") String busType) throws Exception {
         DatasourceVO datasourceVO = this.datasourceServiceImpl.queryDatasourceInfoById(connectionId);
         if (datasourceVO != null) {
-            return this.datasourceServiceImpl.queryTableFields2(datasourceVO, tableName, busType,tType);
+            return this.datasourceServiceImpl.queryTableFields2(datasourceVO, tableName, busType, tType);
         } else {
             return new TableFieldVV();
         }

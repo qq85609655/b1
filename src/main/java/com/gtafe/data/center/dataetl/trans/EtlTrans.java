@@ -158,7 +158,7 @@ public class EtlTrans {
         for (String stepstr : dataTask.getSteps()) {
 
             //判断步骤类型
-            List stepInfo = getStepInfo(stepstr);
+            List stepInfo =  Utils.getStepInfo(stepstr);
             if (stepInfo == null) {
                 etlMapper.stopErrorTask(taskId);
                 return;
@@ -184,7 +184,7 @@ public class EtlTrans {
         //转换处理
         for (String stepstr : dataTask.getSteps()) {
 
-            List stepInfo = getStepInfo(stepstr);
+            List stepInfo =  Utils.getStepInfo(stepstr);
 
             if ((int) stepInfo.get(2) == 1 || (int) stepInfo.get(2) == 2) {
                 continue;
@@ -250,7 +250,7 @@ public class EtlTrans {
         //output
         for (String stepstr : dataTask.getSteps()) {
 
-            List stepInfo = getStepInfo(stepstr);
+            List stepInfo = Utils.getStepInfo(stepstr);
             if ((int) stepInfo.get(2) == 2) {
 
                 //初始化表输出
@@ -354,19 +354,7 @@ public class EtlTrans {
     }
 
     //json步骤处理
-    private List getStepInfo(String stepstr) {
 
-        List stepInfo = new ArrayList();
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            stepInfo.add(mapper.readTree(stepstr).get("id").asInt());
-            stepInfo.add(mapper.readTree(stepstr).get("name").asText());
-            stepInfo.add(mapper.readTree(stepstr).get("type").asInt());
-        } catch (IOException e) {
-            return null;
-        }
-        return stepInfo;
-    }
 
     private List<StepMeta> tranStep(int stepType, String name, String stepId, String stepstr, int busType, DatasourceVO targetDS) {
 

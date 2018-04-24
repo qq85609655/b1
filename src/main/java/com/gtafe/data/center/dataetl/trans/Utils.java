@@ -1,5 +1,6 @@
 package com.gtafe.data.center.dataetl.trans;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gtafe.data.center.dataetl.datasource.utils.ConnectDB;
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.rulevo.DynamicValueMappingVo;
@@ -23,6 +24,19 @@ import java.util.List;
  * 工具类
  */
 public class Utils {
+    public static List getStepInfo(String stepstr) {
+
+        List stepInfo = new ArrayList();
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            stepInfo.add(mapper.readTree(stepstr).get("id").asInt());
+            stepInfo.add(mapper.readTree(stepstr).get("name").asText());
+            stepInfo.add(mapper.readTree(stepstr).get("type").asInt());
+        } catch (IOException e) {
+            return null;
+        }
+        return stepInfo;
+    }
 
     /**
      * 生成元数据库
