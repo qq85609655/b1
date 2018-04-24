@@ -112,23 +112,33 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
     public void checkValueMapper4TaskVo(int businessType, DataTaskVo taskVo) {
         //循环判断是否存在 值映射的步骤
         mapper = new ObjectMapper();
+
+        boolean hsValueMapping = false;
+
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        String valueMappStepStr = "";
         for (String stepstr : taskVo.getSteps()) {
-            List stepInfo =  Utils.getStepInfo(stepstr);
+            List stepInfo = Utils.getStepInfo(stepstr);
             if (stepInfo == null) {
                 throw new OrdinaryException(this.getName(businessType) + " 没有有效的转换步骤！");
-                return;
+            }
+            int stepType = (int) stepInfo.get(2);
+            if (stepType == 7) {//判断是否 有7 的步骤
+                hsValueMapping = true;
+                valueMappStepStr = stepstr;
+                break;
             }
 
         }
-        List<ValuemapperVo> valuemapperVos;
-        try {
-            valuemapperVos = mapper.readValue(stepstr, ConvertRuleValuemapper.class).getDataList();
-        } catch (IOException e) {
+        if (hsValueMapping && StringUtil.isNotBlank(valueMappStepStr)) {
+            List<ValuemapperVo> valuemapperVos;
+            try {
+                valuemapperVos = mapper.readValue(valueMappStepStr, ConvertRuleValuemapper.class).getDataList();
+            } catch (IOException e) {
 
+            }
         }
 
-        boolean hsValueMapping = false;
 
         if (hsValueMapping) {
 
