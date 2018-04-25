@@ -112,13 +112,14 @@
 			data_type,data_length,data_primarykey,data_nullable,
 			data_value_source,data_explain,data_referenced,selectable,
 			creator,createtime,updater,updatetime,
-			sourceid ) values
+			sourceid ,data_referenced1,data_referenced2,data_referenced3)
+			values
         	(
 	        	#{item.subclassCode},#{item.itemCode},#{item.itemName},#{item.itemComment},
 	        	#{item.dataType},#{item.dataLength},#{item.dataPrimarykey},#{item.dataNullable},
 	        	#{item.dataValueSource},#{item.dataExplain},#{item.dataReferenced},#{item.selectable},
 	        	#{userId}, now(), #{userId}, now(),
-	        	#{sourceId}  	
+	        	#{sourceId},#{item.dataReferenced1},#{item.dataReferenced2},#{item.dataReferenced3},
         	)  
 	</insert>
 

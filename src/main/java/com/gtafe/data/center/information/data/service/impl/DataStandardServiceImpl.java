@@ -163,6 +163,11 @@ public class DataStandardServiceImpl extends BaseController implements DataStand
     }
 
     @Override
+    public List<DataStandardVo> queryNodesByParentId(int pid) {
+        return null;
+    }
+
+    @Override
     public boolean deleteDataStandardVo(int sourceId, String code,
                                         int nodeType) {
         DataStandardVo dbVo = this.dataStandardMapper.getDataStandardVo(code);

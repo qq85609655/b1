@@ -26,99 +26,150 @@ public class DataStandardItemVo {
     private String dataValueSource;
     @ApiModelProperty(value = "说明/示例", required = false)
     private String dataExplain;
-    @ApiModelProperty(value = "引用管理", required = false)
-    private String dataReferenced;
-    @ApiModelProperty(value = "是否可选，默认M=必选，O=必选", required = true)
-    private String selectable;
-   /* @ApiModelProperty(value = "代码标准分类的自增序列id", required = false)
-    private int sourceid;
-    @ApiModelProperty(value = "代码标准集合的id", required = false)
-    private int setid;
-    @ApiModelProperty(value = "代码标准集合中的分类的id", required = false)
-    private int typeid;
-    @ApiModelProperty(value = "代码标准集合中的代码id", required = false)
-    private int codeid;*/
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
-    public String getSubclassCode() {
-        return subclassCode;
-    }
-    public void setSubclassCode(String subclassCode) {
-        this.subclassCode = subclassCode;
-    }
-    public String getSubclassName() {
-        return subclassName;
-    }
-    public void setSubclassName(String subclassName) {
-        this.subclassName = subclassName;
-    }
-    public String getItemCode() {
-        return itemCode;
-    }
-    public void setItemCode(String itemCode) {
-        this.itemCode = itemCode;
-    }
-    public String getItemName() {
-        return itemName;
-    }
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-    public String getItemComment() {
-        return itemComment;
-    }
-    public void setItemComment(String itemComment) {
-        this.itemComment = itemComment;
-    }
-    public String getDataType() {
-        return dataType;
-    }
-    public void setDataType(String dataType) {
-        this.dataType = dataType;
-    }
-    public String getDataLength() {
-        return dataLength;
-    }
-    public void setDataLength(String dataLength) {
-        this.dataLength = dataLength;
-    }
-    public int getDataPrimarykey() {
-        return dataPrimarykey;
-    }
-    public void setDataPrimarykey(int dataPrimarykey) {
-        this.dataPrimarykey = dataPrimarykey;
-    }
-    public int getDataNullable() {
-        return dataNullable;
-    }
-    public void setDataNullable(int dataNullable) {
-        this.dataNullable = dataNullable;
-    }
-    public String getDataValueSource() {
-        return dataValueSource;
-    }
-    public void setDataValueSource(String dataValueSource) {
-        this.dataValueSource = dataValueSource;
-    }
-    public String getDataExplain() {
-        return dataExplain;
-    }
-    public void setDataExplain(String dataExplain) {
-        this.dataExplain = dataExplain;
-    }
+
     public String getDataReferenced() {
         return dataReferenced;
     }
+
     public void setDataReferenced(String dataReferenced) {
         this.dataReferenced = dataReferenced;
     }
+
+    @ApiModelProperty(value = "引用管理", required = false)
+    private String dataReferenced;
+
+    private String dataReferenced1;
+    @ApiModelProperty(value = "是否可选，默认M=必选，O=必选", required = true)
+    private String dataReferenced2;
+    @ApiModelProperty(value = "是否可选，默认M=必选，O=必选", required = true)
+    private String dataReferenced3;
+    @ApiModelProperty(value = "是否可选，默认M=必选，O=必选", required = true)
+    private String selectable;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getSubclassCode() {
+        return subclassCode;
+    }
+
+    public void setSubclassCode(String subclassCode) {
+        this.subclassCode = subclassCode;
+    }
+
+    public String getSubclassName() {
+        return subclassName;
+    }
+
+    public void setSubclassName(String subclassName) {
+        this.subclassName = subclassName;
+    }
+
+    public String getItemCode() {
+        return itemCode;
+    }
+
+    public void setItemCode(String itemCode) {
+        this.itemCode = itemCode;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public String getItemComment() {
+        return itemComment;
+    }
+
+    public void setItemComment(String itemComment) {
+        this.itemComment = itemComment;
+    }
+
+    public String getDataType() {
+        return dataType;
+    }
+
+    public void setDataType(String dataType) {
+        this.dataType = dataType;
+    }
+
+    public String getDataLength() {
+        return dataLength;
+    }
+
+    public void setDataLength(String dataLength) {
+        this.dataLength = dataLength;
+    }
+
+    public int getDataPrimarykey() {
+        return dataPrimarykey;
+    }
+
+    public void setDataPrimarykey(int dataPrimarykey) {
+        this.dataPrimarykey = dataPrimarykey;
+    }
+
+    public int getDataNullable() {
+        return dataNullable;
+    }
+
+    public void setDataNullable(int dataNullable) {
+        this.dataNullable = dataNullable;
+    }
+
+    public String getDataValueSource() {
+        return dataValueSource;
+    }
+
+    public void setDataValueSource(String dataValueSource) {
+        this.dataValueSource = dataValueSource;
+    }
+
+    public String getDataExplain() {
+        return dataExplain;
+    }
+
+    public void setDataExplain(String dataExplain) {
+        this.dataExplain = dataExplain;
+    }
+
+    public String getDataReferenced1() {
+        return dataReferenced1;
+    }
+
+    public void setDataReferenced1(String dataReferenced1) {
+        this.dataReferenced1 = dataReferenced1;
+    }
+
+    public String getDataReferenced2() {
+        return dataReferenced2;
+    }
+
+    public void setDataReferenced2(String dataReferenced2) {
+        this.dataReferenced2 = dataReferenced2;
+    }
+
+    public String getDataReferenced3() {
+        return dataReferenced3;
+    }
+
+    public void setDataReferenced3(String dataReferenced3) {
+        this.dataReferenced3 = dataReferenced3;
+    }
+
     public String getSelectable() {
         return selectable;
     }
+
     public void setSelectable(String selectable) {
         this.selectable = selectable;
     }
