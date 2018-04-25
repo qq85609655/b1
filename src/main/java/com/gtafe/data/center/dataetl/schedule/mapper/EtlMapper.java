@@ -40,7 +40,7 @@ public interface EtlMapper {
             @Result(column = "username", property = "username"),
             @Result(column = "password", property = "password")
     })
-    DatasourceVO getDSById(int id);
+    DatasourceVO getDSById(@Param("id") int id);
 
     @Select("select * from sys_config ")
     @Results({
@@ -80,19 +80,30 @@ public interface EtlMapper {
             @Result(column = "run_status", property = "runStatus"),
             @Result(column = "task_id", property = "steps", many = @Many(select = "getStepById", fetchType = FetchType.EAGER))
     })
-    DataTaskVo getDataTaskById(int id);
+    DataTaskVo getDataTaskById(@Param("id") int id);
 
     @Select("select step_detail from data_etl_task_step where task_id=#{taskId} order by serial")
-    List<String> getStepById(int taskId);
+    List<String> getStepById(@Param("taskId") int taskId);
 
     @Update("update  data_etl_task set run_status=0 where task_id=#{taskId}")
-    boolean stopErrorTask(int taskId);
+    boolean stopErrorTask(@Param("taskId") int taskId);
 
     @Select("select ERRORS errors from kettle_log where CHANNEL_ID=#{channelId}")
-    KettleLogVO taskStatus(String channelId);
+    KettleLogVO taskStatus(@Param("channelId") String channelId);
 
     @Delete("delete from data_etl_task_status where task_id is not null ")
     void cleanAllStatus();
 
-
+    @Select("SELECT\n" +
+            "\tc. CODE,c.`name`\n" +
+            "FROM\n" +
+            "\tinfo_codestandard_code c,\n" +
+            "\tinfo_datastandard_item i,\n" +
+            "\tinfo_datastandard_org o\n" +
+            "WHERE\n" +
+            "\to.`code` = i.subclass_code\n" +
+            "AND i.data_referenced = c.node_id\n" +
+            "AND o.tablename = #{tableName} \n" +
+            "AND i.item_name =#{field}")
+    List<String> queryCodes(@Param("tableName") String tableName, @Param("field") String field);
 }

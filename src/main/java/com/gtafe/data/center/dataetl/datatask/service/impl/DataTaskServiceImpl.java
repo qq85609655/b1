@@ -25,10 +25,12 @@ import javax.annotation.Resource;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
 import com.gtafe.data.center.dataetl.datatask.vo.OSinfo;
 import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.ConvertRuleValuemapper;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.rulevo.ValuemapperVo;
+import com.gtafe.data.center.dataetl.schedule.mapper.EtlMapper;
 import com.gtafe.data.center.dataetl.trans.Utils;
 import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
 import com.gtafe.data.center.system.config.vo.SysConfigVo;
@@ -102,6 +104,9 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
 
     ObjectMapper mapper;
 
+    @Autowired
+    EtlMapper etlMapper;
+
     /**
      * 针对 值映射 情况比较特殊
      * 如果 发布的时候选了 值映射 那么 如果对应中心库的表字段 有对应的代码范围的话 需要根据去检束 是否存在
@@ -112,45 +117,123 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
     public void checkValueMapper4TaskVo(int businessType, DataTaskVo taskVo) {
         //循环判断是否存在 值映射的步骤
         mapper = new ObjectMapper();
-
-        boolean hsValueMapping = false;
-
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        String valueMappStepStr = "";
+        List<String> valueMappStepStrList = new ArrayList<String>();
+        //循环所有的步骤 找到 值映射的步骤
         for (String stepstr : taskVo.getSteps()) {
             List stepInfo = Utils.getStepInfo(stepstr);
             if (stepInfo == null) {
                 throw new OrdinaryException(this.getName(businessType) + " 没有有效的转换步骤！");
             }
             int stepType = (int) stepInfo.get(2);
+            String stepName = (String) stepInfo.get(1);
             if (stepType == 7) {//判断是否 有7 的步骤
-                hsValueMapping = true;
-                valueMappStepStr = stepstr;
-                break;
-            }
-
-        }
-        if (hsValueMapping && StringUtil.isNotBlank(valueMappStepStr)) {
-            List<ValuemapperVo> valuemapperVos;
-            try {
-                valuemapperVos = mapper.readValue(valueMappStepStr, ConvertRuleValuemapper.class).getDataList();
-            } catch (IOException e) {
-
+                valueMappStepStrList.add(stepstr + "######" + stepName);
             }
         }
-
-
-        if (hsValueMapping) {
-
+        //源表名和目标表名
+        String sourceDBName = "", targetDBName = "";
+        //根据业务类型定义数据源
+        if (businessType == 1) {//发布 从 第三方库 表数据 到 中心库 表数据
+            sourceDBName = taskVo.getThirdTablename().split("#")[0];
+            targetDBName = taskVo.getCenterTablename();
+        } else if (businessType == 2) { // 订阅 从中心库表数据 到 第三方库表数据
+            targetDBName = taskVo.getThirdTablename().split("#")[0];
+            sourceDBName = taskVo.getCenterTablename();
         }
+
+        //一个值隐射步骤里面 可能会有很多 组 隐射 所以需要循环
+
+        StringBuilder errorMessge = new StringBuilder("");
 
         //如果有 找到对应的 字段 有没有关联的code类
+        //循环所有的 值映射步骤 进行逐个验证
+        List<ValuemapperVo> valuemapperVos = new ArrayList<ValuemapperVo>();
+        for (int k = 0; k < valueMappStepStrList.size(); k++) {
+            String vmstep = valueMappStepStrList.get(k).split("######")[0];
+            String stepName = valueMappStepStrList.get(k).split("######")[1];
+            try {
+                valuemapperVos = mapper.readValue(vmstep, ConvertRuleValuemapper.class).getDataList();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            for (int j = 0; j < valuemapperVos.size(); j++) {
+                ValuemapperVo valuemapperVo = valuemapperVos.get(j);
+                String targetField = valuemapperVo.getTargetField();
+                String sourceField = valuemapperVo.getSourceField();
+                //根据targetField 和busType 来查询其规则  此时还需要 源数据库 和对应的表
+                Params params = new Params();
+                params.setBusinessType(businessType);
+                params.setSourceDBName(sourceDBName);
+                params.setTargetDBName(targetDBName);
+                params.setTargetField(targetField);
+                params.setSourceField(sourceField);
+                List<String> rules = this.getByParams(params);
+                List<String> targetStrs = new ArrayList<String>();
+                List<String> sourceStrs = new ArrayList<String>();
+                for (int i = 0; i < valuemapperVo.getMappings().size(); i++) {
+                    targetStrs.add(valuemapperVo.getMappings().get(i).getTargetValue());
+                    sourceStrs.add(valuemapperVo.getMappings().get(i).getSourceValue());
+                }
+                //然后 再查询 用户输入的 是否合理
+                //需要验证 code 是否 与 用户输入 的一致
+                //不一致 就抛异常 提示用户检查输入
+                String errorMsg = this.checkRuleByParams(rules, sourceStrs, targetStrs, businessType);
+                if (StringUtil.isNotBlank(errorMsg)) {
+                    errorMessge.append("步骤名称:").append(stepName).append("存在隐射错误!请检查:").append(errorMsg);
+                }
+            }
+        }
+        if (errorMessge.length() > 0) {
+            throw new OrdinaryException("值隐射异常:" + errorMessge.toString());
+        }
+    }
 
-        //找到类之后 把对应的代码放到list 里面
+    //效验
+    private String checkRuleByParams(List<String> rules, List<String> sourceStrs, List<String> targetStrs, int businessType) {
+        StringBuilder message_ = new StringBuilder(" ");
+        StringBuilder ss = new StringBuilder();
+        if (businessType == 1) {
+            message_.append("目标值[");
+            //发布  比较 目标值 和代码标准的是否一致
+            for (String s : targetStrs) {
+                if (!rules.contains(s)) {
+                    ss.append(s).append("、");
+                }
+            }
+        } else {
+            message_.append("源值[");
+            //订阅 比较 原值  和代码 标准 的 是否一致
+            for (String s : sourceStrs) {
+                if (!rules.contains(s)) {
+                    ss.append(s).append("、");
+                }
+            }
+        }
+        if (ss.length() > 0) {
+            message_.append(ss.toString().substring(0, ss.length() - 1));
+            message_.append("对应不上 !");
+        } else {
+            message_ = new StringBuilder("");
+        }
+        return message_.toString();
+    }
 
-        //然后 再查询 用户输入的 是否合理
+    //根据参数 查询出 这个 code 值域
 
-
+    /**
+     * @param params
+     * @return
+     */
+    private List<String> getByParams(Params params) {
+        List<String> codeRules = new ArrayList<String>();
+        if (params.getBusinessType() == 1) {
+            //发布  比较 目标值
+            codeRules = etlMapper.queryCodes(params.getTargetDBName(), params.getTargetField());
+        } else {
+            codeRules = etlMapper.queryCodes(params.getSourceDBName(), params.getSourceField());
+        }
+        return codeRules;
     }
 
 
@@ -567,6 +650,56 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         return flag;
     }
 
+
+    class Params {
+        String targetField;
+
+        public String getSourceField() {
+            return sourceField;
+        }
+
+        public void setSourceField(String sourceField) {
+            this.sourceField = sourceField;
+        }
+
+        String sourceField;
+        int businessType;
+        String targetDBName;
+        String sourceDBName;
+
+        public String getTargetField() {
+            return targetField;
+        }
+
+        public void setTargetField(String targetField) {
+            this.targetField = targetField;
+        }
+
+        public int getBusinessType() {
+            return businessType;
+        }
+
+        public void setBusinessType(int businessType) {
+            this.businessType = businessType;
+        }
+
+        public String getTargetDBName() {
+            return targetDBName;
+        }
+
+        public void setTargetDBName(String targetDBName) {
+            this.targetDBName = targetDBName;
+        }
+
+        public String getSourceDBName() {
+            return sourceDBName;
+        }
+
+        public void setSourceDBName(String sourceDBName) {
+            this.sourceDBName = sourceDBName;
+        }
+
+    }
 
     public void ss() throws IOException {
 
