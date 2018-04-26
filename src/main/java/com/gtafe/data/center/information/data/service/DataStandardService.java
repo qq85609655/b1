@@ -68,5 +68,4 @@ public interface DataStandardService {
      */
     public boolean deleteDataStandardVo(int sourceId, String code, int nodeType);
 
-    List<DataStandardVo> queryNodesByParentId(int pid);
 }

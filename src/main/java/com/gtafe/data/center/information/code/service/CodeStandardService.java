@@ -46,4 +46,7 @@ public interface CodeStandardService {
 
     byte[] generatorCode(List<String> tableNamesList) throws Exception;
 
+    List<CodeNodeVo> queryNodesByParentId(int parentNode, String type);
+
+    List<CodeInfoVo> queryCodeALL(int nodeId);
 }

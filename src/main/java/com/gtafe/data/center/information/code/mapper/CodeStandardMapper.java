@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.gtafe.data.center.information.code.vo.MysqlTableVo;
 import com.gtafe.data.center.information.code.vo.TableEntity;
+import com.gtafe.data.center.information.data.vo.DataStandardVo;
 import org.apache.ibatis.annotations.*;
 
 import com.gtafe.data.center.information.code.vo.CodeInfoVo;
@@ -61,7 +62,10 @@ public interface CodeStandardMapper {
 
 
     List<TableEntity> queryAllCenterTableList(@Param("tableName") String tableName,
-                                       //       @Param("tableType") String tableType,
+                                              //       @Param("tableType") String tableType,
                                               @Param("pageNumKey") int pageNum,
                                               @Param("pageSizeKey") int pageSize);
+
+    @Select("select n.node_id nodeId , n.`name` name from info_codestandard_node n where n.parentnode_id=#{parentId}")
+    List<CodeNodeVo> queryDataNodeBy(@Param("parentId") String parentId);
 }

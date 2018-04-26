@@ -239,7 +239,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
 
     @Override
     public int insertDataTaskVo(int businessType, DataTaskVo taskVo) {
-        this.checkValueMapper4TaskVo(businessType, taskVo);
+      //  this.checkValueMapper4TaskVo(businessType, taskVo);
         this.revisionDataTaskVo(businessType, taskVo);
         if (this.dataTaskMapper.checkTaskNameRepeat(null,
                 taskVo.getTaskName(), taskVo.getOrgId(), businessType) > 0) {

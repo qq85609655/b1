@@ -80,8 +80,17 @@ public class CodeStandardController extends BaseController {
     }
 
 
+    @RequestMapping(path = "/queryNodesByParentId", method = RequestMethod.GET)
+    public List<CodeNodeVo> queryNodesByParentId(@RequestParam(value = "parentNode", required = true) int parentNode,
+                                                 @RequestParam(value = "type", required = true) String type) {
+        List<CodeNodeVo> result = codeStandardServiceImpl.queryNodesByParentId(parentNode, type);
+        return result;
+    }
 
-
+    @RequestMapping(path = "/queryCodeALL", method = RequestMethod.GET)
+    public List<CodeInfoVo> queryCodeALL(@RequestParam(value = "nodeId", required = true) int nodeId) {
+        return codeStandardServiceImpl.queryCodeALL(nodeId);
+    }
 
     @AuthAnnotation(value = {"032001", "033001"}, conditions = {"sourceId=1", "sourceId=2"})
     @RequestMapping(path = "/queryCodeList4Reseacher", method = RequestMethod.POST)
@@ -128,29 +137,25 @@ public class CodeStandardController extends BaseController {
             parentId2 = "1004";
         } else if ("61".equals(parentId)) {
             parentId2 = "1201";
-        }
-        else if ("62".equals(parentId)) {
+        } else if ("62".equals(parentId)) {
             parentId2 = "1202";
-        }
-        else if ("63".equals(parentId)) {
+        } else if ("63".equals(parentId)) {
             parentId2 = "1203";
-        }
-        else if ("64".equals(parentId)) {
+        } else if ("64".equals(parentId)) {
             parentId2 = "1204";
-        }
-        else if ("65".equals(parentId)) {
+        } else if ("65".equals(parentId)) {
             parentId2 = "1205";
         } else if ("66".equals(parentId)) {
             parentId2 = "1206";
-        }else if ("67".equals(parentId)) {
+        } else if ("67".equals(parentId)) {
             parentId2 = "1207";
-        }else if ("68".equals(parentId)) {
+        } else if ("68".equals(parentId)) {
             parentId2 = "1208";
-        }else if ("69".equals(parentId)) {
+        } else if ("69".equals(parentId)) {
             parentId2 = "1209";
-        }else if ("70".equals(parentId)) {
+        } else if ("70".equals(parentId)) {
             parentId2 = "1210";
-        }else if ("71".equals(parentId)) {
+        } else if ("71".equals(parentId)) {
             parentId2 = "1211";
         }
 

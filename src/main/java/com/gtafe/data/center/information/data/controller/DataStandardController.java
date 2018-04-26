@@ -43,11 +43,6 @@ public class DataStandardController {
         return new PageInfo<DataStandardVo>(result);
     }
 
-    @RequestMapping(path = "/queryNodesByParentId/{pId}", method = RequestMethod.POST)
-    public List<DataStandardVo> queryNodesByParentId(@PathVariable("pId") int pid) {
-        List<DataStandardVo> result = dataStandardServiceImpl.queryNodesByParentId(pid);
-        return result;
-    }
 
 
     /**

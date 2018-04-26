@@ -199,6 +199,19 @@ public class CodeStandardServiceImpl implements CodeStandardService {
         return result;
     }
 
+    @Override
+    public List<CodeInfoVo> queryCodeALL(int nodeId) {
+        return this.codeStandardMapper.queryCodeALL(nodeId);
+    }
+
+    @Override
+    public List<CodeNodeVo> queryNodesByParentId(int ParentId, String type) {
+        List<CodeNodeVo> list = new ArrayList<CodeNodeVo>();
+        //  if (type.equals("1")) {
+        list = this.codeStandardMapper.queryDataNodeBy(ParentId + "");
+        //   }
+        return list;
+    }
 
     @Override
     public boolean saveNodeVos(int sourceId, int nodeId, List<CodeNodeVo> voList, int userId) {

@@ -95,4 +95,5 @@ public interface DataStandardMapper {
             "\t\tFROM\n" +
             "\t\t    info_datastandard_org where sourceid=#{sourceId} and node_type=3 ")
     List<DataStandardVo> queryAll(@Param("sourceId") int sourceId);
+
 }

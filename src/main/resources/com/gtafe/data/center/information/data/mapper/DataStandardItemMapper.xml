@@ -119,7 +119,7 @@
 	        	#{item.dataType},#{item.dataLength},#{item.dataPrimarykey},#{item.dataNullable},
 	        	#{item.dataValueSource},#{item.dataExplain},#{item.dataReferenced},#{item.selectable},
 	        	#{userId}, now(), #{userId}, now(),
-	        	#{sourceId},#{item.dataReferenced1},#{item.dataReferenced2},#{item.dataReferenced3},
+	        	#{sourceId},#{item.dataReferenced1},#{item.dataReferenced2},#{item.dataReferenced3}
         	)  
 	</insert>
 
