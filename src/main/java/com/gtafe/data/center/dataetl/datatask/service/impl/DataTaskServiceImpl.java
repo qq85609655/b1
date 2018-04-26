@@ -179,7 +179,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
                 //需要验证 code 是否 与 用户输入 的一致
                 //不一致 就抛异常 提示用户检查输入
                 String errorMsg = this.checkRuleByParams(rules, sourceStrs, targetStrs, businessType);
-                if (StringUtil.isNotBlank(errorMsg)) {
+                if (StringUtil.isNotBlank(errorMsg.trim())) {
                     errorMessge.append("步骤名称:").append(stepName).append("存在隐射错误!请检查:").append(errorMsg);
                 }
             }
@@ -191,30 +191,32 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
 
     //效验
     private String checkRuleByParams(List<String> rules, List<String> sourceStrs, List<String> targetStrs, int businessType) {
-        StringBuilder message_ = new StringBuilder(" ");
+        StringBuilder message_ = new StringBuilder("");
         StringBuilder ss = new StringBuilder();
-        if (businessType == 1) {
-            message_.append("目标值[");
-            //发布  比较 目标值 和代码标准的是否一致
-            for (String s : targetStrs) {
-                if (!rules.contains(s)) {
-                    ss.append(s).append("、");
+        if (rules.size() > 0) {
+            if (businessType == 1) {
+                message_.append("目标值[");
+                //发布  比较 目标值 和代码标准的是否一致
+                for (String s : targetStrs) {
+                    if (!rules.contains(s)) {
+                        ss.append(s).append("、");
+                    }
+                }
+            } else {
+                message_.append("源值[");
+                //订阅 比较 原值  和代码 标准 的 是否一致
+                for (String s : sourceStrs) {
+                    if (!rules.contains(s)) {
+                        ss.append(s).append("、");
+                    }
                 }
             }
-        } else {
-            message_.append("源值[");
-            //订阅 比较 原值  和代码 标准 的 是否一致
-            for (String s : sourceStrs) {
-                if (!rules.contains(s)) {
-                    ss.append(s).append("、");
-                }
+            if (ss.length() > 0) {
+                message_.append(ss.toString().substring(0, ss.length() - 1));
+                message_.append("对应不上 !");
+            } else {
+                message_ = new StringBuilder("");
             }
-        }
-        if (ss.length() > 0) {
-            message_.append(ss.toString().substring(0, ss.length() - 1));
-            message_.append("对应不上 !");
-        } else {
-            message_ = new StringBuilder("");
         }
         return message_.toString();
     }
@@ -239,7 +241,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
 
     @Override
     public int insertDataTaskVo(int businessType, DataTaskVo taskVo) {
-      //  this.checkValueMapper4TaskVo(businessType, taskVo);
+        this.checkValueMapper4TaskVo(businessType, taskVo);
         this.revisionDataTaskVo(businessType, taskVo);
         if (this.dataTaskMapper.checkTaskNameRepeat(null,
                 taskVo.getTaskName(), taskVo.getOrgId(), businessType) > 0) {

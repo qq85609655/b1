@@ -87,7 +87,7 @@ public class CodeStandardController extends BaseController {
         return result;
     }
 
-    @RequestMapping(path = "/queryCodeALL", method = RequestMethod.GET)
+    @RequestMapping(path = "/queryCodeALL", method = RequestMethod.POST)
     public List<CodeInfoVo> queryCodeALL(@RequestParam(value = "nodeId", required = true) int nodeId) {
         return codeStandardServiceImpl.queryCodeALL(nodeId);
     }
