@@ -16,7 +16,9 @@
         b.data_nullable dataNullable,
         b.data_value_source dataValueSource,
         b.data_explain dataExplain,
-        b.data_referenced dataReferenced,
+        b.data_referenced1 dataReferenced1,
+        b.data_referenced2 dataReferenced2,
+        b.data_referenced3 dataReferenced3,
         b.selectable selectable
         FROM
         info_datastandard_item b
@@ -39,7 +41,9 @@
         b.data_nullable dataNullable,
         b.data_value_source dataValueSource,
         b.data_explain dataExplain,
-        b.data_referenced dataReferenced,
+        b.data_referenced1 dataReferenced1,
+        b.data_referenced2 dataReferenced2,
+        b.data_referenced3 dataReferenced3,
         b.selectable selectable,
         o.code_name subclassName
         FROM info_datastandard_item b
@@ -88,6 +92,9 @@
         b.data_value_source dataValueSource,
         b.data_explain dataExplain,
         b.data_referenced dataReferenced,
+        b.data_referenced1 dataReferenced1,
+        b.data_referenced2 dataReferenced2,
+        b.data_referenced3 dataReferenced3,
         b.selectable selectable,
         o.code_name subclassName
 		FROM info_datastandard_item b
@@ -110,16 +117,17 @@
 		INSERT INTO info_datastandard_item(
 			subclass_code,item_code,item_name,item_comment,
 			data_type,data_length,data_primarykey,data_nullable,
-			data_value_source,data_explain,data_referenced,selectable,
+			data_value_source,data_explain,selectable,
 			creator,createtime,updater,updatetime,
-			sourceid ,data_referenced1,data_referenced2,data_referenced3)
+			sourceid ,data_referenced1,data_referenced2,data_referenced3,data_referenced)
 			values
         	(
 	        	#{item.subclassCode},#{item.itemCode},#{item.itemName},#{item.itemComment},
 	        	#{item.dataType},#{item.dataLength},#{item.dataPrimarykey},#{item.dataNullable},
-	        	#{item.dataValueSource},#{item.dataExplain},#{item.dataReferenced},#{item.selectable},
+	        	#{item.dataValueSource},#{item.dataExplain},#{item.selectable},
 	        	#{userId}, now(), #{userId}, now(),
 	        	#{sourceId},#{item.dataReferenced1},#{item.dataReferenced2},#{item.dataReferenced3}
+	        	,#{item.dataReferenced}
         	)  
 	</insert>
 
@@ -131,7 +139,10 @@
 			data_explain = #{item.dataExplain},
 			data_referenced = #{item.dataReferenced},
 			updater = #{userId} ,
-			updatetime = now()
+			updatetime = now(),
+			data_referenced1=#{item.dataReferenced1},
+			data_referenced2=#{item.dataReferenced2},
+			data_referenced3=#{item.dataReferenced3}
 		where id= #{item.id} and sourceid = #{sourceId}
 	</update>
 

@@ -29,8 +29,10 @@ import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
 import com.gtafe.data.center.dataetl.datatask.vo.OSinfo;
 import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.ConvertRuleValuemapper;
+import com.gtafe.data.center.dataetl.datatask.vo.rule.rulevo.TargetMappingVo;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.rulevo.ValuemapperVo;
 import com.gtafe.data.center.dataetl.schedule.mapper.EtlMapper;
+import com.gtafe.data.center.dataetl.trans.ConstantValue;
 import com.gtafe.data.center.dataetl.trans.Utils;
 import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
 import com.gtafe.data.center.system.config.vo.SysConfigVo;
@@ -119,6 +121,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         List<String> valueMappStepStrList = new ArrayList<String>();
+        String targetStep = "";
         //循环所有的步骤 找到 值映射的步骤
         for (String stepstr : taskVo.getSteps()) {
             List stepInfo = Utils.getStepInfo(stepstr);
@@ -130,20 +133,13 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
             if (stepType == 7) {//判断是否 有7 的步骤
                 valueMappStepStrList.add(stepstr + "######" + stepName);
             }
-        }
-        //源表名和目标表名
-        String sourceDBName = "", targetDBName = "";
-        //根据业务类型定义数据源
-        if (businessType == 1) {//发布 从 第三方库 表数据 到 中心库 表数据
-            sourceDBName = taskVo.getThirdTablename().split("#")[0];
-            targetDBName = taskVo.getCenterTablename();
-        } else if (businessType == 2) { // 订阅 从中心库表数据 到 第三方库表数据
-            targetDBName = taskVo.getThirdTablename().split("#")[0];
-            sourceDBName = taskVo.getCenterTablename();
-        }
 
+            if (stepType == 2) {
+                targetStep = stepstr;
+            }
+
+        }
         //一个值隐射步骤里面 可能会有很多 组 隐射 所以需要循环
-
         StringBuilder errorMessge = new StringBuilder("");
 
         //如果有 找到对应的 字段 有没有关联的code类
@@ -159,16 +155,33 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
             }
             for (int j = 0; j < valuemapperVos.size(); j++) {
                 ValuemapperVo valuemapperVo = valuemapperVos.get(j);
-                String targetField = valuemapperVo.getTargetField();
+                //这个是 配置的值映射的 输出字段， 不管发布或者订阅 都是针对中心库 而言 需要 到 targetStep 里找到对应的 字段
+                String souField = "";
+
+                // busType 为1 时
+                String targetField = valuemapperVo.getTargetField(); //ww
+                // busType 为2 时  需要 反过来
                 String sourceField = valuemapperVo.getSourceField();
+
+                if (businessType == 1) {
+                    souField = targetField;
+                } else {
+                    souField = sourceField;
+                }
                 //根据targetField 和busType 来查询其规则  此时还需要 源数据库 和对应的表
-                Params params = new Params();
-                params.setBusinessType(businessType);
-                params.setSourceDBName(sourceDBName);
-                params.setTargetDBName(targetDBName);
-                params.setTargetField(targetField);
-                params.setSourceField(sourceField);
-                List<String> rules = this.getByParams(params);
+                //这里有需要注意： 在bustype 为1 发布任务时候 需要找到 最后一步 里面 与 值映射字段对应的字段
+                String fieldValue = "";
+                //从对应的步骤里面找到对应的字段名称
+                fieldValue = this.getMapperField(targetStep, souField);
+
+                JSONObject target = JSONObject.parseObject(targetStep);
+                ConvertRuleTarget targetObj = JSONObject.toJavaObject(target, ConvertRuleTarget.class);
+                //循环 最后一步 目标步骤 来取得 对应关系
+
+
+                System.out.println("对应的字段名称为===========" + fieldValue);
+                List<String> rules = etlMapper.queryCodes(taskVo.getCenterTablename(), fieldValue);
+
                 List<String> targetStrs = new ArrayList<String>();
                 List<String> sourceStrs = new ArrayList<String>();
                 for (int i = 0; i < valuemapperVo.getMappings().size(); i++) {
@@ -187,6 +200,13 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         if (errorMessge.length() > 0) {
             throw new OrdinaryException("值隐射异常:" + errorMessge.toString());
         }
+    }
+
+    private String getMapperField(String targetStep, String souField) {
+        String str = "";
+
+
+        return str;
     }
 
     //效验
@@ -221,28 +241,11 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         return message_.toString();
     }
 
-    //根据参数 查询出 这个 code 值域
-
-    /**
-     * @param params
-     * @return
-     */
-    private List<String> getByParams(Params params) {
-        List<String> codeRules = new ArrayList<String>();
-        if (params.getBusinessType() == 1) {
-            //发布  比较 目标值
-            codeRules = etlMapper.queryCodes(params.getTargetDBName(), params.getTargetField());
-        } else {
-            codeRules = etlMapper.queryCodes(params.getSourceDBName(), params.getSourceField());
-        }
-        return codeRules;
-    }
-
 
     @Override
     public int insertDataTaskVo(int businessType, DataTaskVo taskVo) {
-        this.checkValueMapper4TaskVo(businessType, taskVo);
         this.revisionDataTaskVo(businessType, taskVo);
+        // this.checkValueMapper4TaskVo(businessType, taskVo);
         if (this.dataTaskMapper.checkTaskNameRepeat(null,
                 taskVo.getTaskName(), taskVo.getOrgId(), businessType) > 0) {
             throw new OrdinaryException(this.getName(businessType) + "资源名称已存在");
@@ -272,6 +275,8 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
             throw new OrdinaryException(this.getName(businessType) + "资源不存在会已被删除！");
         }
         this.revisionDataTaskVo(businessType, taskVo);
+        //add by zhougang  2018-4-27 for check valuemapper 数据清洗的一步
+        // this.checkValueMapper4TaskVo(businessType, taskVo);
         if (this.dataTaskMapper.checkTaskNameRepeat(dbVo.getTaskId(),
                 taskVo.getTaskName(), taskVo.getOrgId(), businessType) > 0) {
             throw new OrdinaryException(this.getName(businessType) + "资源名称已存在");
@@ -365,6 +370,13 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         return true;
     }
 
+    /**
+     * 数据处理
+     *
+     * @param businessType
+     * @param taskVo
+     * @return
+     */
     private boolean revisionDataTaskVo(int businessType, DataTaskVo taskVo) {
         //中心库连接ID
         //List<DatasourceVO> dvos = this.datasourceMapper.queryCenterData();
@@ -397,10 +409,177 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
             throw new OrdinaryException("数据子类不存在或已被删除，请重新选择！");
         }
         //计算 表达式
-        //taskVo.setRunTime(new Date());
         this.calculateExpression(taskVo);
+
+
+        /**
+         * 做针对值映射步骤的 数据代码值的效验工作
+         * 思路：
+         * 1.检索出当前任务中配置了 几个 值映射的 步骤
+         * 2 若有值映射 步骤 ，循环每个步骤  （每个步骤里面 可能有多个输入、输出、映射规则（源和目标值））
+         * 3 如果有值映射步骤 ，从最后一步骤里面 找到 所有的映射关系
+         * 4 进行匹配效验 抛异常
+         */
+        List<String> valueMappingSteps = getStepsByType(ConstantValue.STEP_VALUEMAPPER, taskVo, businessType);
+        Map<String, String> targetMappers = getTargetMappers(taskVo);
+        Map<String, Map<String, aa>> outMappers = getOutMappers(valueMappingSteps, businessType);
+        checkMappers(outMappers, targetMappers);
         return true;
     }
+
+
+    /**
+     * 获取值映射步骤里面 所有的输出字段 及其 映射关系
+     * ps : 一个任务有多个值映射步骤 每个值映射可以配置多个输出 ，每个输出 有一套对应的 源值 和目标值。
+     *
+     * @param valueMappingSteps
+     * @return
+     */
+    private Map<String, Map<String, aa>> getOutMappers(List<String> valueMappingSteps, int busType) {
+        Map<String, Map<String, aa>> m = new HashMap<>();
+        for (int k = 0; k < valueMappingSteps.size(); k++) {
+            String vmstep = valueMappingSteps.get(k).split("######")[0];
+            String stepName = valueMappingSteps.get(k).split("######")[1]; //步骤名称
+            String targetField_ = "";
+            Map<String, aa> pmap = new HashMap<>();
+            try {
+                List<ValuemapperVo> valuemapperVos = mapper.readValue(vmstep, ConvertRuleValuemapper.class).getDataList();
+                //循环每一个输出 找到 对应的原值 和目标值关系
+                for (int j = 0; j < valuemapperVos.size(); j++) {
+                    ValuemapperVo valuemapperVo = valuemapperVos.get(j);
+                    String sourceField = valuemapperVo.getSourceField();
+                    String targetField = valuemapperVo.getTargetField();//输出字段
+                    if (busType == 1) {
+                        targetField_ = targetField;
+                    } else {
+                        targetField_ = sourceField;
+                    }
+
+                    List<String> targetStrs = new ArrayList<String>();
+                    List<String> sourceStrs = new ArrayList<String>();
+                    //源值 和目标值 后面针对 效验的时候 就是用这两个值 跟 rule 来对应
+                    for (int i = 0; i < valuemapperVo.getMappings().size(); i++) {
+                        targetStrs.add(valuemapperVo.getMappings().get(i).getTargetValue());
+                        sourceStrs.add(valuemapperVo.getMappings().get(i).getSourceValue());
+                    }
+                    if (sourceStrs.size() > 0 && targetStrs.size() > 0) {
+                        aa a = new aa();
+                        a.setSourceStrs(sourceStrs);
+                        a.setTargetStrs(targetStrs);
+                        //以输出字段为key  对应 映射值 为value
+                        pmap.put(targetField_, a);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            m.put(stepName, pmap);
+        }
+        return m;
+    }
+
+    class aa {
+        List<String> sourceStrs;
+        List<String> targetStrs;
+
+        public List<String> getSourceStrs() {
+            return sourceStrs;
+        }
+
+        public void setSourceStrs(List<String> sourceStrs) {
+            this.sourceStrs = sourceStrs;
+        }
+
+        public List<String> getTargetStrs() {
+            return targetStrs;
+        }
+
+        public void setTargetStrs(List<String> targetStrs) {
+            this.targetStrs = targetStrs;
+        }
+    }
+
+    /**
+     * 验证核心代码
+     * Map map = new HashMap();
+     * <p>
+     * 　　Iterator iter = map.entrySet().iterator();
+     * <p>
+     * 　　while (iter.hasNext()) {
+     * <p>
+     * 　　Map.Entry entry = (Map.Entry) iter.next(); Object key = entry.getKey();
+     * <p>
+     * 　　Object val = entry.getValue();
+     * <p>
+     * 　　}
+     *
+     * @param outMappers
+     * @param targetMappers
+     */
+    private void checkMappers(Map<String, Map<String, aa>> outMappers, Map<String, String> targetMappers) {
+        Iterator iter = outMappers.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry entry = (Map.Entry) iter.next();
+            String stepName = (String) entry.getKey();//值映射步骤名
+            System.out.println("当前的步骤名称：===" + stepName);
+            Map<String, aa> relationMap = (Map<String, aa>) entry.getValue(); //对应的 输出和 映射值对象
+            Iterator ralationIterator = relationMap.entrySet().iterator();
+            while (ralationIterator.hasNext()) {
+                Map.Entry r_entry = (Map.Entry) ralationIterator.next();
+                String field = (String) r_entry.getKey();
+                if (targetMappers.containsKey(field)) {
+                    //如果  。。。目标对应的字段里面有 与 值映射输出的字段 有相等
+
+                }
+            }
+
+        }
+    }
+
+    /**
+     * 这一步是从 映射字段里面 获取所有的映射 源字段 和目标字段
+     *
+     * @param taskVo
+     * @return
+     */
+    private Map<String, String> getTargetMappers(DataTaskVo taskVo) {
+        Map<String, String> mmps = new HashMap<String, String>();
+        if (taskVo.getSteps().size() > 0) {
+            JSONObject target = JSONObject.parseObject(taskVo.getSteps().get(taskVo.getSteps().size() - 1));
+            if (!target.isEmpty()) {
+                ConvertRuleTarget targetObj = JSONObject.toJavaObject(target, ConvertRuleTarget.class);
+                if (targetObj != null) {
+                    SourceTargetVo center = targetObj.getData();
+                    if (center != null) {
+                        List<TargetMappingVo> mappingVos = center.getMappings();
+                        for (TargetMappingVo vo : mappingVos) {
+                            System.out.println("----S----" + vo.getSourceField() + "----T----" + vo.getTargetField());
+                            //注意 此处是 以 目标字段为key  源字段为值  ：因为 目标字段不可能重复 ，但 源字段 可能重复
+                            mmps.put(vo.getSourceField(), vo.getTargetField());
+                        }
+                    }
+                }
+            }
+        }
+        return mmps;
+    }
+
+    private List<String> getStepsByType(int stepValuemapper, DataTaskVo taskVo, int businessType) {
+        List<String> valueMappingSteps = new ArrayList<String>();
+        for (String stepstr : taskVo.getSteps()) {
+            List stepInfo = Utils.getStepInfo(stepstr);
+            if (stepInfo == null) {
+                throw new OrdinaryException(this.getName(businessType) + " 没有有效的转换步骤！");
+            }
+            int stepType = (int) stepInfo.get(2);
+            String stepName = (String) stepInfo.get(1);
+            if (stepType == stepValuemapper) {//判断是否 有7 的步骤
+                valueMappingSteps.add(stepstr + "######" + stepName);
+            }
+        }
+        return valueMappingSteps;
+    }
+
 
     private void calculateExpression(DataTaskVo taskVo) {
         String expression = "";
@@ -652,56 +831,6 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         return flag;
     }
 
-
-    class Params {
-        String targetField;
-
-        public String getSourceField() {
-            return sourceField;
-        }
-
-        public void setSourceField(String sourceField) {
-            this.sourceField = sourceField;
-        }
-
-        String sourceField;
-        int businessType;
-        String targetDBName;
-        String sourceDBName;
-
-        public String getTargetField() {
-            return targetField;
-        }
-
-        public void setTargetField(String targetField) {
-            this.targetField = targetField;
-        }
-
-        public int getBusinessType() {
-            return businessType;
-        }
-
-        public void setBusinessType(int businessType) {
-            this.businessType = businessType;
-        }
-
-        public String getTargetDBName() {
-            return targetDBName;
-        }
-
-        public void setTargetDBName(String targetDBName) {
-            this.targetDBName = targetDBName;
-        }
-
-        public String getSourceDBName() {
-            return sourceDBName;
-        }
-
-        public void setSourceDBName(String sourceDBName) {
-            this.sourceDBName = sourceDBName;
-        }
-
-    }
 
     public void ss() throws IOException {
 

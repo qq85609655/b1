@@ -158,12 +158,12 @@ public class EtlTrans {
         for (String stepstr : dataTask.getSteps()) {
 
             //判断步骤类型
-            List stepInfo =  Utils.getStepInfo(stepstr);
+            List stepInfo = Utils.getStepInfo(stepstr);
             if (stepInfo == null) {
                 etlMapper.stopErrorTask(taskId);
                 return;
             }
-            if ((int) stepInfo.get(2) == 1) {
+            if ((int) stepInfo.get(2) == ConstantValue.STEP_INPUTTABLE) {
                 //初始化表输入
                 InputTable inputTable = new InputTable(locationX, 100, (String) stepInfo.get(1), sourceDS, sourceDBName);
                 inputStep = inputTable.inputStep();
@@ -184,9 +184,9 @@ public class EtlTrans {
         //转换处理
         for (String stepstr : dataTask.getSteps()) {
 
-            List stepInfo =  Utils.getStepInfo(stepstr);
+            List stepInfo = Utils.getStepInfo(stepstr);
 
-            if ((int) stepInfo.get(2) == 1 || (int) stepInfo.get(2) == 2) {
+            if ((int) stepInfo.get(2) == ConstantValue.STEP_INPUTTABLE || (int) stepInfo.get(2) == ConstantValue.STEP_OUTPUTTABLE) {
                 continue;
             }
 
@@ -251,7 +251,7 @@ public class EtlTrans {
         for (String stepstr : dataTask.getSteps()) {
 
             List stepInfo = Utils.getStepInfo(stepstr);
-            if ((int) stepInfo.get(2) == 2) {
+            if ((int) stepInfo.get(2) == ConstantValue.STEP_OUTPUTTABLE) {
 
                 //初始化表输出
                 OutputTable outputTable = new OutputTable(locationX, 100, (String) stepInfo.get(1), targetDS, targetDBName, stepstr);
@@ -366,37 +366,37 @@ public class EtlTrans {
         switch (stepType) {
 
             //字符串操作
-            case 3:
+            case ConstantValue.STEP_STRINGOPERATIONS:
                 StringOperations stringOperations = new StringOperations(locationX, 100, name, stepstr);
                 stepMeta.add(stringOperations.strOpe());
                 break;
 
             //字符串剪切
-            case 4:
+            case ConstantValue.STEP_STRINGCUT:
                 StringCut stringCut = new StringCut(locationX, 100, name, stepstr);
                 stepMeta.add(stringCut.strCut());
                 break;
 
             //字符串替换
-            case 5:
+            case ConstantValue.STEP_REPLACESTRING:
                 ReplaceString replaceString = new ReplaceString(locationX, 100, name, stepstr);
                 stepMeta.add(replaceString.replace());
                 break;
 
             //增加常量
-            case 6:
+            case ConstantValue.STEP_CONSTANT:
                 Constant cons = new Constant(locationX, 100, name, stepstr);
                 stepMeta.add(cons.constantStep());
                 break;
 
             //值映射
-            case 7:
+            case ConstantValue.STEP_VALUEMAPPER:
                 ValueMapper valueMapper = new ValueMapper(locationX, 100, name, stepstr);
                 stepMeta.addAll(valueMapper.valueMapperStep());
                 break;
 
             //拆分
-            case 8:
+            case ConstantValue.STEP_SPLIT:
                 SelectValues addValues = new SelectValues(locationX, 100, name + "_add", stepstr);
                 locationX += 100;
                 Split split = new Split(locationX, 100, name, stepstr);
@@ -412,49 +412,49 @@ public class EtlTrans {
                 break;
 
             //合并
-            case 9:
+            case ConstantValue.STEP_CONCAT:
                 Concat concat = new Concat(locationX, 100, name, stepstr);
                 stepMeta.addAll(concat.concatStep());
                 break;
 
             //数值范围
-            case 10:
+            case ConstantValue.STEP_NUMBERRANGE:
                 NumberRange numberRange = new NumberRange(locationX, 100, name, stepstr);
                 stepMeta.addAll(numberRange.nrStep());
                 break;
 
             //字段选择
-            case 11:
+            case ConstantValue.STEP_SELECTVALUES:
                 SelectValues selectValues = new SelectValues(locationX, 100, name, stepstr);
                 stepMeta.add(selectValues.selectValueStep());
                 break;
 
             //列转多行
-            case 12:
+            case ConstantValue.STEP_SPLITFIELDTOROWS:
                 SplitFieldToRows splitFieldToRows = new SplitFieldToRows(locationX, 100, name, stepstr);
                 stepMeta.add(splitFieldToRows.ftrStep());
                 break;
 
             //计算器
-            case 13:
+            case ConstantValue.STEP_CALCULATOR:
                 Calculator calculator = new Calculator(locationX, 100, name, stepstr);
                 stepMeta.add(calculator.ca());
                 break;
 
             //去除重复记录
-            case 14:
+            case ConstantValue.STEP_UNIQUEROWSBYHASHSET:
                 UniqueRowsByHashSet uniqueRowsByHashSet = new UniqueRowsByHashSet(locationX, 100, name, stepstr);
                 stepMeta.add(uniqueRowsByHashSet.unique());
                 break;
 
             //动态值映射
-            case 16:
+            case ConstantValue.STEP_DYNAMIC_VALUEMAPPING:
                 DynamicValueMapper dynamicValueMapper = new DynamicValueMapper(locationX, 100, name, stepstr, targetDS);
                 stepMeta.addAll(dynamicValueMapper.valueMapperStep());
                 break;
 
             // 执行sql 脚本
-            case 15:
+            case ConstantValue.STEP_EXECUTESQL:
                 ExecuteSql executeSql = new ExecuteSql(locationX, 100, name, stepstr, busType);
                 stepMeta.addAll(executeSql.executeSqlStep());
                 break;

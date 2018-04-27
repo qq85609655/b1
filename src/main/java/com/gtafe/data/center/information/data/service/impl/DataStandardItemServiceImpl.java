@@ -156,6 +156,19 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
             itemCode = subclassCode + "001";
         }
         itemVo.setItemCode(itemCode);
+        String data_ref1 = itemVo.getDataReferenced1();
+        String data_ref2 = itemVo.getDataReferenced2();
+        String data_ref3 = itemVo.getDataReferenced3();
+        if (itemVo.getDataPrimarykey() == 0) { //非主键的时候 才会有引用值
+            if (StringUtil.isNotBlank(data_ref1) && data_ref1.equals("1000")) {
+                if (StringUtil.isNotBlank(data_ref3) && StringUtil.isNotBlank(data_ref2)) {
+                    itemVo.setDataReferenced(data_ref3);
+                }
+            } else if (StringUtil.isNotBlank(data_ref2)) {
+                itemVo.setDataReferenced(data_ref2);
+            }
+        }
+
         this.dataStandardItemMapper.insertDataStandardItemVo(itemVo, sourceId, this.getUserId());
         LogInfo logInfo = new LogInfo();
         logInfo.setModuleId(LogConstant.Module_Standard_Item);
@@ -213,9 +226,9 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
         }
         sourceId = subclassVo.getSourceId();
         String tableName = subclassVo.getTableName();
-        LOGGER.info(tableName);
+        System.out.println(tableName);
         res = createTable(subclassCode, tableName, sourceId);
-        LOGGER.info("ok 表[" + tableName + "]已经创建了。。。");
+        System.out.println("ok 表[" + tableName + "]已经创建了。。。" + res);
     }
 
     /**

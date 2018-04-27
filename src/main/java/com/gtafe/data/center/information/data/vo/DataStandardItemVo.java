@@ -27,6 +27,7 @@ public class DataStandardItemVo {
     @ApiModelProperty(value = "说明/示例", required = false)
     private String dataExplain;
 
+
     public String getDataReferenced() {
         return dataReferenced;
     }
@@ -37,6 +38,7 @@ public class DataStandardItemVo {
 
     @ApiModelProperty(value = "引用管理", required = false)
     private String dataReferenced;
+
 
     private String dataReferenced1;
     @ApiModelProperty(value = "是否可选，默认M=必选，O=必选", required = true)
