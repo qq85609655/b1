@@ -106,6 +106,7 @@ public class CodeStandardController extends BaseController {
     public WebResult checkCodeValues(HttpServletRequest request) {
         WebResult result = new WebResult();
         String targetValues222 = request.getParameter("targetValues222");
+        String busType = request.getParameter("busType");
         //   System.out.println(targetValues222);
         Integer code = Integer.parseInt(request.getParameter("code222"));
         //   System.out.println(code);
@@ -118,7 +119,7 @@ public class CodeStandardController extends BaseController {
         }
         result.setException(false);
         result.setSuccess(true);
-        StringBuilder sb = new StringBuilder("目标值:");
+        StringBuilder sb = busType.equals("1") ? new StringBuilder("目标值:") : new StringBuilder("源值");
         StringBuilder sb2 = new StringBuilder("");
         if (StringUtil.isNotBlank(targetValues222)) {
             String[] targetValues_ = targetValues222.split(";;");
