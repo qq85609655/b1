@@ -122,7 +122,7 @@ public class CodeStandardController extends BaseController {
             String[] targetValues_ = targetValues222.split(";;");
             for (String s : targetValues_) {
                 if (!codes.contains(s)) {
-                    sb2.append("s").append(",");
+                    sb2.append(s).append(",");
                 }
             }
         }
