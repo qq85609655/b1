@@ -1,9 +1,11 @@
 package com.gtafe.data.center.information.code.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.gtafe.framework.base.controller.WebResult;
 import com.gtafe.framework.base.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,19 +94,38 @@ public class CodeStandardController extends BaseController {
         return codeStandardServiceImpl.queryCodeALL(nodeId);
     }
 
-    @AuthAnnotation(value = {"032001", "033001"}, conditions = {"sourceId=1", "sourceId=2"})
-    @RequestMapping(path = "/queryCodeList4Reseacher", method = RequestMethod.POST)
-    public PageInfo<CodeInfoVo> queryCodeList4Reseacher(
-            @RequestParam(value = "sourceId", required = false) int sourceId,
-            @RequestParam(value = "parentId", required = false) String parentId,
-            @RequestBody CodeInfoParam param) {
-        if (param.getNodeType() < 0) {
-            throw new OrdinaryException("参数错误");
+
+    /**
+     * 效验 代码输入 是否合规
+     *
+     * @param targetValues
+     * @param code
+     * @return
+     */
+    @RequestMapping(path = "/checkCodeValues", method = RequestMethod.POST)
+    public WebResult checkCodeValues(@RequestParam(value = "targetValues", required = false) String targetValues, @RequestParam(value = "code", required = true) String code) {
+        WebResult result = new WebResult();
+        List<CodeInfoVo> codeInfoVos = codeStandardServiceImpl.queryCodeALL(Integer.parseInt(code));
+        List<String> codes = new ArrayList<String>();
+        for (CodeInfoVo vo : codeInfoVos) {
+            if (StringUtil.isNotBlank(vo.getCode())) {
+                codes.add(vo.getCode());
+            }
         }
-        param.setSourceId(sourceId);
-        LOGGER.info("node_id=====" + param.getNodeId());
-        List<CodeInfoVo> result = codeStandardServiceImpl.queryCodeList2(param.getKeyWord(), param.getNodeId() + "", sourceId, param.getPageNum(), param.getPageSize());
-        return new PageInfo<CodeInfoVo>(result);
+        result.setException(false);
+        result.setSuccess(true);
+        String[] targetValues_ = new String[codeInfoVos.size()];
+        if (StringUtil.isNotBlank(targetValues)) {
+            targetValues_ = targetValues.split("@@@@");
+            for (String s : targetValues_) {
+                if (!codes.contains(s)) {
+                    result.setSuccess(false);
+                    result.setException(true);
+                    result.setExpInfo("目标值[" + s + "]不在代码值域中，请重新选择输入!");
+                }
+            }
+        }
+        return result;
     }
 
 

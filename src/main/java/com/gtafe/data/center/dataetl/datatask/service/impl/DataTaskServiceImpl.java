@@ -421,9 +421,11 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
          * 4 进行匹配效验 抛异常
          */
         List<String> valueMappingSteps = getStepsByType(ConstantValue.STEP_VALUEMAPPER, taskVo, businessType);
-        Map<String, String> targetMappers = getTargetMappers(taskVo);
-        Map<String, Map<String, aa>> outMappers = getOutMappers(valueMappingSteps, businessType);
-        checkMappers(outMappers, targetMappers);
+        if (valueMappingSteps.size() > 0) {
+            Map<String, String> targetMappers = getTargetMappers(taskVo);
+            Map<String, Map<String, aa>> outMappers = getOutMappers(valueMappingSteps, businessType);
+            checkMappers(outMappers, targetMappers);
+        }
         return true;
     }
 
@@ -529,10 +531,9 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
                 String field = (String) r_entry.getKey();
                 if (targetMappers.containsKey(field)) {
                     //如果  。。。目标对应的字段里面有 与 值映射输出的字段 有相等
-
+                    System.out.println("存在"+field+",被映射使用!");
                 }
             }
-
         }
     }
 
