@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 import com.gtafe.framework.base.controller.WebResult;
 import com.gtafe.framework.base.utils.StringUtil;
@@ -97,15 +98,16 @@ public class CodeStandardController extends BaseController {
 
     /**
      * 效验 代码输入 是否合规
-     *
-     * @param targetValues
-     * @param code
      * @return
      */
     @RequestMapping(path = "/checkCodeValues", method = RequestMethod.POST)
-    public WebResult checkCodeValues(@RequestParam(value = "targetValues", required = false) String targetValues, @RequestParam(value = "code", required = true) String code) {
+    public WebResult checkCodeValues(HttpServletRequest request) {
         WebResult result = new WebResult();
-        List<CodeInfoVo> codeInfoVos = codeStandardServiceImpl.queryCodeALL(Integer.parseInt(code));
+        String targetValues222 = request.getParameter("targetValues222");
+        System.out.println(targetValues222);
+        Integer code = Integer.parseInt(request.getParameter("code222"));
+        System.out.println(code);
+        List<CodeInfoVo> codeInfoVos = codeStandardServiceImpl.queryCodeALL(code);
         List<String> codes = new ArrayList<String>();
         for (CodeInfoVo vo : codeInfoVos) {
             if (StringUtil.isNotBlank(vo.getCode())) {
@@ -114,16 +116,21 @@ public class CodeStandardController extends BaseController {
         }
         result.setException(false);
         result.setSuccess(true);
-        String[] targetValues_ = new String[codeInfoVos.size()];
-        if (StringUtil.isNotBlank(targetValues)) {
-            targetValues_ = targetValues.split("@@@@");
+        StringBuilder sb = new StringBuilder("目标值:");
+        StringBuilder sb2 = new StringBuilder("");
+        if (StringUtil.isNotBlank(targetValues222)) {
+            String[] targetValues_ = targetValues222.split(";;");
             for (String s : targetValues_) {
                 if (!codes.contains(s)) {
-                    result.setSuccess(false);
-                    result.setException(true);
-                    result.setExpInfo("目标值[" + s + "]不在代码值域中，请重新选择输入!");
+                    sb2.append("s").append(",");
                 }
             }
+        }
+        if (sb2.length() > 0) {
+            sb.append(sb2.toString().substring(0, sb2.length() - 1)).append(".不在对应的国家标准代码中，请重新对应输入!");
+            result.setSuccess(false);
+            result.setExpInfo(sb.toString());
+            result.setException(true);
         }
         return result;
     }
