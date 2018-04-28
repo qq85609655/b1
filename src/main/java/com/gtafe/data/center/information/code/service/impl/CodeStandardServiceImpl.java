@@ -54,6 +54,12 @@ public class CodeStandardServiceImpl implements CodeStandardService {
         return codeStandardMapper.queryCodeList(keyWord, nodeId, sourceId, nodeType, pageNum, pageSize);
     }
 
+
+    @Override
+    public List<CodeInfoVo> queryCodeInfoPage(int nodeId, int pageNum, int pageSize) {
+        return codeStandardMapper.queryCodeInfoPage(nodeId, pageNum, pageSize);
+    }
+
     @Override
     public CodeNodeVo queryCodeNodeTree(int sourceId) {
         List<CodeNodeVo> list = this.codeStandardMapper.queryCodeNodes(sourceId);

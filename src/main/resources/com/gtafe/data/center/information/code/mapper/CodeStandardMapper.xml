@@ -35,6 +35,20 @@
         order by c.node_id
     </select>
 
+    <select id="queryCodeInfoPage" resultType="com.gtafe.data.center.information.code.vo.CodeInfoVo">
+        SELECT
+        c.code_id codeId,
+        c.node_id nodeId,
+        c.code,
+        c.name,
+        c.description,
+        n.name nodeName
+        FROM info_codestandard_code c
+        inner join info_codestandard_node n on c.node_id= n.node_id
+        where  c.node_id = #{nodeId}
+        order by c.node_id
+    </select>
+
 
     <select id="queryCodeList2" resultType="com.gtafe.data.center.information.code.vo.CodeInfoVo">
 
@@ -325,42 +339,42 @@ and t1.node_id=#{parentId}
         createDate DESC
     </select>
 
-   <!-- <select id="queryAllCenterTableList2" resultType="com.gtafe.data.center.information.code.vo.MysqlTableVo">
-        SELECT
-        TABLE_CATALOG tableCatalog,
-        TABLE_SCHEMA tableSchema,
-        `TABLE_NAME` tableName,
-        TABLE_TYPE tableType,
-        `ENGINE` ENGINE,
-        VERSION version,
-        ROW_FORMAT rowFormat,
-        TABLE_ROWS tableRows,
-        AVG_ROW_LENGTH avgRowLength,
-        DATA_LENGTH dataLength,
-        MAX_DATA_LENGTH maxDataLength,
-        INDEX_LENGTH indexLength,
-        DATA_FREE dataFree,
-        AUTO_INCREMENT autoIncrement,
-        CREATE_TIME createTime,
-        DATE_FORMAT(CREATE_TIME,'%m-%d-%Y %h:%i %p') createTime_,
-        DATE_FORMAT(UPDATE_TIME,'%m-%d-%Y %h:%i %p') updateTime_,
-        UPDATE_TIME updateTime,
-        CHECK_TIME checkTime,
-        TABLE_COLLATION tableCollation,
-        `CHECKSUM` checkSum,
-        CREATE_OPTIONS createOptions,
-        TABLE_COMMENT tableComment
-        FROM
-        information_schema.`TABLES`
-        WHERE
-        TABLE_SCHEMA = 'center_db'
-        <if test="tableName !=null and tableName.trim().length() > 0">
-            and `TABLE_NAME` LIKE CONCAT('%', #{tableName}, '%')
-        </if>
-        <if test="tableType !=null">
-            and TABLE_TYPE = #{tableType}
-        </if>
-        ORDER BY
-        Update_time DESC
-    </select>-->
+    <!-- <select id="queryAllCenterTableList2" resultType="com.gtafe.data.center.information.code.vo.MysqlTableVo">
+         SELECT
+         TABLE_CATALOG tableCatalog,
+         TABLE_SCHEMA tableSchema,
+         `TABLE_NAME` tableName,
+         TABLE_TYPE tableType,
+         `ENGINE` ENGINE,
+         VERSION version,
+         ROW_FORMAT rowFormat,
+         TABLE_ROWS tableRows,
+         AVG_ROW_LENGTH avgRowLength,
+         DATA_LENGTH dataLength,
+         MAX_DATA_LENGTH maxDataLength,
+         INDEX_LENGTH indexLength,
+         DATA_FREE dataFree,
+         AUTO_INCREMENT autoIncrement,
+         CREATE_TIME createTime,
+         DATE_FORMAT(CREATE_TIME,'%m-%d-%Y %h:%i %p') createTime_,
+         DATE_FORMAT(UPDATE_TIME,'%m-%d-%Y %h:%i %p') updateTime_,
+         UPDATE_TIME updateTime,
+         CHECK_TIME checkTime,
+         TABLE_COLLATION tableCollation,
+         `CHECKSUM` checkSum,
+         CREATE_OPTIONS createOptions,
+         TABLE_COMMENT tableComment
+         FROM
+         information_schema.`TABLES`
+         WHERE
+         TABLE_SCHEMA = 'center_db'
+         <if test="tableName !=null and tableName.trim().length() > 0">
+             and `TABLE_NAME` LIKE CONCAT('%', #{tableName}, '%')
+         </if>
+         <if test="tableType !=null">
+             and TABLE_TYPE = #{tableType}
+         </if>
+         ORDER BY
+         Update_time DESC
+     </select>-->
 </mapper>

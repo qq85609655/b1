@@ -82,6 +82,12 @@ public class CodeStandardController extends BaseController {
         return new PageInfo<CodeInfoVo>(result);
     }
 
+    @RequestMapping(path = "/queryCodeInfoPage", method = RequestMethod.POST)
+    public PageInfo<CodeInfoVo> queryCodeInfoPage(@RequestBody CodeInfoParam param) {
+        List<CodeInfoVo> result = codeStandardServiceImpl.queryCodeInfoPage(param.getNodeId(), param.getPageNum(), param.getPageSize());
+        return new PageInfo<CodeInfoVo>(result);
+    }
+
 
     @RequestMapping(path = "/queryNodesByParentId", method = RequestMethod.GET)
     public List<CodeNodeVo> queryNodesByParentId(@RequestParam(value = "parentNode", required = true) int parentNode,
@@ -90,23 +96,19 @@ public class CodeStandardController extends BaseController {
         return result;
     }
 
-    @RequestMapping(path = "/queryCodeALL", method = RequestMethod.POST)
-    public List<CodeInfoVo> queryCodeALL(@RequestParam(value = "nodeId", required = true) int nodeId) {
-        return codeStandardServiceImpl.queryCodeALL(nodeId);
-    }
-
 
     /**
      * 效验 代码输入 是否合规
+     *
      * @return
      */
     @RequestMapping(path = "/checkCodeValues", method = RequestMethod.POST)
     public WebResult checkCodeValues(HttpServletRequest request) {
         WebResult result = new WebResult();
         String targetValues222 = request.getParameter("targetValues222");
-        System.out.println(targetValues222);
+        //   System.out.println(targetValues222);
         Integer code = Integer.parseInt(request.getParameter("code222"));
-        System.out.println(code);
+        //   System.out.println(code);
         List<CodeInfoVo> codeInfoVos = codeStandardServiceImpl.queryCodeALL(code);
         List<String> codes = new ArrayList<String>();
         for (CodeInfoVo vo : codeInfoVos) {

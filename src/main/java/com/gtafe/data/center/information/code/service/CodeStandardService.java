@@ -14,7 +14,9 @@ public interface CodeStandardService {
      * @author 汪逢建
      * @date 2017年11月8日
      */
-    public List<CodeInfoVo> queryCodeList(String keyWord, int nodeId, int sourceId, int nodeType, int pageNum, int pageSize);
+    List<CodeInfoVo> queryCodeList(String keyWord, int nodeId, int sourceId, int nodeType, int pageNum, int pageSize);
+
+    List<CodeInfoVo> queryCodeInfoPage(int nodeId, int pageNum, int pageSize);
 
     /**
      * 查询代码标准树
@@ -22,21 +24,21 @@ public interface CodeStandardService {
      * @author 汪逢建
      * @date 2017年11月6日
      */
-    public CodeNodeVo queryCodeNodeTree(int sourceId);
+    CodeNodeVo queryCodeNodeTree(int sourceId);
 
-    public CodeNodeVo queryCodeNodeTree2(String parentId);
+    CodeNodeVo queryCodeNodeTree2(String parentId);
 
-    public boolean updateCodeVo(int sourceId, CodeInfoVo voList, int userId);
+    boolean updateCodeVo(int sourceId, CodeInfoVo voList, int userId);
 
-    public boolean deleteCodeVo(int sourceId, int codeId, int userId);
+    boolean deleteCodeVo(int sourceId, int codeId, int userId);
 
-    public boolean saveNodeVos(int sourceId, int nodeId, List<CodeNodeVo> voList, int userId);
+    boolean saveNodeVos(int sourceId, int nodeId, List<CodeNodeVo> voList, int userId);
 
-    public boolean updateNodeVo(int sourceId, CodeNodeVo vo, int userId);
+    boolean updateNodeVo(int sourceId, CodeNodeVo vo, int userId);
 
-    public boolean deleteNodeVo(int sourceId, int nodeId, int userId);
+    boolean deleteNodeVo(int sourceId, int nodeId, int userId);
 
-    public boolean saveCodeVos(int sourceId, int nodeId, List<CodeInfoVo> voList, int userId);
+    boolean saveCodeVos(int sourceId, int nodeId, List<CodeInfoVo> voList, int userId);
 
     List<CodeInfoVo> queryCodeList2(String keyWord, String parentId_, int sourceId, int pageNum, int pageSize);
 
@@ -49,4 +51,6 @@ public interface CodeStandardService {
     List<CodeNodeVo> queryNodesByParentId(int parentNode, String type);
 
     List<CodeInfoVo> queryCodeALL(int nodeId);
+
+
 }

@@ -12,11 +12,12 @@ import com.gtafe.data.center.information.code.vo.CodeNodeVo;
 
 public interface CodeStandardMapper {
 
-    public List<CodeInfoVo> queryCodeList(@Param("keyWord") String keyWord, @Param("nodeId") int nodeId, @Param("sourceId") int sourceId,
-                                          @Param("nodeType") int nodeType,
-                                          @Param("pageNumKey") int pageNum, @Param("pageSizeKey") int pageSize);
+    List<CodeInfoVo> queryCodeList(@Param("keyWord") String keyWord, @Param("nodeId") int nodeId, @Param("sourceId") int sourceId,
+                                   @Param("nodeType") int nodeType,
+                                   @Param("pageNumKey") int pageNum, @Param("pageSizeKey") int pageSize);
 
-    public List<CodeNodeVo> queryCodeNodes(@Param("sourceId") int sourceId);
+
+    List<CodeNodeVo> queryCodeNodes(@Param("sourceId") int sourceId);
 
     @Insert("insert into info_codestandard_node(code,parentnode_id,name,description,node_type,sourceid,creater,updater) " +
             "values(#{code},#{parentnodeId},#{name},#{description},#{nodeType},#{sourceId},#{creater},#{updater}) ")
@@ -68,4 +69,6 @@ public interface CodeStandardMapper {
 
     @Select("select n.node_id nodeId , n.`name` name from info_codestandard_node n where n.parentnode_id=#{parentId}")
     List<CodeNodeVo> queryDataNodeBy(@Param("parentId") String parentId);
+
+    List<CodeInfoVo> queryCodeInfoPage(@Param("nodeId") int nodeId, @Param("pageNumKey") int pageNum, @Param("pageSizeKey") int pageSize);
 }
