@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.dataetl.datajob.mapper.DataJobMapper">
+    <!-- 分页查询映射数据 -->
+    <select id="queryList" resultType="com.gtafe.data.center.dataetl.datajob.vo.JobEntity">
+        SELECT
+        m.id jobId,
+        m.orgId orgId,
+        o.org_name orgName,
+        m.jobName jobName,
+        m.remark remark,
+        m.businessType businessType,
+        if(m.status=1,true,false) status,
+        if(m.status=1,'启动','停止') statusStr,
+        m.schedule schedule
+        FROM data_etl_job m
+        inner JOIN sys_org o ON o.id = m.orgId
+        WHERE 1=1
+        <if test="busType >= 1">
+            AND m.businessType=#{busType}
+        </if>
+
+        <if test="status >= 0">
+            AND m.status = #{status}
+        </if>
+
+        <if test="jobName != null and jobName.trim().length() > 0">
+            AND m.jobName LIKE CONCAT('%',#{jobName},'%')
+        </if>
+        and m.orgId in (
+        <foreach collection="orgIdList" item="item" separator=",">
+            #{item}
+        </foreach>
+        )
+        ORDER BY m.updateTime DESC
+    </select>
+
+
+</mapper>

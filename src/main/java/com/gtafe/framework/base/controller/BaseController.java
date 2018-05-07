@@ -23,7 +23,7 @@ public class BaseController {
     protected UserLoginInfo getUserInfo(){
         UserLoginInfo userInfo = gtSessionUserInfo(getRequest().getSession());
         if(userInfo == null) {
-          //  throw new NoLoginException();
+             throw new NoLoginException();
         }
         return userInfo;
         

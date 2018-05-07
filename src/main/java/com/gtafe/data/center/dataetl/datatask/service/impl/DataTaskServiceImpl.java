@@ -420,12 +420,12 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
          * 3 如果有值映射步骤 ，从最后一步骤里面 找到 所有的映射关系
          * 4 进行匹配效验 抛异常
          */
-        List<String> valueMappingSteps = getStepsByType(ConstantValue.STEP_VALUEMAPPER, taskVo, businessType);
+     /*   List<String> valueMappingSteps = getStepsByType(ConstantValue.STEP_VALUEMAPPER, taskVo, businessType);
         if (valueMappingSteps.size() > 0) {
             Map<String, String> targetMappers = getTargetMappers(taskVo);
             Map<String, Map<String, aa>> outMappers = getOutMappers(valueMappingSteps, businessType);
             checkMappers(outMappers, targetMappers);
-        }
+        }*/
         return true;
     }
 

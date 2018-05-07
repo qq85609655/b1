@@ -86,10 +86,6 @@ public class DataTaskController extends BaseController {
     }
 
 
-    @Resource
-    private IDatasourceService datasourceServiceImpl;
-
-
 
     /**
      * 新增资源任务
