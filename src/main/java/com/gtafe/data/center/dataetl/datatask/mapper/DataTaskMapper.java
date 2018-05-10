@@ -99,4 +99,13 @@ public interface DataTaskMapper extends BaseMapper {
     @Select("select file_path filePath,file_name fileName,schedule_info scheduleInfo," +
             "file_type fileType,update_time updateTime  from t_trans_file_info")
     List<TransFileVo> queryKfileListAll();
+
+    @Select("select  " +
+            "m.task_id taskId, " +
+            "m.task_name taskName," +
+            " if(m.run_status=1,'启动','停止') runStatusStr " +
+            " from data_etl_task m " +
+            "  where m.business_type=#{busType}" +
+            " and m.org_id=#{orgId} ")
+    List<DataTaskVo> queryTasks(@Param("busType") int busType, @Param("orgId") int orgId);
 }

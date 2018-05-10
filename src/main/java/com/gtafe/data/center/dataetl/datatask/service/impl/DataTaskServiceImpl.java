@@ -531,7 +531,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
                 String field = (String) r_entry.getKey();
                 if (targetMappers.containsKey(field)) {
                     //如果  。。。目标对应的字段里面有 与 值映射输出的字段 有相等
-                    System.out.println("存在"+field+",被映射使用!");
+                    System.out.println("存在" + field + ",被映射使用!");
                 }
             }
         }
@@ -790,8 +790,13 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         return false;
     }
 
+    @Override
+    public List<DataTaskVo> queryTasks(int busType, int orgId) {
+        return this.dataTaskMapper.queryTasks(busType, orgId);
+    }
 
     private static String OS = System.getProperty("os.name").toLowerCase();
+
 
     /**
      * 判断操作系统类型 如果是window 则先根据规则 删除定时任务，然后再创建一个新的定时任务

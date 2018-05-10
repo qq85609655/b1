@@ -64,4 +64,6 @@ public interface DataTaskService {
     void flushTransFileVo(String ktrpath, String type);
 
     boolean sendInTask(String filePath);
+
+    List<DataTaskVo> queryTasks(int businessType, int orgId);
 }

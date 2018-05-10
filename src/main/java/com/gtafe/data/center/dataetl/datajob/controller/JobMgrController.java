@@ -3,7 +3,9 @@ package com.gtafe.data.center.dataetl.datajob.controller;
 import com.github.pagehelper.PageInfo;
 import com.gtafe.data.center.dataetl.datajob.service.DataJobService;
 import com.gtafe.data.center.dataetl.datajob.vo.JobEntity;
+import com.gtafe.data.center.dataetl.datatask.service.DataTaskService;
 import com.gtafe.data.center.dataetl.datatask.vo.DataJobParam;
+import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
 import com.gtafe.framework.base.controller.BaseController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +24,8 @@ public class JobMgrController extends BaseController {
             .getLogger(JobMgrController.class);
     @Resource
     private DataJobService dataJobServiceImpl;
+    @Resource
+    private DataTaskService dataTaskServiceImpl;
 
     @RequestMapping(path = "/queryList", method = RequestMethod.POST)
     public @ResponseBody
@@ -67,6 +71,11 @@ public class JobMgrController extends BaseController {
     public @ResponseBody
     boolean updateStatus(@RequestParam int jobId,
                          @RequestParam boolean checked) {
-        return dataJobServiceImpl.batchUpdateState(jobId+"", checked?1:0);
+        return dataJobServiceImpl.batchUpdateState(jobId + "", checked ? 1 : 0);
+    }
+
+    @RequestMapping(path = "/queryTasks", method = RequestMethod.GET)
+    public List<DataTaskVo> queryTasks(@RequestParam int businessType, @RequestParam int orgId) {
+        return this.dataTaskServiceImpl.queryTasks(businessType, orgId);
     }
 }
