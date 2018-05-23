@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gtafe.data.center.dataetl.datasource.utils.ConnectDB;
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.rulevo.DynamicValueMappingVo;
+import com.gtafe.framework.base.utils.PropertyUtils;
 import com.gtafe.framework.base.utils.StringUtil;
 import org.pentaho.di.core.database.DatabaseMeta;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.trans.TransMeta;
+import org.springframework.util.StringUtils;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -19,6 +21,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 工具类
@@ -74,14 +77,25 @@ public class Utils {
     /**
      * kettle任务生成ktr
      *
+     * @param taskName
      * @param transMeta
      * @throws IOException
      * @throws KettleException
      */
-    static void outputktr(TransMeta transMeta) {
+    static void outputktr(String taskName, TransMeta transMeta) {
         try {
             String xml = transMeta.getXML();
-            DataOutputStream dos = new DataOutputStream(new FileOutputStream(new File("d:\\kettle-file.ktr")));
+            String kettleFilePath = "";//从配置文件来
+            String kfilepathconfig = PropertyUtils.getProperty("other.properties", "kettleFilePath");
+            if (StringUtils.isEmpty(kfilepathconfig)) {
+                if (System.getProperty("os.name").toLowerCase(Locale.US).indexOf("window") == 0) {
+                    kettleFilePath = "d:";
+                } else {
+                    kettleFilePath = "/home/user/local/ktlfile";
+                }
+            }
+            String filePath = kettleFilePath + File.separator + taskName + ".ktr";
+            DataOutputStream dos = new DataOutputStream(new FileOutputStream(new File(filePath)));
             dos.write(xml.getBytes("UTF-8"));
             dos.close();
         } catch (Exception e) {

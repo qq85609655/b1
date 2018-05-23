@@ -284,8 +284,11 @@ public class EtlTrans {
         transMeta.getTransLogTable().setStepUpdate(outputStep);
         transMeta.getTransLogTable().setStepRejected(outputStep);
 
+        String taskName=dataTask.getTaskName();
+        System.out.println(taskName);
+
         // ktr文件保存至本地
-        Utils.outputktr(transMeta);
+        Utils.outputktr(taskName,transMeta);
 
         // 执行处理
         try {

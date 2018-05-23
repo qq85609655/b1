@@ -3,15 +3,12 @@ package com.gtafe.framework.base.utils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class DateUtil {
 
     public final static String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+
     public static Date parseDate(String dateStr, String format) {
         Date date = null;
         try {
@@ -170,8 +167,8 @@ public class DateUtil {
     }
 
     public static int diffDate(String date, String date1) {
-       // System.out.println(date + "--date-----" + getMillis(parseDate(date)));
-       // System.out.println(date1 + "--date1-----" + getMillis(parseDate(date1)));
+        // System.out.println(date + "--date-----" + getMillis(parseDate(date)));
+        // System.out.println(date1 + "--date1-----" + getMillis(parseDate(date1)));
         return (int) ((getMillis(parseDate(date)) - getMillis(parseDate(date1))) / 86400000L);
     }
 
@@ -194,7 +191,7 @@ public class DateUtil {
     }
 
 
-    public static String getNewDateStr(){
+    public static String getNewDateStr() {
         String timeStr = "";
         String createDateTime = DateUtil.formatDateByFormat(new Date(), "yyyy-MM-dd");
         if (StringUtil.isNotBlank(createDateTime)) {
@@ -205,6 +202,7 @@ public class DateUtil {
         }
         return timeStr;
     }
+
     public static String formatDateByFormat(Date date, String format) {
         String result = "";
         if (date != null) {
@@ -258,27 +256,27 @@ public class DateUtil {
             Date date = sdf.parse(dateStr);
             SimpleDateFormat weekSdf = new SimpleDateFormat("EEEE");
             String week = weekSdf.format(date);
-            if("monday".equals(week.toLowerCase())){
-            		return "星期一";
+            if ("monday".equals(week.toLowerCase())) {
+                return "星期一";
             }
-			if("tuesday".equals(week.toLowerCase())){
-				return "星期二";      	
-			}
-			if("wednesday".equals(week.toLowerCase())){
-				return "星期三";
-			}
-			if("thursday".equals(week.toLowerCase())){
-				return "星期四";
-			}
-			if("friday".equals(week.toLowerCase())){
-				return "星期五";
-			}
-			if("saturday".equals(week.toLowerCase())){
-				return "星期六";
-			}
-			if("sunday".equals(week.toLowerCase())){
-				return "星期天";
-			}
+            if ("tuesday".equals(week.toLowerCase())) {
+                return "星期二";
+            }
+            if ("wednesday".equals(week.toLowerCase())) {
+                return "星期三";
+            }
+            if ("thursday".equals(week.toLowerCase())) {
+                return "星期四";
+            }
+            if ("friday".equals(week.toLowerCase())) {
+                return "星期五";
+            }
+            if ("saturday".equals(week.toLowerCase())) {
+                return "星期六";
+            }
+            if ("sunday".equals(week.toLowerCase())) {
+                return "星期天";
+            }
             return week;
         } catch (Exception e) {
             return null;
@@ -359,7 +357,7 @@ public class DateUtil {
             String lstkssj = year1 + yue1 + day1;
             String lstjssj = year2 + yue2 + day2;
             String lstriqi = lstkssj + "-" + lstjssj;
-          //  System.out.println(lstriqi);
+            //  System.out.println(lstriqi);
             return lstriqi;
         }
         return "";
@@ -376,7 +374,7 @@ public class DateUtil {
             String lstkssj = year1 + "-" + yue1 + "-" + day1;
             String lstjssj = year2 + "-" + yue2 + "-" + day2;
             String lstriqi = lstkssj + " ~ " + lstjssj;
-          //  System.out.println(lstriqi);
+            //  System.out.println(lstriqi);
             return lstriqi;
         }
         return "";
@@ -556,46 +554,53 @@ public class DateUtil {
             return false;
         }
     }
-    
+
     //比较当前时间和获得时间的大小到时分秒
     public static int compare_date(String DATE1, String DATE2) {
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		try {
-			Date dt1 = df.parse(DATE1);
-			Date dt2 = df.parse(DATE2);
-			if (dt1.getTime() > dt2.getTime()) {
-				return 1;
-			} else if (dt1.getTime() < dt2.getTime()) {
-				return -1;
-			} else {
-				return 0;
-			}
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
-		return 0;
-	}
-  //比较当前时间和获得时间的大小到天
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            Date dt1 = df.parse(DATE1);
+            Date dt2 = df.parse(DATE2);
+            if (dt1.getTime() > dt2.getTime()) {
+                return 1;
+            } else if (dt1.getTime() < dt2.getTime()) {
+                return -1;
+            } else {
+                return 0;
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return 0;
+    }
+
+    //比较当前时间和获得时间的大小到天
     public static int compare_day(String DATE1, String DATE2) {
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-		try {
-			Date dt1 = df.parse(DATE1);
-			Date dt2 = df.parse(DATE2);
-			if (dt1.getTime() >= dt2.getTime()) {
-				return 1;
-			} else {
-				return 0;
-			} 
-		} catch (Exception exception) {
-			exception.printStackTrace();
-		}
-		return 0;
-	}
-    public static Date getDateAfter(Date d,int day){  
- 	   Calendar now =Calendar.getInstance();  
- 	   now.setTime(d);  
- 	   now.set(Calendar.DATE,now.get(Calendar.DATE)+day);  
- 	   return now.getTime();  
- 	}  
-    
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date dt1 = df.parse(DATE1);
+            Date dt2 = df.parse(DATE2);
+            if (dt1.getTime() >= dt2.getTime()) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static Date getDateAfter(Date d, int day) {
+        Calendar now = Calendar.getInstance();
+        now.setTime(d);
+        now.set(Calendar.DATE, now.get(Calendar.DATE) + day);
+        return now.getTime();
+    }
+
+    public static void main(String[] args) {
+        String OS_NAME = System.getProperty("os.name").toLowerCase(Locale.US);
+        System.out.println(OS_NAME.indexOf("linux"));
+    }
+
 }

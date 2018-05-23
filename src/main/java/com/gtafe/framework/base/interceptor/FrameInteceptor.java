@@ -87,8 +87,8 @@ public class FrameInteceptor extends HandlerInterceptorAdapter {
         if (li.getUrlPath().startsWith("/common/reg") || li.getUrlPath().startsWith("/forgetPwd/sendMail") || li.getUrlPath().startsWith("/forgetPwd/editPwd")) {
             return true;
         }
-/*
-      if (!IniVerifyFlag.verifyFlag) {
+
+    /*   if (!IniVerifyFlag.verifyFlag) {
            throw new NoRegistException();
         }*/
 
