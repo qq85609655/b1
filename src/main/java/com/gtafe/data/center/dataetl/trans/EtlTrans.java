@@ -284,11 +284,12 @@ public class EtlTrans {
         transMeta.getTransLogTable().setStepUpdate(outputStep);
         transMeta.getTransLogTable().setStepRejected(outputStep);
 
-        String taskName=dataTask.getTaskName();
+        String taskName = dataTask.getTaskName();
         System.out.println(taskName);
 
+        SysConfigVo vov = this.sysConfigMapper.queryEntity(false);
         // ktr文件保存至本地
-        Utils.outputktr(taskName,transMeta);
+        Utils.outputktr(taskName, transMeta, vov.getKtrFilesPath());
 
         // 执行处理
         try {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gtafe.data.center.dataetl.datasource.utils.ConnectDB;
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.rulevo.DynamicValueMappingVo;
+import com.gtafe.data.center.system.config.vo.SysConfigVo;
 import com.gtafe.framework.base.utils.PropertyUtils;
 import com.gtafe.framework.base.utils.StringUtil;
 import org.pentaho.di.core.database.DatabaseMeta;
@@ -82,20 +83,15 @@ public class Utils {
      * @throws IOException
      * @throws KettleException
      */
-    static void outputktr(String taskName, TransMeta transMeta) {
+    static void outputktr(String taskName, TransMeta transMeta, String kettleFilePath) {
         try {
             String xml = transMeta.getXML();
-            String kettleFilePath = "";//从配置文件来
-            String kfilepathconfig = PropertyUtils.getProperty("other.properties", "kettleFilePath");
-            if (StringUtils.isEmpty(kfilepathconfig)) {
-                if (System.getProperty("os.name").toLowerCase(Locale.US).indexOf("window") == 0) {
-                    kettleFilePath = "d:";
-                } else {
-                    kettleFilePath = "/home/user/local/ktlfile";
-                }
+            if (!StringUtil.isNotBlank(kettleFilePath)) {
+                kettleFilePath = "d:";
             }
             String filePath = kettleFilePath + File.separator + taskName + ".ktr";
             DataOutputStream dos = new DataOutputStream(new FileOutputStream(new File(filePath)));
+
             dos.write(xml.getBytes("UTF-8"));
             dos.close();
         } catch (Exception e) {
