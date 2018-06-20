@@ -45,7 +45,7 @@ public class RunTransFileSchedule {
     @Autowired
     SysConfigMapper sysConfigMapper;
 
-    @Scheduled(initialDelay = 20000, fixedRate = 10000)
+    @Scheduled(initialDelay = 200000, fixedRate =900000)
     private void doRunTransTask() throws SchedulerException {
 
         SysConfigVo sysConfigVo = sysConfigMapper.queryEntity(false);

@@ -732,6 +732,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
                 Path p = Paths.get(a.getAbsolutePath());
                 TransFileVo transFileVo = new TransFileVo();
                 try {
+
                     BasicFileAttributes att = Files.readAttributes(p, BasicFileAttributes.class);//获取文件的属性
                     String createtime = att.creationTime().toString();
                     String accesstime = att.lastAccessTime().toString();

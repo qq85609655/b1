@@ -88,9 +88,9 @@ public class FrameInteceptor extends HandlerInterceptorAdapter {
             return true;
         }
 
-    /*   if (!IniVerifyFlag.verifyFlag) {
-           throw new NoRegistException();
-        }*/
+     // if (!IniVerifyFlag.verifyFlag) {
+     //      throw new NoRegistException();
+      //  }
 
         // 判断是否登录地址，如果是登录，直接返回
         if (li.getUrlPath().startsWith("/common/")) {

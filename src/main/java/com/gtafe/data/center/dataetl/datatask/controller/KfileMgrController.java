@@ -4,11 +4,14 @@ import com.github.pagehelper.PageInfo;
 import com.gtafe.data.center.dataetl.datatask.service.DataTaskService;
 import com.gtafe.data.center.dataetl.datatask.vo.KfileParam;
 import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
+import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
+import com.gtafe.data.center.system.config.vo.SysConfigVo;
 import com.gtafe.framework.base.controller.BaseController;
 import com.gtafe.framework.base.exception.OrdinaryException;
 import com.gtafe.framework.base.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -25,6 +28,9 @@ public class KfileMgrController extends BaseController {
             .getLogger(KfileMgrController.class);
 
 
+    @Autowired
+    private SysConfigMapper sysConfigMapper;
+
     @Resource
     private DataTaskService dataTaskServiceImpl;
 
@@ -32,6 +38,16 @@ public class KfileMgrController extends BaseController {
     public @ResponseBody
     PageInfo<TransFileVo> queryLocalTransFileList(@RequestBody KfileParam param, @RequestParam(value = "fileType", required = true) String fileType,
                                                   @RequestParam(value = "fileName", required = true) String fileName) {
+        String filePath = "";
+        SysConfigVo sysConfigVo = sysConfigMapper.queryEntity(false);
+        if (sysConfigVo != null) {
+            if (fileType.equals("ktr")) {
+                filePath = sysConfigVo.getKtrFilesPath();
+            } else {
+                filePath = sysConfigVo.getKjbFilesPath();
+            }
+        }
+        dataTaskServiceImpl.flushTransFileVo(filePath, fileType);
         param.setFileName(fileName);
         param.setFileType(fileType);
         List<TransFileVo> result = dataTaskServiceImpl.queryKfileList(param.getFileType(),
@@ -39,6 +55,7 @@ public class KfileMgrController extends BaseController {
         LOGGER.debug("Result: ", result.size());
         return new PageInfo<TransFileVo>(result);
     }
+
     /**
      * 手动执行ktr任务
      *
@@ -46,7 +63,7 @@ public class KfileMgrController extends BaseController {
      * @return
      */
     @RequestMapping(path = "/runIt", method = RequestMethod.GET)
-    public boolean runIt(String  fileName) {
+    public boolean runIt(String fileName) {
         return this.dataTaskServiceImpl.runItem(fileName);
     }
 
@@ -57,7 +74,7 @@ public class KfileMgrController extends BaseController {
     }
 
     @RequestMapping(path = "/sendInTask", method = RequestMethod.GET)
-    public  boolean sendInTask(String filePath){
+    public boolean sendInTask(String filePath) {
         return this.dataTaskServiceImpl.sendInTask(filePath);
     }
 

@@ -1,5 +1,6 @@
 package com.gtafe.data.center.common.login.controller;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Map;
 
@@ -8,6 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.gtafe.framework.base.filter.ApplicationConst;
+import com.gtafe.framework.base.utils.CASInterfaceUtil;
+import com.gtafe.framework.base.utils.CookieUitl;
+import com.gtafe.framework.base.utils.HttpClientUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -59,7 +64,7 @@ public class LoginController extends BaseController {
         }
     }
 
-    @RequestMapping(value = "/loginout", method = RequestMethod.GET)
+  /*  @RequestMapping(value = "/loginout", method = RequestMethod.GET)
     public @ResponseBody
     ResultVO loginout(HttpServletRequest request, HttpServletResponse response) throws Exception {
         ResultVO result = new ResultVO();
@@ -84,11 +89,37 @@ public class LoginController extends BaseController {
         result.setUserInfo(null);
         return result;
     }
+*/
+  @RequestMapping(value = "/loginout", method = RequestMethod.GET)
+  public @ResponseBody
+  ResultVO loginout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+      HttpSession session = request.getSession();
+      ResultVO result = new ResultVO();
+      try {
+          CASInterfaceUtil.callCASInterface(request, "http://10.1.135.191:7072/Auth/Logout/PostLoginOut?ticket=", "post");
+          CookieUitl.delCookie(ApplicationConst.TICKET, request, response);
+          if (session!=null) {
+              session.invalidate();
+          }
+          String location=HttpClientUtil.CallNetAPI("http://10.1.135.191:7074/api/E_Config/GetValue?key=LoginUrl2", "get").replaceAll("\"", "") +"?ReturnUrl=http://localhost:8080"+request.getContextPath()+"/logout";
+
+          result.setCounts(1);
+          result.setLocation(location);
+          result.setUserInfo(null);
+
+       //   response.sendRedirect(HttpClientUtil.CallNetAPI("http://10.1.135.191:7074/api/E_Config/GetValue?key=LoginUrl2", "get").replaceAll("\"", "") +"?ReturnUrl=http://localhost:7071"+request.getContextPath()+"/user/userinfo.do");
+      } catch (IOException e) {
+          e.printStackTrace();
+      }
+      return result;
+  }
+
+
 
     /**
      * 用戶退出系統
      *
-     * @param request
+     * @param
      * @return
      */
     /*

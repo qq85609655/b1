@@ -42,16 +42,14 @@ public class ScanTransFileJob {
     Logger logger = LoggerFactory.getLogger(ScanTransFileJob.class);
     @Autowired
     private SysConfigMapper sysConfigMapper;
-    @Resource
-    private SysConfigService sysConfigServiceImpl;
 
 
     @Autowired
     DataTaskService dataTaskServiceImpl;
 
-    @Scheduled(cron = "0 0 0/1 * * *")
+    @Scheduled(cron = "0 0 0/30 * * *")
     public void ScanTransFileJob() {
-        System.out.println("開始執行任務....");
+     //   System.out.println("開始執行任務....");
         this.doTask();
     }
 
@@ -68,9 +66,9 @@ public class ScanTransFileJob {
                 logger.info("需要联系管理员 配置 kjb文件保存路径!");
                 return;
             }
-            dataTaskServiceImpl.flushTransFileVo(ktrpath,"ktr");
             dataTaskServiceImpl.flushTransFileVo(kjbPath,"kjb");
+            dataTaskServiceImpl.flushTransFileVo(ktrpath,"ktr");
         }
-        System.out.println("扫描任务完毕!");
+      //  System.out.println("扫描任务完毕!");
     }
 }

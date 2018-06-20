@@ -19,6 +19,13 @@ dependencies {
     //添加hibernate
     //  compile group: 'org.jboss.spec.javax.transaction', name: 'jboss-transaction-api_1.2_spec', version: '1.0.1.Final'
     //  compile group: 'org.hibernate', name: 'hibernate-entitymanager', version: '5.2.2.Final'
+
+    // https://mvnrepository.com/artifact/org.apache.httpcomponents/httpcore
+    compile group: 'org.apache.httpcomponents', name: 'httpcore', version: '4.1.2'
+// https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.1.2'
+
+
     //添加Log4j2依赖
     //compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.9.0'   //会被core依赖
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.9.0'

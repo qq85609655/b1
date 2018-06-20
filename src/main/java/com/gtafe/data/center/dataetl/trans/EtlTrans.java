@@ -18,7 +18,9 @@ import com.gtafe.data.center.system.user.vo.SysUserVo;
 import com.gtafe.framework.base.exception.OrdinaryException;
 import com.gtafe.framework.base.utils.DateUtil;
 import com.gtafe.framework.base.utils.MailSender;
+import com.gtafe.framework.base.utils.PinYinUtil;
 import com.gtafe.framework.base.utils.StringUtil;
+import net.sourceforge.pinyin4j.PinyinHelper;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.trans.Trans;
@@ -284,12 +286,10 @@ public class EtlTrans {
         transMeta.getTransLogTable().setStepUpdate(outputStep);
         transMeta.getTransLogTable().setStepRejected(outputStep);
 
-        String taskName = dataTask.getTaskName();
-        System.out.println(taskName);
 
         SysConfigVo vov = this.sysConfigMapper.queryEntity(false);
         // ktr文件保存至本地
-        Utils.outputktr(taskName, transMeta, vov.getKtrFilesPath());
+        Utils.outputktr(taskId+"", transMeta, vov.getKtrFilesPath());
 
         // 执行处理
         try {

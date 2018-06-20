@@ -1,6 +1,5 @@
 package com.gtafe.framework.base.listener;
 
-import com.gtafe.data.center.system.config.vo.SysConfigVo;
 
 import java.io.InputStream;
 import java.util.Properties;
