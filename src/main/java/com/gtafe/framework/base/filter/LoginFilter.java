@@ -42,7 +42,6 @@ public class LoginFilter implements Filter {
         HttpServletRequest requests = (HttpServletRequest) request;
         HttpServletResponse responses = (HttpServletResponse) response;
         String userno = ((HttpServletRequest) request).getRemoteUser();
-        System.out.println(userno);
         HttpSession session = ((HttpServletRequest) request).getSession();
         UserLoginInfo se = (UserLoginInfo) session.getAttribute("accountinfo");
         if (se == null) {

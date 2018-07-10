@@ -64,57 +64,62 @@ public class LoginController extends BaseController {
         }
     }
 
-  /*  @RequestMapping(value = "/loginout", method = RequestMethod.GET)
-    public @ResponseBody
-    ResultVO loginout(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        ResultVO result = new ResultVO();
-        String login = PropertyUtils.getProperty("java-cas-client.properties", "casServerLoginUrl");
-        if (login.indexOf("/login") != -1) {
-            login = login.substring(0, login.indexOf("/login"));
-        }
-        login += "/logout";
-        String serverName = PropertyUtils.getProperty("java-cas-client.properties", "serverName");
-        serverName += request.getContextPath();
-        serverName += "/?t=" + System.currentTimeMillis();// 放着浏览器首页缓存
-        String location = login + "?service=" + URLEncoder.encode(serverName, "UTF-8");
-        //response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
-        //response.setHeader("Location", location);
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
-        LOGGER.info(location);
-        result.setCounts(1);
-        result.setLocation(location);
-        result.setUserInfo(null);
-        return result;
-    }
-*/
-  @RequestMapping(value = "/loginout", method = RequestMethod.GET)
-  public @ResponseBody
-  ResultVO loginout(HttpServletRequest request, HttpServletResponse response) throws Exception {
-      HttpSession session = request.getSession();
-      ResultVO result = new ResultVO();
-      try {
-          CASInterfaceUtil.callCASInterface(request, "http://10.1.135.191:7072/Auth/Logout/PostLoginOut?ticket=", "post");
-          CookieUitl.delCookie(ApplicationConst.TICKET, request, response);
-          if (session!=null) {
+    @RequestMapping(value = "/loginout", method = RequestMethod.GET)
+      public @ResponseBody
+      ResultVO loginout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+          ResultVO result = new ResultVO();
+          String login = PropertyUtils.getProperty("java-cas-client.properties", "casServerLoginUrl");
+          if (login.indexOf("/login") != -1) {
+              login = login.substring(0, login.indexOf("/login"));
+          }
+          login += "/logout";
+          String serverName = PropertyUtils.getProperty("java-cas-client.properties", "serverName");
+          serverName += request.getContextPath();
+          serverName += "/?t=" + System.currentTimeMillis();// 放着浏览器首页缓存
+          String location = login + "?service=" + URLEncoder.encode(serverName, "UTF-8");
+          //response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+          //response.setHeader("Location", location);
+          HttpSession session = request.getSession(false);
+          if (session != null) {
               session.invalidate();
           }
-          String location=HttpClientUtil.CallNetAPI("http://10.1.135.191:7074/api/E_Config/GetValue?key=LoginUrl2", "get").replaceAll("\"", "") +"?ReturnUrl=http://localhost:8080"+request.getContextPath()+"/logout";
-
+          LOGGER.info(location);
           result.setCounts(1);
           result.setLocation(location);
           result.setUserInfo(null);
-
-       //   response.sendRedirect(HttpClientUtil.CallNetAPI("http://10.1.135.191:7074/api/E_Config/GetValue?key=LoginUrl2", "get").replaceAll("\"", "") +"?ReturnUrl=http://localhost:7071"+request.getContextPath()+"/user/userinfo.do");
-      } catch (IOException e) {
-          e.printStackTrace();
+          return result;
       }
-      return result;
-  }
+  /*
+    @RequestMapping(value = "/loginout", method = RequestMethod.GET)
+    public @ResponseBody
+    ResultVO loginout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HttpSession session = request.getSession();
+        ResultVO result = new ResultVO();
+        try {
+            String localApPath = PropertyUtils.getProperty("java-cas-client.properties", "localApPath");
+            String casLoginPath = PropertyUtils.getProperty("java-cas-client.properties", "casLoginPath");
+            String casLoginOutPath = PropertyUtils.getProperty("java-cas-client.properties", "casLoginOutPath");
 
+            CASInterfaceUtil.callCASInterface(request, casLoginOutPath, "post");
+            CookieUitl.delCookie(ApplicationConst.TICKET, request, response);
+            if (session != null) {
+                session.invalidate();
+            }
+            //  String location="http://10.1.135.191:7072/SignIn/Index?ReturnUrl=http://localhost:8888/GTADataCenter";
 
+            String location = casLoginPath + "?ReturnUrl=" + localApPath;
+
+            result.setCounts(1);
+            result.setLocation(location);
+            result.setUserInfo(null);
+
+            //   response.sendRedirect(HttpClientUtil.CallNetAPI("http://10.1.135.191:7074/api/E_Config/GetValue?key=LoginUrl2", "get").replaceAll("\"", "") +"?ReturnUrl=http://localhost:7071"+request.getContextPath()+"/user/userinfo.do");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+ */
 
     /**
      * 用戶退出系統

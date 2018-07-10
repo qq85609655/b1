@@ -167,7 +167,7 @@ public class EtlTrans {
             }
             if ((int) stepInfo.get(2) == ConstantValue.STEP_INPUTTABLE) {
                 //初始化表输入
-                InputTable inputTable = new InputTable(locationX, 100, (String) stepInfo.get(1), sourceDS, sourceDBName);
+                InputTable inputTable = new InputTable(locationX, 100, (String) stepInfo.get(1), sourceDS, sourceDBName, taskId);
                 inputStep = inputTable.inputStep();
                 transMeta.addStep(inputStep);
                 fromStep = inputStep;
@@ -289,7 +289,7 @@ public class EtlTrans {
 
         SysConfigVo vov = this.sysConfigMapper.queryEntity(false);
         // ktr文件保存至本地
-        Utils.outputktr(taskId+"", transMeta, vov.getKtrFilesPath());
+        Utils.outputktr(taskId + "", transMeta, vov.getKtrFilesPath());
 
         // 执行处理
         try {

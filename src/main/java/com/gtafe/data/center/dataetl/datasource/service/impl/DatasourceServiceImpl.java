@@ -21,6 +21,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.gtafe.data.center.dataetl.datatask.vo.rule.TableFieldVV;
+import com.gtafe.framework.base.utils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -196,6 +197,12 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
     public List<String> queryTablesByDatasource(DatasourceVO datasourceVO, String busType) {
         List<String> tbs = new ArrayList<String>();
         ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
+        String B_MYSQL_READ_VIEW = PropertyUtils.getProperty("config.properties", "B_MYSQL_READ_VIEW");
+        String B_SQLSERVER_READ_VIEW = PropertyUtils.getProperty("config.properties", "B_SQLSERVER_READ_VIEW");
+        if(!StringUtil.isNotBlank(B_MYSQL_READ_VIEW)){
+            B_MYSQL_READ_VIEW="N";
+        }
+
         try {
             Connection connection = connectDB.getConn();
             if (null != connection) {
@@ -203,41 +210,62 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                 String sql = "";
                 if (datasourceVO.getDbType() == 2) {
                     if (busType.equals("1")) {
-                        sql = "select table_name tableName ,'TABLE' as typeStr from user_tables " +
-                                "union all " +
-                                "select view_name viewName,'VIEW' as typeStr from user_views " +
-                                "";
+                        if(B_MYSQL_READ_VIEW.equals("Y")) {
+                            sql = "select table_name tableName ,'TABLE' as typeStr from user_tables " +
+                                    "union all " +
+                                    "select view_name viewName,'VIEW' as typeStr from user_views " +
+                                    "";
+                        }else {
+                            sql = "select table_name tableName ,'TABLE' as typeStr from user_tables " +
+                                    "";
+                        }
                     } else if (busType.equals("2")) {
                         sql = "select table_name tableName ,'TABLE' as typeStr from user_tables ";
                     }
                 } else if (datasourceVO.getDbType() == 3) {
                     if (busType.equals("1")) {
-                        sql = "select name,'TABLE' AS type from sys.tables\n" +
-                                " UNION \n" +
-                                " SELECT name,'VIEW' AS type from sys.viewsj \n" +
-                                " ";
+                        if(B_SQLSERVER_READ_VIEW.equals("Y")) {
+                            sql = "select name,'TABLE' AS type from sys.tables\n" +
+                                    " UNION \n" +
+                                    " SELECT name,'VIEW' AS type from sys.viewsj \n" +
+                                    " ";
+                        }else {
+                            sql = "select name,'TABLE' AS type from sys.tables\n" +
+                                    " ";
+                        }
                     } else {
                         sql = "select name,'TABLE' AS type from sys.tables ";
                     }
                 } else {
                     if (busType.equals("1")) {
-                        sql = "SELECT\n" +
-                                "\ttable_name,\n" +
-                                "TABLE_TYPE\n" +
-                                "FROM\n" +
-                                "\tinformation_schema. TABLES\n" +
-                                "WHERE\n" +
-                                "\ttable_schema = '" + datasourceVO.getDbName() + "'\n" +
-                                "AND table_type = 'base table'\n" +
-                                "UNION ALL\n" +
-                                "SELECT\n" +
-                                "\ttable_name,\n" +
-                                "TABLE_TYPE\n" +
-                                "FROM\n" +
-                                "\tinformation_schema. TABLES\n" +
-                                "WHERE\n" +
-                                "\ttable_schema = '" + datasourceVO.getDbName() + "'\n" +
-                                "AND table_type = 'VIEW'";
+                        if(B_MYSQL_READ_VIEW.equals("Y")) {
+                            sql = "SELECT\n" +
+                                    "\ttable_name,\n" +
+                                    "TABLE_TYPE\n" +
+                                    "FROM\n" +
+                                    "\tinformation_schema. TABLES\n" +
+                                    "WHERE\n" +
+                                    "\ttable_schema = '" + datasourceVO.getDbName() + "'\n" +
+                                    "AND table_type = 'base table'\n" +
+                                    "UNION ALL\n" +
+                                    "SELECT\n" +
+                                    "\ttable_name,\n" +
+                                    "TABLE_TYPE\n" +
+                                    "FROM\n" +
+                                    "\tinformation_schema. TABLES\n" +
+                                    "WHERE\n" +
+                                    "\ttable_schema = '" + datasourceVO.getDbName() + "'\n" +
+                                    "AND table_type = 'VIEW'";
+                        }else {
+                            sql = "SELECT\n" +
+                                    "\ttable_name,\n" +
+                                    "TABLE_TYPE\n" +
+                                    "FROM\n" +
+                                    "\tinformation_schema. TABLES\n" +
+                                    "WHERE\n" +
+                                    "\ttable_schema = '" + datasourceVO.getDbName() + "'\n" +
+                                    "AND table_type = 'base table'\n" ;
+                        }
                     } else if (busType.equals("2")) {
                         sql = "SELECT\n" +
                                 "\t table_name,\n" +

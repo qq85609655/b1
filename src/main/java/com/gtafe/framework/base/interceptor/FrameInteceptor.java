@@ -23,10 +23,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.alibaba.fastjson.JSONObject;
+import com.gtafe.data.center.system.user.mapper.SysUserAuthMapper;
+import com.gtafe.data.center.system.user.service.SysUserService;
+import com.gtafe.data.center.system.user.vo.SysUserVo;
 import com.gtafe.framework.base.exception.*;
 import com.gtafe.framework.base.register.IniVerifyFlag;
+import com.gtafe.framework.base.utils.CASInterfaceUtil;
+import com.gtafe.framework.base.utils.CookieUitl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.method.HandlerMethod;
@@ -68,6 +76,13 @@ public class FrameInteceptor extends HandlerInterceptorAdapter {
     private static Pattern pattern = Pattern.compile(FrameInteceptor.LOGIN_URL);
     private static String DEF_NOAUTH = "您没有当前功能的操作权限,请联系管理员！";
 
+
+    @Autowired
+    private SysUserService sysUserServiceImpl;
+    @Autowired
+    private SysUserAuthMapper sysUserAuthMapper;
+
+
     /**
      * 仅判断用户是否登录。 <br>
      * 未登录则返回未登录提示<br>
@@ -79,52 +94,39 @@ public class FrameInteceptor extends HandlerInterceptorAdapter {
                              HttpServletResponse response, Object handler)
             throws Exception {
 
+        HttpServletRequest servletRequest = (HttpServletRequest) request;
         // 取得request 相关的东西 用户 请求 时间 参数
         LoggerInfo li = new LoggerInfo(request);
-
-        //  LOGGER.info(li.toString());
+     //   if(li != null){
+    //        return true;
+    //    }
 
         if (li.getUrlPath().startsWith("/common/reg") || li.getUrlPath().startsWith("/forgetPwd/sendMail") || li.getUrlPath().startsWith("/forgetPwd/editPwd")) {
             return true;
         }
 
-     // if (!IniVerifyFlag.verifyFlag) {
-     //      throw new NoRegistException();
-      //  }
+        // if (!IniVerifyFlag.verifyFlag) {
+        //      throw new NoRegistException();
+        //  }
 
         // 判断是否登录地址，如果是登录，直接返回
         if (li.getUrlPath().startsWith("/common/")) {
             return true;
         }
 
-
-        HttpSession session = request.getSession();
-
+        HttpSession session = servletRequest.getSession();
         UserLoginInfo vo = BaseController.gtSessionUserInfo(session);
 
         if (null == vo) {
             //未登录异常，由异常拦截器接收。
-             throw new NoLoginException();
+            throw new NoLoginException();
         }
-      /*  Map<String, String> userOnlineMap = (Map<String, String>) request.getServletContext().getAttribute("userOnlineMap");
-        String hasLoginTime = userOnlineMap.get(vo.getUserNo().toLowerCase());
-        if (!vo.getLoginTime().equals(hasLoginTime)) {
-            request.getSession().invalidate();
-            throw new KickOutException();
-        }*/
-
         this.handleUserAuth(request, response, handler, vo);
         // 已登录则不再拦截 用户ID不为空则代表已登录 需要取得session，并获取其中的变量。
         return true;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.springframework.web.servlet.handler.HandlerInterceptorAdapter#postHandle(javax.servlet.
-     * http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.Object,
-     * org.springframework.web.servlet.ModelAndView)
-     */
+
     @Override
     public void postHandle(HttpServletRequest request,
                            HttpServletResponse response, Object handler,
