@@ -83,4 +83,13 @@ ORDER BY
 LIMIT 1
 </select>
 
+
+    <delete id="clearLogs">
+           delete from kettle_log where 1=1
+    </delete>
+
+    <delete id="clearLogsDetail">
+           delete from kettle_error_log where 1=1
+    </delete>
+
 </mapper>

@@ -26,4 +26,7 @@ public interface IKettleLogService {
      * @return
      */
     List<ErrorLogVo> queryErrorList(int pageNum, int pageSize, String channel_id);
+
+    boolean clearLogs();
+    boolean clearLogsDetail();
 }

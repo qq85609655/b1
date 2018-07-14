@@ -86,25 +86,7 @@ public class SysConfigServiceImpl extends BaseService implements SysConfigServic
 
     @Override
     public SysConfigVo getBasicSysConfigVO() {
-        System.out.println("系统配置信息初始化...start......");
-    /*    SysConfigVo newVo = new SysConfigVo();
-        try {
-            System.out.println("系统配置信息初始化...start......");
-            flushSystemInfo(true);
-            SysConfigVo vo = this.getCacheSysConfigVO();
-            BeanUtils.copyProperties(newVo, vo);
-            System.out.println("系统配置信息初始化...over.....");
-        } catch (Exception e) {
-
-        }
-        newVo.setEmailHost(null);
-        newVo.setEmailPwd(null);
-        newVo.setEmailSmtpAddr(null);
-        newVo.setEmailSmtpPort(0);
-        newVo.setEmailUser(null);
-        newVo.setSfInit(0);//未初始化中心库*/
         SysConfigVo vo = this.sysConfigMapper.queryEntity(false);
-        System.out.println("系统配置信息初始化...over.....");
         return vo;
     }
 

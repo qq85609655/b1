@@ -42,6 +42,7 @@ public class KettleLogController extends BaseController {
 
     /**
      * list:分页显示映射关系数据. <br/>
+     *
      * @return
      * @history
      * @author ken.zhang
@@ -52,9 +53,9 @@ public class KettleLogController extends BaseController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "查询kettle Log 信息:参数")})
     public @ResponseBody
-    PageInfo<KettleLogVO> list(@RequestBody KettleLogParam param){
+    PageInfo<KettleLogVO> list(@RequestBody KettleLogParam param) {
         List<KettleLogVO> result = kettleLogServiceImpl.list(param.getBusType(),
-            param.getStartTime(),param.getEndTime(),param.getPageNum(), param.getPageSize(), param.getTransName(), param.getOrgIds());
+                param.getStartTime(), param.getEndTime(), param.getPageNum(), param.getPageSize(), param.getTransName(), param.getOrgIds());
         LOGGER.debug("Result: ", result.size());
         return new PageInfo<KettleLogVO>(result);
     }
@@ -81,6 +82,15 @@ public class KettleLogController extends BaseController {
         return new PageInfo<ErrorLogVo>(result);
     }
 
+
+    @RequestMapping(path = "/clearLogs")
+    public @ResponseBody
+    boolean clearLogs() {
+        this.kettleLogServiceImpl.clearLogsDetail();
+        this.kettleLogServiceImpl.clearLogs();
+
+        return true;
+    }
 
 
 }

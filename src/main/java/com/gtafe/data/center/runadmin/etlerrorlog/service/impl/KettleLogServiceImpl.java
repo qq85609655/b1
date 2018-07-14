@@ -33,4 +33,14 @@ public class KettleLogServiceImpl extends BaseService implements IKettleLogServi
         return this.kettleLogMapper.queryErrorList(pageNum, pageSize, channel_id);
     }
 
+    @Override
+    public boolean clearLogs() {
+        return this.kettleLogMapper.clearLogs();
+    }
+
+    @Override
+    public boolean clearLogsDetail() {
+        return this.kettleLogMapper.clearLogsDetail();
+    }
+
 }

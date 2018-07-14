@@ -4,6 +4,7 @@ package com.gtafe.data.center.runadmin.etlerrorlog.mapper;
 import com.gtafe.data.center.runadmin.etlerrorlog.vo.ErrorLogVo;
 import com.gtafe.data.center.runadmin.etlerrorlog.vo.KettleLogVO;
 import com.gtafe.framework.base.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
@@ -29,7 +30,7 @@ public interface KettleLogMapper extends BaseMapper {
     List<ErrorLogVo> queryErrorList(@Param("channel_id") String channel_id);
 
 
-    List<KettleLogVO> queryLstErrorList(@Param("taskId")int taskId);
+    List<KettleLogVO> queryLstErrorList(@Param("taskId") int taskId);
 
     @Select("   SELECT\n" +
             "        log.id_batch id,\n" +
@@ -59,4 +60,9 @@ public interface KettleLogMapper extends BaseMapper {
             "        log.transname = m.task_id\n" +
             "        AND m.org_id = o.id and  channel_id =#{logChannelId}")
     KettleLogVO queryKettleVOByChannelId(@Param("logChannelId") String logChannelId);
+
+
+    boolean clearLogs();
+
+    boolean clearLogsDetail();
 }
