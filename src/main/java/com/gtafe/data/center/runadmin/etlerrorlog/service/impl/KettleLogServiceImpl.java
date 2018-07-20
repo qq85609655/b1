@@ -21,7 +21,7 @@ public class KettleLogServiceImpl extends BaseService implements IKettleLogServi
 
     @Override
     public List<KettleLogVO> list(int businessType, String startTime, String endTime, int pageNum, int pageSize, String transName, String orgIds) {
-        List<Integer> orgIdList = StringUtil.splitListInt(orgIds);
+        List<String> orgIdList = StringUtil.splitListString(orgIds);
         if (orgIdList.isEmpty()) {
             return EmptyUtil.emptyList(pageSize, KettleLogVO.class);
         }

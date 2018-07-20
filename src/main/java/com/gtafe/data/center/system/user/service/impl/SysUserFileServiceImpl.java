@@ -109,8 +109,8 @@ public class SysUserFileServiceImpl extends BaseController implements SysUserFil
      * @throws IOException
      */
     public MessageVo importUserInfos(MultipartFile file) throws Exception {
-        int creatorId = this.getUserId();
-        List<OrgVo> orgVosAll = orgMapper.getOrgVos(this.isAdmin() ? -1 : creatorId);
+        String creatorId = this.getUserId();
+        List<OrgVo> orgVosAll = orgMapper.getOrgVos(this.isAdmin() ?"-1" : creatorId);
         List<OrgVo> orgVos = new ArrayList<OrgVo>();
         for(OrgVo org : orgVosAll) {
             if(org.getNodeType() == 3) {
@@ -182,7 +182,7 @@ public class SysUserFileServiceImpl extends BaseController implements SysUserFil
             } else {
                 successVo.setUserNo(userNo);
                 successVo.setRealName(realName);
-                successVo.setOrgId(Integer.parseInt(orgId));
+                successVo.setOrgId(orgId);
                 successVo.setSex(sex != null && "女".equals(sex) ? 2 : 1);
                 successVo.setEmail(email);
                 successVo.setLoginPwd("e10adc3949ba59abbe56e057f20f883e");
@@ -255,7 +255,7 @@ public class SysUserFileServiceImpl extends BaseController implements SysUserFil
     }
 
 
-    private String getOrgName(int orgId, List<OrgVo> orgVos) {
+    private String getOrgName(String orgId, List<OrgVo> orgVos) {
         String result = "";
         for (OrgVo org : orgVos) {
             if (orgId == org.getId()) {

@@ -11,7 +11,7 @@ public class DataTaskVo {
     private String description;
     private int dataType;
     private int businessType;
-    private int orgId;
+    private String orgId;
     private String orgName;
     private int thirdConnectionId;
     private int thirdDbtype;
@@ -67,10 +67,10 @@ public class DataTaskVo {
     public void setBusinessType(int businessType) {
         this.businessType = businessType;
     }
-    public int getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
-    public void setOrgId(int orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
     public String getOrgName() {

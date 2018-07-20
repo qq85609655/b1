@@ -13,7 +13,7 @@ import com.gtafe.data.center.common.common.vo.RemoveEmptyChildVO;
 public class OrgVo extends RemoveEmptyChildVO implements  Comparable<OrgVo>{
 
     @ApiModelProperty(value = "主鍵", required = true)
-    private int id;
+    private String id;
     @ApiModelProperty(value = " 名称", required = true)
     private String orgName;
 
@@ -22,7 +22,7 @@ public class OrgVo extends RemoveEmptyChildVO implements  Comparable<OrgVo>{
     @ApiModelProperty(value = " 地址", required = true)
     private String orgAddress;
     @ApiModelProperty(value = "父机构id", required = true)
-    private int parentId;
+    private String parentId;
 
     @ApiModelProperty(value = "父机构名称")
     String parentName;
@@ -31,11 +31,11 @@ public class OrgVo extends RemoveEmptyChildVO implements  Comparable<OrgVo>{
     private int state;
 
     @ApiModelProperty(value = "创建人id", required = true)
-    private int creater;
+    private String creater;
     @ApiModelProperty(value = "创建时间", required = true)
     private Date createTime;
     @ApiModelProperty(value = "修改人id", required = true)
-    private int updater;
+    private String updater;
     @ApiModelProperty(value = "修改时间", required = true)
     private Date updateTime;
 
@@ -71,11 +71,11 @@ public class OrgVo extends RemoveEmptyChildVO implements  Comparable<OrgVo>{
         this.children = children;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -95,11 +95,11 @@ public class OrgVo extends RemoveEmptyChildVO implements  Comparable<OrgVo>{
         this.orgAddress = orgAddress;
     }
 
-    public int getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(int parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 
@@ -111,11 +111,11 @@ public class OrgVo extends RemoveEmptyChildVO implements  Comparable<OrgVo>{
         this.state = state;
     }
 
-    public int getCreater() {
+    public String getCreater() {
         return creater;
     }
 
-    public void setCreater(int creater) {
+    public void setCreater(String creater) {
         this.creater = creater;
     }
 
@@ -127,11 +127,11 @@ public class OrgVo extends RemoveEmptyChildVO implements  Comparable<OrgVo>{
         this.createTime = createTime;
     }
 
-    public int getUpdater() {
+    public String getUpdater() {
         return updater;
     }
 
-    public void setUpdater(int updater) {
+    public void setUpdater(String updater) {
         this.updater = updater;
     }
 

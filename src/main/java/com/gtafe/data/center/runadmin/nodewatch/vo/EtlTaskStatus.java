@@ -37,7 +37,7 @@ public class EtlTaskStatus {
 	
 	private Timestamp createTime;
 
-	private int orgId;
+	private String orgId;
 
 	private int busType;
 	private int sourceConnectionId;
@@ -128,11 +128,11 @@ public class EtlTaskStatus {
 		this.tagertTableName = tagertTableName;
 	}
 
-	public int getOrgId() {
+	public String getOrgId() {
 		return orgId;
 	}
 
-	public void setOrgId(int orgId) {
+	public void setOrgId(String orgId) {
 		this.orgId = orgId;
 	}
 

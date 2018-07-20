@@ -18,7 +18,7 @@ public interface KettleLogMapper extends BaseMapper {
                            @Param("pageNumKey") int pageNum,
                            @Param("pageSizeKey") int pageSize,
                            @Param("transName") String transName,
-                           @Param("orgIdList") List<Integer> orgIdList);
+                           @Param("orgIdList") List<String> orgIdList);
 
     List<ErrorLogVo> queryErrorList(@Param("pageNumKey") int pageNum,
                                     @Param("pageSizeKey") int pageSize,

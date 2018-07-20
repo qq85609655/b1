@@ -9,6 +9,18 @@ import java.util.List;
 public class RoleInfoVo {
     @ApiModelProperty(value = "主键", required = true)
     private int roleId;
+
+    public String getIds() {
+        return ids;
+    }
+
+    public void setIds(String ids) {
+        this.ids = ids;
+    }
+
+    private String ids;
+
+
     @ApiModelProperty(value = "角色名称", required = true)
     private String roleName;//角色名称
     @ApiModelProperty(value = "备注", required = true)

@@ -26,7 +26,7 @@ public interface IOrgService {
      * @param orgId
      * @return
      */
-    OrgVo getEntityById(int orgId);
+    OrgVo getEntityById(String orgId);
 
 
     OrgVo orgTree();
@@ -45,21 +45,21 @@ public interface IOrgService {
      * @author 汪逢建
      * @date 2017年12月1日
      */
-    List<Integer> getUserAuthOrgIds(int userId);
+    List<String> getUserAuthOrgIds(String userId);
 
     boolean insertOrg(OrgVo org);
 
-    boolean deleteById(int id);
+    boolean deleteById(String id);
 
-    OrgVo getOrgVoById(int id);
+    OrgVo getOrgVoById(String id);
 
     boolean updateOrg(OrgVo org);
 
-    String getOrgNo(int parentId);
+    String getOrgNo(String parentId);
 
-    void updateSort(int id, boolean up);
+    void updateSort(String id, boolean up);
 
-    boolean checkOrgName(String orgName, int pId, int nodeType);
+    boolean checkOrgName(String orgName, String pId, int nodeType);
 
     boolean checkOrgNo(String orgNo);
 

@@ -28,8 +28,8 @@
         WHERE
         menu_id = #{id}
     </update>
-	
-	<select id="queryMenuAuthCodes" resultType="com.gtafe.data.center.system.menu.vo.MenuAuthCodeInfo">
+
+    <select id="queryMenuAuthCodes" resultType="com.gtafe.data.center.system.menu.vo.MenuAuthCodeInfo">
 		select * from
 		(
 			select
@@ -53,4 +53,16 @@
 				order by menu_id asc,auth_code asc
 		) t2
     </select>
+<!--
+    <select id="queryMenuAuthCodes2" resultType="com.gtafe.data.center.system.menu.vo.MenuAuthCodeInfo">
+
+			select
+				m.id authId,
+				m.org_name authName,
+				m.parent_id parentId,
+				TRUE authFlag
+				from sys_org m
+				order  by m.parent_id asc,m.id  asc
+
+    </select>-->
 </mapper>

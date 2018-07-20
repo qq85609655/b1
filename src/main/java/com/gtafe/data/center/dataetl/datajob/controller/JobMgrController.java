@@ -75,7 +75,7 @@ public class JobMgrController extends BaseController {
     }
 
     @RequestMapping(path = "/queryTasks", method = RequestMethod.GET)
-    public List<DataTaskVo> queryTasks(@RequestParam int businessType, @RequestParam int orgId) {
+    public List<DataTaskVo> queryTasks(@RequestParam int businessType, @RequestParam String orgId) {
         return this.dataTaskServiceImpl.queryTasks(businessType, orgId);
     }
 }

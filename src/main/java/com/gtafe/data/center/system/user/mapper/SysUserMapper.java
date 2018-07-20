@@ -16,7 +16,7 @@ public interface SysUserMapper extends BaseMapper {
      * @param pageSize
      * @return
      */
-    List<SysUserVo> queryList(@Param("isAdmin") boolean isAdmin, @Param("keyWord") String keyWord, @Param("state") int state, @Param("orgIdList") List<Integer> orgIdList,
+    List<SysUserVo> queryList(@Param("isAdmin") boolean isAdmin, @Param("keyWord") String keyWord, @Param("state") int state, @Param("orgIdList") List<String> orgIdList,
                               @Param("pageNumKey") int pageNum, @Param("pageSizeKey") int pageSize);
 
     /**
@@ -25,7 +25,7 @@ public interface SysUserMapper extends BaseMapper {
      */
     SysUserVo getUserVoByUserNo(@Param("userNo") String userNo);
 
-    SysUserVo getUserVoByuserId(int userId);
+    SysUserVo getUserVoByuserId(String userId);
 
     /**
      * @param vo
@@ -37,7 +37,7 @@ public interface SysUserMapper extends BaseMapper {
      * @param userId
      * @return
      */
-    boolean deleteEntity(@Param("userId") Integer userId);
+    boolean deleteEntity(@Param("userId") String userId);
 
     /**
      * @param userVo
@@ -54,7 +54,7 @@ public interface SysUserMapper extends BaseMapper {
      * @param roleIds
      * @return
      */
-    boolean saveUserRole(@Param("userId") int userId, @Param("roleIds") List<Integer> roleIds);
+    boolean saveUserRole(@Param("userId") String userId, @Param("roleIds") List<Integer> roleIds);
 
     /**
      * 删除用户和角色关系
@@ -63,7 +63,7 @@ public interface SysUserMapper extends BaseMapper {
      * @return
      */
     @Delete("delete from sys_user_role where user_id=#{userId}")
-    boolean deleteUserRole(@Param("userId") int userId);
+    boolean deleteUserRole(@Param("userId") String userId);
 
     /**
      * 根据userId 查询所有角色id
@@ -72,7 +72,7 @@ public interface SysUserMapper extends BaseMapper {
      * @return
      */
     @Select("select role_id from sys_user_role where user_id=#{userId}")
-    List<Integer> queryRoleListByUserId(@Param("userId") int userId);
+    List<Integer> queryRoleListByUserId(@Param("userId") String userId);
 
     @Select("SELECT\n" +
             "\t CONCAT(u.realname, '(',u.user_no, ')' ) realName,\n" +
@@ -111,15 +111,15 @@ public interface SysUserMapper extends BaseMapper {
     List<SysUserVo> getAllUser();
 
     @Select("select  role_id  roleId,role_name roleName  from sys_role WHERE  role_id  in (select  role_id from  sys_user_role where  user_id=#{userId})")
-    List<RoleVo> getRoleByUserId(int userId);
+    List<RoleVo> getRoleByUserId(String userId);
 
     @Delete("delete from sys_user_task where user_id=#{userId} and bus_type=#{busType}")
-    void deleteUserTasks(@Param("userId") int userId, @Param("busType") int busType);
+    void deleteUserTasks(@Param("userId") String userId, @Param("busType") int busType);
 
-    void saveUserTasks(@Param("busType") int busType, @Param("userId") int userId, @Param("taskList") List<Integer> taskList);
+    void saveUserTasks(@Param("busType") int busType, @Param("userId") String userId, @Param("taskList") List<Integer> taskList);
 
     @Select("select t.* from sys_user t where t.org_id=#{orgId} and t.isdelete=0 ")
-    List<SysUserVo> queryListByOrgId(@Param("orgId") int id);
+    List<SysUserVo> queryListByOrgId(@Param("orgId") String id);
 
     @Select("select count(1) from sys_user where user_no=#{userNo} and isdelete=0")
     int queryCountByUserNo(@Param("userNo") String userNo);

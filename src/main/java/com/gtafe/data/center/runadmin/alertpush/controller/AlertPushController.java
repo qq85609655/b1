@@ -57,13 +57,11 @@ public class AlertPushController extends BaseController {
     /**
      * 查询已经发布的任务资源 和人 机构之间的关系 数据
      * @param userId
-     * @param orgId
-     * @param type
      * @return
      */
     @RequestMapping(path = "/queryAllByParams", method = RequestMethod.GET)
     public  @ResponseBody
-     TempAlertPushVo  queryAllByParams(@RequestParam("userId") int userId, @RequestParam("businessType") int businessType){
+     TempAlertPushVo  queryAllByParams(@RequestParam("userId") String userId, @RequestParam("businessType") int businessType){
         TempAlertPushVo vo=new TempAlertPushVo();
         //查询当前机构下 所发布的数据资源
         List<DataTaskVo> dataTaskVoList=this.alertPushServiceImpl.queryMappingVosByOrg(businessType);

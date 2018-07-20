@@ -61,7 +61,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                                                   String nameOrDBName,
                                                   int pageNum, int pageSize,
                                                   String orgIds, String isCenter) {
-        List<Integer> orgIdList = StringUtil.splitListInt(orgIds);
+        List<String> orgIdList = StringUtil.splitListString(orgIds);
         if (orgIdList.isEmpty()) {
             return EmptyUtil.emptyList(pageSize, DatasourceVO.class);
         }
@@ -71,7 +71,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
 
     @Override
     public List<DatasourceVO> queryDatasourceListAll(String orgIds) {
-        List<Integer> orgIdList = StringUtil.splitListInt(orgIds);
+        List<String> orgIdList = StringUtil.splitListString(orgIds);
         if (orgIdList.isEmpty()) {
             return new ArrayList<DatasourceVO>();
         }

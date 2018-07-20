@@ -251,7 +251,7 @@ public class SysConfigServiceImpl extends BaseService implements SysConfigServic
             dataStandardItemVo.setItemName("ID");
             dataStandardItemVo.setItemComment("主鍵");
             dataStandardItemVo.setDataPrimarykey(1);
-            this.dataStandardItemMapper.insertDataStandardItemVo(dataStandardItemVo, 1, 1);
+            this.dataStandardItemMapper.insertDataStandardItemVo(dataStandardItemVo, 1, "1");
             LOGGER.info("插入成功》》》》》》》" + vo.getCode() + "000");
         }
         //  LOGGER.info("第二步開始重新生成建表語句");

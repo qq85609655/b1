@@ -27,7 +27,7 @@ public interface CodeStandardMapper {
     CodeNodeVo queryNodeEntity(@Param("nodeId") int nodeId);
 
     @Update("update info_codestandard_node set name=#{name},description=#{description},updater=#{userId}  where node_id=#{nodeId}")
-    boolean updateNode(@Param("nodeId") int nodeId, @Param("name") String name, @Param("description") String description, @Param("userId") int userId);
+    boolean updateNode(@Param("nodeId") int nodeId, @Param("name") String name, @Param("description") String description, @Param("userId") String userId);
 
     //根据节点id 删除代码
     @Delete("delete from info_codestandard_code where node_id=#{nodeId} ")

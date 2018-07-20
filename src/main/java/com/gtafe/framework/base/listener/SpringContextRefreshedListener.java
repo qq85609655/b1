@@ -154,11 +154,13 @@ public class SpringContextRefreshedListener implements ApplicationListener<Conte
         if (!StringUtil.isNotBlank(ktrPath)) {
             LOGGER.info("没有配置本地ktrPath路径 ");
         }
-        dataTaskServiceImpl.flushTransFileVo(ktrPath, "ktr");
+        System.out.println("扫描ktr文件目录" + ktrPath + "操作开始");
+       dataTaskServiceImpl.flushTransFileVo(ktrPath, "ktr");
 
         if (!StringUtil.isNotBlank(kjbPath)) {
             LOGGER.info("没有配置本地kjbPath路径 ");
         }
+        System.out.println("扫描kjb文件目录" + kjbPath + "操作开始");
         dataTaskServiceImpl.flushTransFileVo(kjbPath, "kjb");
     }
 }

@@ -13,5 +13,5 @@ public interface SysUserAuthMapper {
      * @param userId
      * @return
      */
-    List<String> getUserAllAuthcodes(@Param("userId") int userId);
+    List<String> getUserAllAuthcodes(@Param("userId") String userId);
 }

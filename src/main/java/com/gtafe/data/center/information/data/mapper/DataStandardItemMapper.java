@@ -30,9 +30,9 @@ public interface DataStandardItemMapper {
     DataStandardItemVo checkCodeNameRepeat(DataStandardItemVo itemVo);
 
 
-    boolean insertDataStandardItemVo(@Param("item") DataStandardItemVo item, @Param("sourceId") int sourceId, @Param("userId") int userId);
+    boolean insertDataStandardItemVo(@Param("item") DataStandardItemVo item, @Param("sourceId") int sourceId, @Param("userId") String userId);
 
-    boolean updateDataStandardItemVo(@Param("item") DataStandardItemVo item, @Param("sourceId") int sourceId, @Param("userId") int userId);
+    boolean updateDataStandardItemVo(@Param("item") DataStandardItemVo item, @Param("sourceId") int sourceId, @Param("userId") String userId);
 
     boolean deleteDataStandardItemVo(@Param("id") int id, @Param("sourceId") int sourceId);
 

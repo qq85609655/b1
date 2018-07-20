@@ -11,7 +11,7 @@ import java.util.List;
 public class SysUserVo {
 
     @ApiModelProperty(value = "主鍵", required = true)
-    private int userId;
+    private String userId;
     @ApiModelProperty(value = "用户编号", required = true)
     private String userNo;
     @ApiModelProperty(value = "姓名", required = true)
@@ -33,13 +33,13 @@ public class SysUserVo {
     private boolean sendErrorState;
 
     @ApiModelProperty(value = "机构id", required = true)
-    private int orgId;
-    private int creater;
+    private String orgId;
+    private String creater;
     private Date createTime;
     private String createTimeStr;
 
 
-    private int updater;
+    private String updater;
     private Date updateTime;
     
     private int userType;
@@ -102,28 +102,28 @@ public class SysUserVo {
         this.userNo = userNo;
     }
 
-    public int getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(int orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 
 
-    public int getCreater() {
+    public String getCreater() {
         return creater;
     }
 
-    public void setCreater(int creater) {
+    public void setCreater(String creater) {
         this.creater = creater;
     }
 
-    public int getUpdater() {
+    public String getUpdater() {
         return updater;
     }
 
-    public void setUpdater(int updater) {
+    public void setUpdater(String updater) {
         this.updater = updater;
     }
 
@@ -135,11 +135,11 @@ public class SysUserVo {
         this.updateTime = updateTime;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

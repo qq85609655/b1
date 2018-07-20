@@ -38,7 +38,7 @@ public interface SysUserService {
      * @param ids
      * @return
      */
-    boolean deleteEntity(Integer ids);
+    boolean deleteEntity(String ids);
 
     /**
      * 修改用户信息
@@ -74,7 +74,7 @@ public interface SysUserService {
      * @param roleIds
      * @return
      */
-    boolean saveUserRole(int userId, String roleIds);
+    boolean saveUserRole(String userId, String roleIds);
 
     /**
      * 保存 用户  和 资源任务 关系
@@ -84,9 +84,9 @@ public interface SysUserService {
      * @param taskIds
      * @return
      */
-    boolean saveUserTasks(int busType, int userId, String taskIds);
+    boolean saveUserTasks(int busType, String userId, String taskIds);
 
-    SysUserVo getUserVoByuserId(int userId);
+    SysUserVo getUserVoByuserId(String userId);
 
     boolean updateStatus(SysUserVo vo);
 

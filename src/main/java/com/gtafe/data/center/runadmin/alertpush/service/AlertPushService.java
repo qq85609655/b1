@@ -25,8 +25,6 @@ public interface AlertPushService {
     /**
      * 根据机构编号 和 业务类型查找当前机构 拥有的 发布数据资源 和  订阅数据资源 任务
      *
-     * @param orgId
-     * @param type
      * @return
      */
     List<DataTaskVo> queryMappingVosByOrg(int businessType);
@@ -37,5 +35,5 @@ public interface AlertPushService {
      * @param userId
      * @return
      */
-    List<Integer> queryUserMapTaskIds(int userId, int businessType);
+    List<Integer> queryUserMapTaskIds(String userId, int businessType);
 }

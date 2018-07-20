@@ -50,7 +50,7 @@ public class ScanTransFileJob {
     @Scheduled(cron = "0 0 0/30 * * *")
     public void ScanTransFileJob() {
      //   System.out.println("開始執行任務....");
-        this.doTask();
+      this.doTask();
     }
 
     private void doTask() {

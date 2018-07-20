@@ -31,6 +31,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class SysUserServiceImpl extends BaseController implements SysUserService {
@@ -50,7 +51,7 @@ public class SysUserServiceImpl extends BaseController implements SysUserService
 
     @Override
     public List<SysUserVo> queryList(String keyWord, int state, String orgIds, int pageNum, int pageSize) {
-        List<Integer> orgIdList = StringUtil.splitListInt(orgIds);
+        List<String> orgIdList = StringUtil.splitListString(orgIds);
         if (orgIdList.isEmpty()) {
             return EmptyUtil.emptyList(pageSize, SysUserVo.class);
         }
@@ -64,7 +65,7 @@ public class SysUserServiceImpl extends BaseController implements SysUserService
     }
 
     @Override
-    public SysUserVo getUserVoByuserId(int userId) {
+    public SysUserVo getUserVoByuserId(String userId) {
         return this.sysUserMapper.getUserVoByuserId(userId);
     }
 
@@ -162,7 +163,7 @@ public class SysUserServiceImpl extends BaseController implements SysUserService
                     this.logServiceImpl.saveEmailSendLog(emailSendLog);
                 }
             } catch (Exception e) {
-             //   throw new OrdinaryException("请检查邮件服务器配置...!");
+                //   throw new OrdinaryException("请检查邮件服务器配置...!");
             }
         }
         LogInfo logInfo = new LogInfo();
@@ -229,7 +230,7 @@ public class SysUserServiceImpl extends BaseController implements SysUserService
      * @author 汪逢建
      * @date 2017年11月30日
      */
-    private SysUserVo checkSuperAdminUpdate(int updateUserId) {
+    private SysUserVo checkSuperAdminUpdate(String updateUserId) {
         SysUserVo user = this.sysUserMapper.getUserVoByuserId(updateUserId);
         if (user == null) {
             return null;
@@ -248,6 +249,7 @@ public class SysUserServiceImpl extends BaseController implements SysUserService
         userVo.setCreater(this.getUserId());
         userVo.setCreateTime(new Date());
         userVo.setCreateTimeStr(DateUtil.getNewDateStr());
+        userVo.setUserId(UUID.randomUUID().toString());
         this.sysUserMapper.saveEntity(userVo);
         LogInfo logInfo = new LogInfo();
         logInfo.setModuleId(LogConstant.Module_User);
@@ -258,7 +260,7 @@ public class SysUserServiceImpl extends BaseController implements SysUserService
     }
 
     @Override
-    public boolean deleteEntity(Integer userId) {
+    public boolean deleteEntity(String userId) {
         SysUserVo dbVo = this.checkSuperAdminUpdate(userId);
         if (dbVo == null) {
             throw new OrdinaryException("用户不存在，或已被删除！");
@@ -279,6 +281,11 @@ public class SysUserServiceImpl extends BaseController implements SysUserService
         this.logServiceImpl.saveLog(logInfo);
         return true;
     }
+
+
+
+
+
 
     @Override
     public boolean updateEntity(SysUserVo vo, boolean updateMy) {
@@ -333,7 +340,7 @@ public class SysUserServiceImpl extends BaseController implements SysUserService
 
 
     @Override
-    public boolean saveUserRole(int userId, String roleIds) {
+    public boolean saveUserRole(String userId, String roleIds) {
         SysUserVo dbVo = this.checkSuperAdminUpdate(userId);
         if (dbVo == null) {
             return true;
@@ -368,7 +375,7 @@ public class SysUserServiceImpl extends BaseController implements SysUserService
     }
 
     @Override
-    public boolean saveUserTasks(int busType, int userId, String taskIds) {
+    public boolean saveUserTasks(int busType, String userId, String taskIds) {
         SysUserVo dbVo = this.sysUserMapper.getUserVoByuserId(userId);
         if (dbVo == null) {
             return true;

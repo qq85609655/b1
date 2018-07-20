@@ -82,5 +82,5 @@ public interface RoleMapper extends BaseMapper {
     List<RoleVo> queryAll();
 
     @Delete("delete from sys_user_role where user_id=#{userId}")
-    void clearUserRoles(@Param("userId") Integer userId);
+    void clearUserRoles(@Param("userId") String userId);
 }

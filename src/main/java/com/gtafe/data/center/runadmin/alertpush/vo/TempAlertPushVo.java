@@ -10,15 +10,15 @@ import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
  * @Description:
  */
 public class TempAlertPushVo {
-    private int userId;
+    private String userId;
     private List<Integer> hasTaskIds;
     private List<DataTaskVo> list;
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

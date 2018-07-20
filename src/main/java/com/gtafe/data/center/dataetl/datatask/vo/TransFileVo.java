@@ -12,12 +12,38 @@ public class TransFileVo {
     private Date createTime;//创建时间
     private Date updateTime; //最后修改时间
     private String createUserInfo; //创建人信息
+    private String createTime2; //创建人信息
+    private String updateTime2; //创建人信息
+    private String accessTime2; //创建人信息
     private Date accessTime;
 
     private String scheduleInfo;
 
     private String fileType;//1 ktr  2 kjb
 
+    public String getCreateTime2() {
+        return createTime2;
+    }
+
+    public void setCreateTime2(String createTime2) {
+        this.createTime2 = createTime2;
+    }
+
+    public String getUpdateTime2() {
+        return updateTime2;
+    }
+
+    public void setUpdateTime2(String updateTime2) {
+        this.updateTime2 = updateTime2;
+    }
+
+    public String getAccessTime2() {
+        return accessTime2;
+    }
+
+    public void setAccessTime2(String accessTime2) {
+        this.accessTime2 = accessTime2;
+    }
 
     public String getFileName() {
         return fileName;

@@ -3,6 +3,7 @@ package com.gtafe.data.center.dataetl.datatask.mapper;
 
 import java.util.List;
 
+import com.gtafe.data.center.dataetl.datatask.vo.TaskStepVo;
 import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
@@ -14,7 +15,7 @@ import com.gtafe.framework.base.mapper.BaseMapper;
 
 public interface DataTaskMapper extends BaseMapper {
 
-    List<DataTaskVo> queryList(@Param("collectionId") int collectionId, @Param("orgIdList") List<Integer> orgIdList,
+    List<DataTaskVo> queryList(@Param("collectionId") int collectionId, @Param("orgIdList") List<String> orgIdList,
                                @Param("status") Integer status,
                                @Param("name") String name,
                                @Param("pageNumKey") int pageNum,
@@ -31,33 +32,39 @@ public interface DataTaskMapper extends BaseMapper {
      * @author 汪逢建
      * @date 2017年11月16日
      */
-    int checkTaskNameRepeat(@Param("taskId") Integer taskId, @Param("taskName") String taskName, @Param("orgId") int orgId, @Param("businessType") int businessType);
+    int checkTaskNameRepeat(@Param("taskId") Integer taskId, @Param("taskName") String taskName, @Param("orgId") String orgId, @Param("businessType") int businessType);
 
-    int insertDataTask(@Param("taskVo") DataTaskVo taskVo, @Param("userId") Integer userId);
+    int insertDataTask(@Param("taskVo") DataTaskVo taskVo, @Param("userId") String userId);
 
-    boolean updateDataTask(@Param("taskVo") DataTaskVo taskVo, @Param("userId") Integer userId);
+    boolean updateDataTask(@Param("taskVo") DataTaskVo taskVo, @Param("userId") String userId);
 
     /**
      * @param runStatus 1启动，0停止
      * @author 汪逢建
      * @date 2017年11月16日
      */
-    boolean updateDataTaskStatus(@Param("taskIds") List<Integer> taskIds, @Param("runStatus") int runStatus, @Param("userId") Integer userId);
+    boolean updateDataTaskStatus(@Param("taskIds") List<Integer> taskIds, @Param("runStatus") int runStatus, @Param("userId") String userId);
 
     boolean deleteTaskSteps(@Param("taskId") Integer taskId);
 
-    boolean insertTaskSteps(@Param("taskId") Integer taskId, @Param("steps") List<String> steps, @Param("userId") Integer userId);
+    boolean insertTaskSteps(@Param("taskId") Integer taskId, @Param("steps") List<String> steps, @Param("userId") String userId);
 
     @Select("select step_detail from data_etl_task_step where task_id=#{taskId} order by serial asc")
     List<String> getTaskSteps(@Param("taskId") Integer taskId);
 
+
+    @Select("select step_id stepId, task_id taskId, serial , " +
+            " step_detail stepDetail, updater ,updatetime updateTime " +
+            "from data_etl_task_step where task_id=#{taskId} order by serial asc")
+    List<TaskStepVo> getTaskStepsAll(@Param("taskId") Integer taskId);
+
     @Delete("delete from data_etl_task where task_id= #{taskId}")
     void deleteTaskById(@Param("taskId") Integer taskId);
 
-    List<DataTaskVo> queryListByOrgs(@Param("orgIds") List<Integer> orgIds, @Param("businessType") int businessType);
+    List<DataTaskVo> queryListByOrgs(@Param("orgIds") List<String> orgIds, @Param("businessType") int businessType);
 
     @Delete("delete from sys_user_task where user_id=#{userId}")
-    void clearUserTaskRelation(@Param("userId") Integer userId);
+    void clearUserTaskRelation(@Param("userId") String userId);
 
     @Select("   SELECT\n" +
             "        m.task_id taskId,\n" +
@@ -82,7 +89,7 @@ public interface DataTaskMapper extends BaseMapper {
 
     void saveEtlTaskStatus(@Param("ee") EtlTaskStatus etlTaskStatus);
 
-    List<EtlTaskStatus> queryTaskStatusList(@Param("orgIdList") List<Integer> orgIdList,
+    List<EtlTaskStatus> queryTaskStatusList(@Param("orgIdList") List<String> orgIdList,
                                             @Param("pageNumKey") int pageNum,
                                             @Param("pageSizeKey") int pageSize,
                                             @Param("busType") int busType);
@@ -107,5 +114,8 @@ public interface DataTaskMapper extends BaseMapper {
             " from data_etl_task m " +
             "  where m.business_type=#{busType}" +
             " and m.org_id=#{orgId} ")
-    List<DataTaskVo> queryTasks(@Param("busType") int busType, @Param("orgId") int orgId);
+    List<DataTaskVo> queryTasks(@Param("busType") int busType, @Param("orgId") String orgId);
+
+    @Select("select id from data_etl_dataconnection where org_id=#{orgId}")
+    List<Integer> getTopThirdConnectionId(@Param("orgId") String orgId);
 }

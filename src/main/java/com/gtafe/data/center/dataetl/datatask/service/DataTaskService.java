@@ -12,6 +12,7 @@ package com.gtafe.data.center.dataetl.datatask.service;
 import java.util.List;
 
 import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
+import com.gtafe.data.center.dataetl.datatask.vo.TaskOrgsInfoVo;
 import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
 
 public interface DataTaskService {
@@ -57,7 +58,7 @@ public interface DataTaskService {
 
     List<TransFileVo> queryKfileListAll();
 
-    boolean runItem(String fileName);
+    boolean runItem(List<String> vlist, String fileType);
 
     TransFileVo findEtlFileInfoById(String fileName);
 
@@ -65,5 +66,7 @@ public interface DataTaskService {
 
     boolean sendInTask(String filePath);
 
-    List<DataTaskVo> queryTasks(int businessType, int orgId);
+    List<DataTaskVo> queryTasks(int businessType, String orgId);
+
+    boolean cloneTasksTo(TaskOrgsInfoVo vo);
 }

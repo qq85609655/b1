@@ -49,94 +49,22 @@ public class NodeWatchServiceImpl extends BaseController implements NodeWatchSer
 
     @Override
     public List<EtlTaskStatus> queryTaskStatusList(String orgIds, int pageNum, int pageSize, int busType) {
-        List<Integer> orgIdList = StringUtil.splitListInt(orgIds);
+        List<String> orgIdList = StringUtil.splitListString(orgIds);
         if (orgIdList.isEmpty()) {
             return EmptyUtil.emptyList(pageSize, EtlTaskStatus.class);
         }
         return this.dataTaskMapper.queryTaskStatusList(orgIdList, pageNum, pageSize, busType);
     }
-
-    /**
-     * 根据数据任务资源 和业务类型 找其 源表 或 目标表 所在的数据库 运行 是否正常
-     * <p>
-     * //   * @param vlist
-     *
-     * @return
-     */
-   /* @Override
-    public List<NodeWatchVo> list(List<DataTaskVo> vlist) {
-        if (vlist.isEmpty()) {
-            return new ArrayList<NodeWatchVo>();
-        }
-        List<EtlTaskStatus> etlTaskStatuses = this.dataTaskMapper.queryTaskStatusList(null, -1, -1);
-        List<NodeWatchVo> nodeWatchVos = new ArrayList<NodeWatchVo>();
-        for (EtlTaskStatus v : etlTaskStatuses) {
-            NodeWatchVo vvv = new NodeWatchVo();
-            vvv.setBusType(v.getBusType());
-            vvv.setId(v.getTaskId());
-            vvv.setOrgId(v.getOrgId() + "");
-            vvv.setOrgName(v.getOrgName());
-            vvv.setResourceName(v.getTaskName());
-            vvv.setSourceTableName(v.getSourceTableName());
-            vvv.setTagertTableName(v.getTagertTableName());
-            int sourceFlag = v.getSourceStatus();
-            int targetFlag = v.getTargetStatus();
-            StringBuffer error = new StringBuffer("");
-            if (sourceFlag == 1) {
-                vvv.setStatus(sourceFlag);
-                error.append(v.getSourceStatusName());
-            } else if (sourceFlag == 3) {
-                vvv.setStatus(sourceFlag);
-                error.append(v.getSourceStatusName());
-            } else {
-                vvv.setStatus(sourceFlag);
-                error.append(v.getSourceStatusName());
-            }
-            if (vvv.getStatus() == 1) {
-                if (targetFlag == 1) {
-                    vvv.setStatus(targetFlag);
-                    error.append(v.getTargetStatusName());
-                } else if (targetFlag == 3) {
-                    vvv.setStatus(targetFlag);
-                    error.append(v.getTargetStatusName());
-                } else {
-                    vvv.setStatus(targetFlag);
-                    error.append(v.getTargetStatusName());
-                }
-            }
-            vvv.setStatusName(error.toString());
-            nodeWatchVos.add(vvv);
-        }
-        return nodeWatchVos;
-    }*/
     @Override
     public IndexVo queryTaskRunStatus() {
         IndexVo result = new IndexVo();
         int successSize = 0;
-        List<Integer> orgIds = orgServiceImpl.getUserAuthOrgIds(this.getUserId());
+        List<String> orgIds = orgServiceImpl.getUserAuthOrgIds(this.getUserId());
         if (orgIds.size() > 0) {
-           /* List<DataTaskVo> list = dataTaskMapper.queryList(-1, orgIds, -1, null, 1, 19, -1);
-            if (list.isEmpty()) {
-                result.setTotalCounts(0);
-                result.setErrorCounts(0);
-                result.setNodeWatchVos(new ArrayList<NodeWatchVo>());
-                return result;
-            }*/
-          /*  List<NodeWatchVo> nodeList = compactList(list);
-            int size = nodeList.size();
-            for (NodeWatchVo vo : nodeList) {
-                if (vo.getStatus() == 1) {
-                    successSize++;
-                }
-            }
-            int errorSize = size - successSize;
-            result.setNodeWatchVos(nodeList);*/
-
             List<EtlTaskStatus> statusList = this.dataTaskMapper.queryTaskStatusList(orgIds, -1, 19, 0);
             if (statusList.isEmpty()) {
                 result.setTotalCounts(0);
                 result.setErrorCounts(0);
-                // result.setNodeWatchVos(new ArrayList<NodeWatchVo>());
                 result.setEtlTaskStatuses(new ArrayList<EtlTaskStatus>());
                 return result;
             }
@@ -183,9 +111,6 @@ public class NodeWatchServiceImpl extends BaseController implements NodeWatchSer
         etlMapper.cleanAllStatus();
         // 扫描所有有效的转换任务
         List<DataTaskVo> dataTaskVolist = etlMapper.getAllTask();
-   /*     List<DatasourceVO> centerList = this.datasourceMapper.queryCenterData();
-        // 中心库
-        DatasourceVO centerVo = centerList.get(0);*/
         int centerStatus = 2;
         int thirdStatus = 2;
         SysConfigVo vos = sysConfigMapper.queryCenterDbInfo();
@@ -204,7 +129,6 @@ public class NodeWatchServiceImpl extends BaseController implements NodeWatchSer
                 }
             }
         } finally {
-            // close connection
             tDb.closeDbConn(connection);
         }
 

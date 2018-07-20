@@ -28,21 +28,21 @@ public interface CodeStandardService {
 
     CodeNodeVo queryCodeNodeTree2(String parentId);
 
-    boolean updateCodeVo(int sourceId, CodeInfoVo voList, int userId);
+    boolean updateCodeVo(int sourceId, CodeInfoVo voList, String userId);
 
-    boolean deleteCodeVo(int sourceId, int codeId, int userId);
+    boolean deleteCodeVo(int sourceId, int codeId, String userId);
 
-    boolean saveNodeVos(int sourceId, int nodeId, List<CodeNodeVo> voList, int userId);
+    boolean saveNodeVos(int sourceId, int nodeId, List<CodeNodeVo> voList, String userId);
 
-    boolean updateNodeVo(int sourceId, CodeNodeVo vo, int userId);
+    boolean updateNodeVo(int sourceId, CodeNodeVo vo, String userId);
 
-    boolean deleteNodeVo(int sourceId, int nodeId, int userId);
+    boolean deleteNodeVo(int sourceId, int nodeId, String userId);
 
-    boolean saveCodeVos(int sourceId, int nodeId, List<CodeInfoVo> voList, int userId);
+    boolean saveCodeVos(int sourceId, int nodeId, List<CodeInfoVo> voList, String userId);
 
     List<CodeInfoVo> queryCodeList2(String keyWord, String parentId_, int sourceId, int pageNum, int pageSize);
 
-    boolean deleteCodeVoByNodeId(int sourceId, int nodeId, int userId);
+    boolean deleteCodeVoByNodeId(int sourceId, int nodeId, String userId);
 
     List<TableEntity> queryAllCenterTableList(String tableName, int pageNum, int pageSize);
 

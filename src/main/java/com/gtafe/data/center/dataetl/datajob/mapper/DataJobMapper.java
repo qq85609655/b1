@@ -19,5 +19,5 @@ public interface DataJobMapper extends BaseMapper {
 
     List<JobEntity> getJobVos(List<Integer> jobList);
 
-    void updateStatus(List<Integer> jobList, int state, int userId);
+    void updateStatus(List<Integer> jobList, int state, String userId);
 }

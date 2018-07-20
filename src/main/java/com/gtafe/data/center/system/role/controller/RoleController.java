@@ -63,13 +63,14 @@ public class RoleController extends BaseController {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "查询列表成功，返回值是分页信息，list属性是返回的列表数据，其他是分页相关数据")})
     public @ResponseBody
     TempUserRoleVo queryAllByUserId(
-            @ApiParam(name = "userId", value = "用户id", required = true) @PathVariable("userId") int userId) {
+            @ApiParam(name = "userId", value = "用户id", required = true) @PathVariable("userId") String userId) {
         return roleServiceImpl.queryAllByUserId(userId);
     }
 
 
     /**
      * 保存角色
+     *
      * @param roleVo
      * @return
      */
@@ -109,16 +110,19 @@ public class RoleController extends BaseController {
         return this.roleServiceImpl.updateRole(roleVo);
     }
 
+
+
     @RequestMapping(path = "/updateStatus", method = RequestMethod.GET)
     public @ResponseBody
     boolean updateStatus(
-            @ApiParam(name = "roleId", value = "角色id", required = true)  int roleId,
-           @ApiParam(name = "checked", value = "状态码", required = true)  boolean checked) {
+            @ApiParam(name = "roleId", value = "角色id", required = true) int roleId,
+            @ApiParam(name = "checked", value = "状态码", required = true) boolean checked) {
         return this.roleServiceImpl.updateState(roleId, checked);
     }
-    
+
     @RequestMapping(path = "/getRoleInfoVo", method = RequestMethod.GET)
-    public @ResponseBody RoleInfoVo getRoleInfoVo(@ApiParam(name = "roleId", value = "角色id", required = true)  int roleId) {
+    public @ResponseBody
+    RoleInfoVo getRoleInfoVo(@ApiParam(name = "roleId", value = "角色id", required = true) int roleId) {
         return this.roleServiceImpl.getRoleInfoVo(roleId);
     }
 }

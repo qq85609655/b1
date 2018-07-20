@@ -29,11 +29,11 @@ public class RoleVo {
     private int ncount;//关联人数
 
     @ApiModelProperty(value = "创建人id", required = true)
-    private int creater;
+    private String creater;
     @ApiModelProperty(value = "创建时间", required = true)
     private Date createTime;
     @ApiModelProperty(value = "修改人id", required = true)
-    private int updater;
+    private String updater;
     @ApiModelProperty(value = "修改时间", required = true)
     private Date updateTime;
 
@@ -91,19 +91,19 @@ public class RoleVo {
         this.ncount = ncount;
     }
 
-    public int getCreater() {
+    public String getCreater() {
         return creater;
     }
 
-    public void setCreator(int creater) {
+    public void setCreator(String creater) {
         this.creater = creater;
     }
 
-    public int getUpdater() {
+    public String getUpdater() {
         return updater;
     }
 
-    public void setUpdater(int updater) {
+    public void setUpdater(String updater) {
         this.updater = updater;
     }
 

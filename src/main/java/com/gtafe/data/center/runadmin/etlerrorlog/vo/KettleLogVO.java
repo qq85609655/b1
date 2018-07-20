@@ -51,13 +51,13 @@ public class KettleLogVO extends BaseVO {
 
     private String client;
 
-    private int orgId;
+    private String orgId;
 
-    public int getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(int orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 

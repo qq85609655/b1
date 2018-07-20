@@ -22,9 +22,9 @@ import java.util.List;
 public interface DatasourceMapper extends BaseMapper {
     List<DatasourceVO> queryDatasourceList(@Param("dbType") Integer dbType, @Param("nameOrDBName") String nameOrDBName,
                                            @Param("pageNumKey") int pageNum, @Param("pageSizeKey") int pageSize,
-                                           @Param("orgIdList") List<Integer> orgIdList, @Param("isCenter") String isCenter);
+                                           @Param("orgIdList") List<String> orgIdList, @Param("isCenter") String isCenter);
 
-    List<DatasourceVO> queryDatasourceListAll(@Param("orgIdList") List<Integer> orgIdList);
+    List<DatasourceVO> queryDatasourceListAll(@Param("orgIdList") List<String> orgIdList);
 
     boolean datasourceDelete(@Param("id") int id);
 

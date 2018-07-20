@@ -63,7 +63,7 @@ public class LoginController extends BaseController {
             return loginServiceImpl.login(map.get("account").toString(), map.get("password").toString());
         }
     }
-
+/*
     @RequestMapping(value = "/loginout", method = RequestMethod.GET)
       public @ResponseBody
       ResultVO loginout(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -88,8 +88,8 @@ public class LoginController extends BaseController {
           result.setLocation(location);
           result.setUserInfo(null);
           return result;
-      }
-  /*
+      }*/
+
     @RequestMapping(value = "/loginout", method = RequestMethod.GET)
     public @ResponseBody
     ResultVO loginout(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -119,7 +119,7 @@ public class LoginController extends BaseController {
         }
         return result;
     }
- */
+
 
     /**
      * 用戶退出系統

@@ -125,7 +125,7 @@ public class SysUserController extends BaseController {
     @RequestMapping(path = "/saveUserRole/{userId}/{roleIds}")
     public @ResponseBody
     boolean saveUserRole(
-            @ApiParam(name = "userId", value = "用户id", required = true) @PathVariable("userId") int userId,
+            @ApiParam(name = "userId", value = "用户id", required = true) @PathVariable("userId") String userId,
             @ApiParam(name = "roleIds", value = "角色ids", required = true) @PathVariable("roleIds") String roleIds
     ) {
         LOGGER.info(userId + "-----" + roleIds);
@@ -137,7 +137,7 @@ public class SysUserController extends BaseController {
     public @ResponseBody
     boolean saveUserTask(
             @ApiParam(name = "busType", value = "业务类型", required = true) @RequestParam("busType") int busType,
-            @ApiParam(name = "userId", value = "用户id", required = true) @RequestParam("userId") int userId,
+            @ApiParam(name = "userId", value = "用户id", required = true) @RequestParam("userId") String userId,
             @ApiParam(name = "taskIds", value = "数据资源ids", required = true) @RequestParam("taskIds") String taskIds
     ) {
         LOGGER.info(busType + "-----" + userId + "-----" + taskIds);
@@ -154,7 +154,7 @@ public class SysUserController extends BaseController {
     @RequestMapping(path = "/deleteEntity", method = RequestMethod.GET)
     public @ResponseBody
     boolean deleteEntity(
-            @ApiParam(name = "userId", value = "userId", required = true) @RequestParam Integer userId
+            @ApiParam(name = "userId", value = "userId", required = true) @RequestParam String userId
     ) {
         return this.sysUserServiceImpl.deleteEntity(userId);
     }
@@ -217,7 +217,7 @@ public class SysUserController extends BaseController {
      */
     @RequestMapping(path = "/resetPwd", method = RequestMethod.GET)
     public @ResponseBody
-    boolean resetPwd(@ApiParam(name = "userId", value = "用户id", required = true) @RequestParam int userId) {
+    boolean resetPwd(@ApiParam(name = "userId", value = "用户id", required = true) @RequestParam String userId) {
         SysUserVo vo = this.sysUserServiceImpl.getUserVoByuserId(userId);
         vo.setLoginPwd(StringUtil.MD5("123456"));
         return this.sysUserServiceImpl.resetPwd(vo);
@@ -235,7 +235,7 @@ public class SysUserController extends BaseController {
     @RequestMapping(path = "/updateStatus", method = RequestMethod.GET)
     public @ResponseBody
     boolean updateStatus(
-            @ApiParam(name = "userId", value = "userId", required = true) @RequestParam int userId,
+            @ApiParam(name = "userId", value = "userId", required = true) @RequestParam String userId,
             @ApiParam(name = "checked", value = "checked", required = true) @RequestParam boolean checked) {
         SysUserVo vo = this.sysUserServiceImpl.getUserVoByuserId(userId);
         LOGGER.info(checked + "");
@@ -247,7 +247,7 @@ public class SysUserController extends BaseController {
     @RequestMapping(path = "/updateSendStatus", method = RequestMethod.GET)
     public @ResponseBody
     boolean updateSendStatus(
-            @ApiParam(name = "userId", value = "userId", required = true) int id,
+            @ApiParam(name = "userId", value = "userId", required = true) String id,
             @ApiParam(name = "checked", value = "checked", required = true) boolean checked) {
         SysUserVo vo = this.sysUserServiceImpl.getUserVoByuserId(id);
         LOGGER.info(checked + "");

@@ -57,8 +57,8 @@ public class LogServiceImpl extends BaseController implements LogService {
 
     @Override
     public List<LogVo> queryListLogin(int pageNum, int pageSize, String startTime, String endTime, int operRes, String orgIds, String keyWord, String operModuleIds) {
-        List<Integer> orgIdList = new ArrayList<Integer>();
-        orgIdList = StringUtil.splitListInt(orgIds);
+        List<String> orgIdList = new ArrayList<String>();
+        orgIdList = StringUtil.splitListString(orgIds);
         if (orgIdList.isEmpty()) {
             return EmptyUtil.emptyList(pageSize, LogVo.class);
         }
@@ -115,7 +115,7 @@ public class LogServiceImpl extends BaseController implements LogService {
             logVo.setOperUserNo(userVo.getUserNo() + "");
             logVo.setOperUserName(userVo.getRealName());
         } else {
-            logVo.setOperOrgId(0);
+            logVo.setOperOrgId("A1");
             logVo.setOperOrgName("");
             logVo.setOperUserNo("admin");
             logVo.setOperUserName("admin");

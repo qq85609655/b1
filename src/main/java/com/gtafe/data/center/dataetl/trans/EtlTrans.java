@@ -314,8 +314,8 @@ public class EtlTrans {
         SysConfigVo configVo = this.sysConfigMapper.queryEntity(false);
         KettleLogVO vo = this.kettleLogMapper.queryKettleVOByChannelId(logChannelId);
         if (vo != null && vo.getErrors() > 0) {
-            List<Integer> userIds = this.alertPushMapper.queryUserIdsByTransName(vo.getTransname());
-            for (Integer u : userIds) {
+            List<String> userIds = this.alertPushMapper.queryUserIdsByTransName(vo.getTransname());
+            for (String u : userIds) {
                 SysUserVo userVo = this.sysUserMapper.getUserVoByuserId(u);
                 if (userVo != null) {
                     if (StringUtil.isNotBlank(userVo.getEmail())) {

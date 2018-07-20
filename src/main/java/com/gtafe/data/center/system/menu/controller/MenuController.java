@@ -94,4 +94,11 @@ public class MenuController extends BaseController {
     }
 
 
+
+ /*   @RequestMapping(value = "/queryMenuAuthCodes2", method = RequestMethod.GET)
+    public MenuAuthCodeInfo queryMenuAuthCodes2() {
+        return menuServiceImpl.queryMenuAuthCodes2();
+    }
+
+*/
 }

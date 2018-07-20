@@ -18,6 +18,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -38,16 +39,7 @@ public class KfileMgrController extends BaseController {
     public @ResponseBody
     PageInfo<TransFileVo> queryLocalTransFileList(@RequestBody KfileParam param, @RequestParam(value = "fileType", required = true) String fileType,
                                                   @RequestParam(value = "fileName", required = true) String fileName) {
-        String filePath = "";
-        SysConfigVo sysConfigVo = sysConfigMapper.queryEntity(false);
-        if (sysConfigVo != null) {
-            if (fileType.equals("ktr")) {
-                filePath = sysConfigVo.getKtrFilesPath();
-            } else {
-                filePath = sysConfigVo.getKjbFilesPath();
-            }
-        }
-        dataTaskServiceImpl.flushTransFileVo(filePath, fileType);
+
         param.setFileName(fileName);
         param.setFileType(fileType);
         List<TransFileVo> result = dataTaskServiceImpl.queryKfileList(param.getFileType(),
@@ -62,9 +54,31 @@ public class KfileMgrController extends BaseController {
      * @param fileName
      * @return
      */
-    @RequestMapping(path = "/runIt", method = RequestMethod.GET)
-    public boolean runIt(String fileName) {
-        return this.dataTaskServiceImpl.runItem(fileName);
+    @RequestMapping(path = "/runIt/{fileType}/{fileName}", method = RequestMethod.GET)
+    public boolean runIt(@PathVariable("fileType") String fileType, @PathVariable("fileName") String fileName) {
+        String[] v = fileName.split(",");
+        List<String> vlist = new ArrayList<String>();
+        for (String mdddp : v) {
+            vlist.add(mdddp);
+        }
+        return this.dataTaskServiceImpl.runItem(vlist, fileType);
+    }
+
+    @RequestMapping(path = "/load/{fileType}", method = RequestMethod.GET)
+    public boolean load(@PathVariable("fileType") String fileType) {
+        String filePath = "";
+        SysConfigVo sysConfigVo = sysConfigMapper.queryEntity(false);
+        if (sysConfigVo != null) {
+            if (fileType.equals("ktr")) {
+                filePath = sysConfigVo.getKtrFilesPath();
+            } else {
+                filePath = sysConfigVo.getKjbFilesPath();
+            }
+        }
+        dataTaskServiceImpl.flushTransFileVo(filePath, fileType);
+        System.out.println("扫描" + fileType + "文件目录" + filePath + "操作结束");
+
+        return true;
     }
 
     @RequestMapping(path = "/downIt", method = RequestMethod.GET)

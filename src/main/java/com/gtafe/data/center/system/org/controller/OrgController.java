@@ -61,7 +61,8 @@ public class OrgController extends BaseController {
      * @return
      */
     @RequestMapping("getOrg")
-    public OrgVo getOrg(int id) {
+    public OrgVo getOrg(String id) {
+        System.out.println(id);
         return orgServiceImpl.getOrgVoById(id);
     }
 
@@ -72,7 +73,7 @@ public class OrgController extends BaseController {
      * @return
      */
     @RequestMapping("getNewOrgNo")
-    public String getNewOrgNo(int id) {
+    public String getNewOrgNo(String id) {
         return orgServiceImpl.getOrgNo(id);
     }
 
@@ -140,7 +141,7 @@ public class OrgController extends BaseController {
      * @return
      */
     @RequestMapping(path = "/updateSort", method = RequestMethod.GET)
-    public boolean updateSort(int id, boolean up) {
+    public boolean updateSort(String id, boolean up) {
         orgServiceImpl.updateSort(id, up);
         return true;
     }

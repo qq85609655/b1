@@ -44,7 +44,7 @@ public class OrgServiceImpl extends BaseController implements IOrgService {
     }
 
     @Override
-    public boolean checkOrgName(String orgName, int pId, int nodeType) {
+    public boolean checkOrgName(String orgName, String pId, int nodeType) {
         int count = this.orgMapper.queryByOrgName(orgName, pId, nodeType);
         if (count > 0) {
             return true;
@@ -59,22 +59,22 @@ public class OrgServiceImpl extends BaseController implements IOrgService {
     }
 
     @Override
-    public OrgVo getEntityById(int orgId) {
+    public OrgVo getEntityById(String orgId) {
         return orgMapper.getEntityById(orgId);
     }
 
     @Override
     public OrgVo orgTree() {
-        int userId = this.isAdmin() ? -1 : this.getUserId();
+        String userId = this.isAdmin() ? "-1" : this.getUserId();
         List<OrgVo> orgVos = orgMapper.getOrgVos(userId);
         OrgVo rootOrg = new OrgVo();
         for (OrgVo orgVo1 : orgVos) {
             for (OrgVo orgVo2 : orgVos) {
-                if (orgVo1.getId() == orgVo2.getParentId()) {
+                if (orgVo1.getId().equals(orgVo2.getParentId())) {
                     orgVo1.getChildren().add(orgVo2);
                 }
             }
-            if (orgVo1.getParentId() == 0) {
+            if (orgVo1.getParentId().equals("0")) {
                 rootOrg = orgVo1;
             }
         }
@@ -91,16 +91,16 @@ public class OrgServiceImpl extends BaseController implements IOrgService {
     }
 
     @Override
-    public List<Integer> getUserAuthOrgIds(int userId) {
+    public List<String> getUserAuthOrgIds(String userId) {
         SysUserVo user = userMapper.getUserVoByuserId(userId);
         if (user == null) {
-            return new ArrayList<Integer>();
+            return new ArrayList<String>();
         }
         if (this.isAdmin(user)) {
-            userId = -1;
+            userId = "-1";
         }
         List<OrgVo> orgVos = orgMapper.getOrgVos(userId);
-        List<Integer> result = new ArrayList<Integer>();
+        List<String> result = new ArrayList<String>();
         for (OrgVo vo : orgVos) {
             if (vo.getNodeType() == 3) {
                 result.add(vo.getId());
@@ -112,7 +112,7 @@ public class OrgServiceImpl extends BaseController implements IOrgService {
     @Override
     public boolean insertOrg(OrgVo org) {
         orgMapper.insertOrg(org);
-        org.setSort(org.getId());
+        org.setSort(org.getSort());
         boolean result = orgMapper.updateSort(org);
         LogInfo logInfo = new LogInfo();
         logInfo.setModuleId(LogConstant.Module_Org);
@@ -123,7 +123,7 @@ public class OrgServiceImpl extends BaseController implements IOrgService {
     }
 
     @Override
-    public boolean deleteById(int id) {
+    public boolean deleteById(String id) {
         //需要验证该机构下是否存在有用的用户
         List<SysUserVo> userVos = this.userMapper.queryListByOrgId(id);
         if (userVos.size() > 0) {
@@ -139,10 +139,14 @@ public class OrgServiceImpl extends BaseController implements IOrgService {
     }
 
     @Override
-    public OrgVo getOrgVoById(int id) {
+    public OrgVo getOrgVoById(String id) {
         OrgVo orgVo = orgMapper.getOrgVoById(id);
-        if (orgVo.getParentId() != 0) {
-            orgVo.setParentName(orgMapper.getOrgVoById(orgVo.getParentId()).getOrgName());
+        System.out.println(orgVo.getParentId());
+        if (!orgVo.getParentId().equals("0")) {
+            OrgVo porg=orgMapper.getOrgVoById(orgVo.getParentId());
+            if(porg!=null) {
+                orgVo.setParentName(porg.getOrgName());
+            }
         }
         return orgVo;
     }
@@ -163,7 +167,7 @@ public class OrgServiceImpl extends BaseController implements IOrgService {
     }
 
     @Override
-    public String getOrgNo(int parentId) {
+    public String getOrgNo(String parentId) {
         OrgVo orgVo = orgMapper.getOrgVoById(parentId);
         List<OrgVo> subOrgs = orgMapper.getSubOrg(parentId);
         int count = subOrgs.size() + 1;
@@ -189,11 +193,11 @@ public class OrgServiceImpl extends BaseController implements IOrgService {
     }
 
     @Override
-    public void updateSort(int id, boolean up) {
+    public void updateSort(String id, boolean up) {
         List<OrgVo> orgVos = orgMapper.getSameOrg(id);
         if (up) {
             for (int i = 0; i < orgVos.size(); i++) {
-                if (orgVos.get(i).getId() == id) {
+                if (orgVos.get(i).getId().equals(id)) {
                     if (i < 1) {
                         return;
                     }
@@ -207,7 +211,7 @@ public class OrgServiceImpl extends BaseController implements IOrgService {
             }
         } else {
             for (int i = 0; i < orgVos.size(); i++) {
-                if (orgVos.get(i).getId() == id) {
+                if (orgVos.get(i).getId().equals(id)) {
                     if (i == orgVos.size() - 1) {
                         return;
                     }

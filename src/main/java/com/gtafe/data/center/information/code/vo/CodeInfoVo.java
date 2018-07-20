@@ -14,22 +14,22 @@ public class CodeInfoVo {
     private String name;
     private String description;
     private int sourceId;
-    private int creater;
-    private int updater;
+    private String creater;
+    private String updater;
 
-    public int getCreater() {
+    public String getCreater() {
         return creater;
     }
 
-    public void setCreater(int creater) {
+    public void setCreater(String creater) {
         this.creater = creater;
     }
 
-    public int getUpdater() {
+    public String getUpdater() {
         return updater;
     }
 
-    public void setUpdater(int updater) {
+    public void setUpdater(String updater) {
         this.updater = updater;
     }
 

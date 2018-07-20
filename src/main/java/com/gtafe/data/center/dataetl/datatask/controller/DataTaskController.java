@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.gtafe.data.center.dataetl.datatask.vo.TaskOrgsInfoVo;
+import com.gtafe.data.center.system.role.vo.RoleInfoVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,8 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.pagehelper.PageInfo;
-import com.gtafe.data.center.dataetl.datasource.service.IDatasourceService;
-import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
 import com.gtafe.data.center.dataetl.datatask.service.DataTaskService;
 import com.gtafe.data.center.dataetl.datatask.vo.DataTaskParam;
 import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
@@ -38,27 +38,18 @@ public class DataTaskController extends BaseController {
     @Resource
     private DataTaskService dataTaskServiceImpl;
 
-    /**
-     * list:分页显示映射关系数据. <br/>
-     *
-     * @return
-     * @history
-     * @author ken.zhang
-     * @since JDK 1.7
-     */
-    @AuthAnnotation(value = {"011001","012001"}, conditions= {"businessType=1","businessType=2"})
+    @AuthAnnotation(value = {"011001", "012001"}, conditions = {"businessType=1", "businessType=2"})
     @RequestMapping(path = "/queryList", method = RequestMethod.POST)
     public @ResponseBody
-    PageInfo<DataTaskVo> queryList(@RequestBody DataTaskParam  param,
-            @RequestParam(value = "businessType", required = true) Integer businessType) {
+    PageInfo<DataTaskVo> queryList(@RequestBody DataTaskParam param,
+                                   @RequestParam(value = "businessType", required = true) Integer businessType) {
         param.setBusinessType(businessType);
         List<DataTaskVo> result = dataTaskServiceImpl.queryList(
-            param.getCollectionId(), param.getOrgIds(), 1, param.getStatus(), param.getName(), param.getPageNum(), param.getPageSize(), businessType);
+                param.getCollectionId(), param.getOrgIds(), 1, param.getStatus(), param.getName(), param.getPageNum(), param.getPageSize(), businessType);
         LOGGER.debug("Result: ", result.size());
         return new PageInfo<DataTaskVo>(result);
     }
 
-    //@AuthAnnotation(value = {"011005","012005"}, conditions= {"businessType=1","businessType=2"})
     @RequestMapping(path = "/startNow/{taskId}", method = RequestMethod.GET)
     public @ResponseBody
     boolean startNow(@PathVariable(name = "taskId") String taskId) {
@@ -69,9 +60,8 @@ public class DataTaskController extends BaseController {
     @RequestMapping(path = "/startLocalKettle", method = RequestMethod.GET)
     public @ResponseBody
     boolean startLocalKettle() {
-       return this.dataTaskServiceImpl.startLocalKettleNow();
+        return this.dataTaskServiceImpl.startLocalKettleNow();
     }
-
 
 
     /**
@@ -86,6 +76,12 @@ public class DataTaskController extends BaseController {
     }
 
 
+    @RequestMapping(path = "/cloneTasksTo", method = RequestMethod.POST)
+    public @ResponseBody
+    boolean cloneTasksTo(@RequestBody TaskOrgsInfoVo vo) {
+        return this.dataTaskServiceImpl.cloneTasksTo(vo);
+    }
+
 
     /**
      * 新增资源任务
@@ -93,7 +89,7 @@ public class DataTaskController extends BaseController {
      * @author 汪逢建
      * @date 2017年11月16日
      */
-    @AuthAnnotation(value = {"011002","012002"}, conditions= {"businessType=1","businessType=2"})
+    @AuthAnnotation(value = {"011002", "012002"}, conditions = {"businessType=1", "businessType=2"})
     @RequestMapping(path = "/insertDataTask", method = RequestMethod.POST)
     public @ResponseBody
     boolean insertDataTask(
@@ -109,7 +105,7 @@ public class DataTaskController extends BaseController {
      * @author 汪逢建
      * @date 2017年11月16日
      */
-    @AuthAnnotation(value = {"011003","012003"}, conditions= {"businessType=1","businessType=2"})
+    @AuthAnnotation(value = {"011003", "012003"}, conditions = {"businessType=1", "businessType=2"})
     @RequestMapping(path = "/updateDataTask", method = RequestMethod.POST)
     public @ResponseBody
     boolean updateDataTask(
@@ -131,7 +127,6 @@ public class DataTaskController extends BaseController {
     /**
      * deleteSource:批量删除发布资源. <br/>
      */
-    //@AuthAnnotation(value = {"011004","012004"}, conditions= {"businessType=1","businessType=2"})
     @RequestMapping(path = "/deleteTaskBatch/{taskIds}", method = RequestMethod.DELETE)
     public @ResponseBody
     boolean deleteTaskBatch(
@@ -158,11 +153,11 @@ public class DataTaskController extends BaseController {
         LOGGER.debug("update param:taskIds state={}  ", taskIds, state);
         return this.dataTaskServiceImpl.batchUpdateState(taskIds, state);
     }
-    
+
     @RequestMapping(path = "/updateStatus", method = RequestMethod.GET)
     public @ResponseBody
     boolean updateStatus(@RequestParam int taskId,
-            @RequestParam boolean checked) {
-        return dataTaskServiceImpl.batchUpdateState(taskId+"", checked?1:0);
+                         @RequestParam boolean checked) {
+        return dataTaskServiceImpl.batchUpdateState(taskId + "", checked ? 1 : 0);
     }
 }

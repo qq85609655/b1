@@ -108,7 +108,7 @@ public class MenuServiceImpl extends BaseController implements MenuService {
             MenuAuthCodeInfo parent = map.get(auth.getParentId());
             if(parent != null) {
                 if(parent.getChildren() == null) {
-                    parent.setChildren(new ArrayList<MenuAuthCodeInfo>()); 
+                    parent.setChildren(new ArrayList<MenuAuthCodeInfo>());
                 }
                 parent.getChildren().add(auth);
             }
@@ -118,5 +118,31 @@ public class MenuServiceImpl extends BaseController implements MenuService {
         }
         return root;
     }
+
+   /* @Override
+    public MenuAuthCodeInfo queryMenuAuthCodes2() {
+        List<MenuAuthCodeInfo> list = menuMapper.queryMenuAuthCodes2();
+        Map<String,MenuAuthCodeInfo> map = new HashMap<String,MenuAuthCodeInfo>();
+        for(MenuAuthCodeInfo auth : list) {
+            map.put(auth.getAuthId(), auth);
+        }
+        MenuAuthCodeInfo root = null;
+        for(MenuAuthCodeInfo auth : list) {
+            if(auth.getParentId().equals("0")) {
+                root = auth;
+            }
+            MenuAuthCodeInfo parent = map.get(auth.getParentId());
+            if(parent != null) {
+                if(parent.getChildren() == null) {
+                    parent.setChildren(new ArrayList<MenuAuthCodeInfo>());
+                }
+                parent.getChildren().add(auth);
+            }
+        }
+        if(root!=null) {
+            root.removeEmptys();
+        }
+        return root;
+    }*/
     
 }

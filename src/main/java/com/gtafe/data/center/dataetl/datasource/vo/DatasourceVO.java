@@ -75,7 +75,7 @@ public class DatasourceVO extends BaseVO {
     private String dataSource;
 
     @ApiModelProperty(value = "所属机构", required = true)
-    private int orgId;
+    private String orgId;
 
     @ApiModelProperty(value = "所属机构名称", required = true)
     private String orgName;
@@ -89,11 +89,11 @@ public class DatasourceVO extends BaseVO {
         this.orgName = orgName;
     }
 
-    public int getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(int orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 

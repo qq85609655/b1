@@ -5,6 +5,11 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.gtafe.data.center.dataetl.datatask.mapper.DataTaskMapper;
+import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
+import com.gtafe.data.center.dataetl.datatask.vo.TaskStepVo;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gtafe.data.center.common.common.constant.LogConstant;
@@ -54,10 +59,13 @@ public class RoleServiceImpl extends BaseController implements IRoleService {
         LogInfo logInfo = new LogInfo();
         logInfo.setModuleId(LogConstant.Module_Role);
         logInfo.setOperType("新增");
-        logInfo.setOperContent("新增角色信息:"+roleVo.getRoleName());
+        logInfo.setOperContent("新增角色信息:" + roleVo.getRoleName());
         this.logServiceImpl.saveLog(logInfo);
         return true;
     }
+
+
+
 
     @Override
     public boolean updateRole(RoleInfoVo roleVo) {
@@ -68,7 +76,7 @@ public class RoleServiceImpl extends BaseController implements IRoleService {
             throw new OrdinaryException("角色名称已存在，请重新输入！");
         }
         RoleVo dbVo = roleMapper.getEntityById(roleVo.getRoleId());
-        if(dbVo == null) {
+        if (dbVo == null) {
             throw new OrdinaryException("角色不存在，或已被删除！");
         }
         RoleVo vo = new RoleVo();
@@ -89,7 +97,7 @@ public class RoleServiceImpl extends BaseController implements IRoleService {
         LogInfo logInfo = new LogInfo();
         logInfo.setModuleId(LogConstant.Module_Role);
         logInfo.setOperType("修改");
-        logInfo.setOperContent("修改角色信息:"+ (dbVo.getRoleName().equals(vo.getRoleName()) ? "" : dbVo.getRoleName()+"=>") +roleVo.getRoleName());
+        logInfo.setOperContent("修改角色信息:" + (dbVo.getRoleName().equals(vo.getRoleName()) ? "" : dbVo.getRoleName() + "=>") + roleVo.getRoleName());
         this.logServiceImpl.saveLog(logInfo);
         return true;
     }
@@ -108,7 +116,7 @@ public class RoleServiceImpl extends BaseController implements IRoleService {
         LogInfo logInfo = new LogInfo();
         logInfo.setModuleId(LogConstant.Module_Role);
         logInfo.setOperType("修改");
-        logInfo.setOperContent("修改角色状态:"+ roleName+" "+(checked ? "启用" : "停用"));
+        logInfo.setOperContent("修改角色状态:" + roleName + " " + (checked ? "启用" : "停用"));
         this.logServiceImpl.saveLog(logInfo);
         return true;
     }
@@ -116,8 +124,8 @@ public class RoleServiceImpl extends BaseController implements IRoleService {
     @Override
     public boolean deleteEntity(Integer roleId) {
         RoleVo vo = roleMapper.getEntityById(roleId);
-        if(vo == null)return true;
-        
+        if (vo == null) return true;
+
         //先删除角色和人员关系 数据
         int a1 = roleMapper.deleteEntityforRelation(roleId);
         int a3 = roleMapper.deleteRoleAuthcode(roleId);
@@ -125,7 +133,7 @@ public class RoleServiceImpl extends BaseController implements IRoleService {
         LogInfo logInfo = new LogInfo();
         logInfo.setModuleId(LogConstant.Module_Role);
         logInfo.setOperType("删除");
-        logInfo.setOperContent("删除角色信息:"+ vo.getRoleName());
+        logInfo.setOperContent("删除角色信息:" + vo.getRoleName());
         this.logServiceImpl.saveLog(logInfo);
         return true;
     }
@@ -136,7 +144,7 @@ public class RoleServiceImpl extends BaseController implements IRoleService {
     }
 
     @Override
-    public TempUserRoleVo queryAllByUserId(int userId) {
+    public TempUserRoleVo queryAllByUserId(String userId) {
         TempUserRoleVo tempUserRoleVo = new TempUserRoleVo();
         List<Integer> sysUserRoleVoIds = this.sysUserMapper.queryRoleListByUserId(userId);
         List<RoleVo> roleVos = this.roleMapper.queryAll();
@@ -161,7 +169,9 @@ public class RoleServiceImpl extends BaseController implements IRoleService {
     }
 
     @Override
-    public void clearUserRole(Integer userId) {
+    public void clearUserRole(String userId) {
         this.roleMapper.clearUserRoles(userId);
     }
+
+
 }

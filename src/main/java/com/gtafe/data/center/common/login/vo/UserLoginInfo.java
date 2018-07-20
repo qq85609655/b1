@@ -9,7 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel
 public class UserLoginInfo {
     @ApiModelProperty(value = "用户Id", required = true)
-    private int userId;
+    private String userId;
     @ApiModelProperty(value = "用户编号", required = true)
     private String userNo;
     @ApiModelProperty(value = "姓名", required = true)
@@ -21,7 +21,7 @@ public class UserLoginInfo {
     @ApiModelProperty(value = "性别，1男，2女", required = true)
     private int sex;
     @ApiModelProperty(value = "机构id", required = true)
-    private int orgId;
+    private String orgId;
     @ApiModelProperty(value = "用户类型，1超级管理员，2老师，3学生", required = true)
     private int userType;
 
@@ -32,11 +32,11 @@ public class UserLoginInfo {
     private String loginTime;
     
     private List<String> authList = new ArrayList<String>();
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -80,11 +80,11 @@ public class UserLoginInfo {
         this.sex = sex;
     }
 
-    public int getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(int orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 

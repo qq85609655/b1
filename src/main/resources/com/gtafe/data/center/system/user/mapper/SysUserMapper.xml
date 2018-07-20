@@ -6,7 +6,7 @@
     <select id="queryList" resultType="com.gtafe.data.center.system.user.vo.SysUserVo">
         select
         m.user_id userId,
-        m.realname  realName ,
+        m.realname realName ,
         m.email email ,
         m.phone phone,
         m.sex sex ,
@@ -21,8 +21,8 @@
         o.org_name orgName,
         m.user_type userType
         from sys_user m
-        LEFT  JOIN  sys_org o on  m.org_id=o.id
-        where  m.isdelete=0
+        LEFT JOIN sys_org o on m.org_id=o.id
+        where m.isdelete=0
         <if test="state >= 0 ">
             and m.state = #{state}
         </if>
@@ -30,12 +30,12 @@
             and m.user_type > 1
         </if>
         <if test="keyWord != '' ">
-            and (m.realname like CONCAT('%', #{keyWord}, '%') OR  m.user_no like Concat('%', #{keyWord}, '%') )
+            and (m.realname like CONCAT('%', #{keyWord}, '%') OR m.user_no like Concat('%', #{keyWord}, '%') )
         </if>
         and m.org_id in (
         <foreach collection="orgIdList" item="item" separator=",">
-        	#{item}
-        </foreach> 
+            #{item}
+        </foreach>
         )
         order by m.updatetime desc
     </select>
@@ -86,15 +86,13 @@
     </select>
 
 
-
-
-
     <update id="updatePwd">
 		UPDATE sys_user set login_pwd=#{newPwd},updatetime=now(),updater=#{updater} where user_id=#{userId} and login_pwd=#{oldPwd}
 	</update>
 
     <!--保存用戶數據-->
-    <insert id="saveEntity" parameterType="com.gtafe.data.center.system.user.vo.SysUserVo" useGeneratedKeys="true" keyProperty="userId">
+    <insert id="saveEntity" parameterType="com.gtafe.data.center.system.user.vo.SysUserVo" useGeneratedKeys="true"
+            keyProperty="userId">
         INSERT INTO SYS_USER(
   `realname` ,
   `login_pwd` ,
@@ -108,7 +106,8 @@
   `createtime`,
   `createtimestr`,
   `updater`,
-  `updatetime`)
+  `updatetime`,
+  `user_id`)
   VALUES (
   #{realName},
   #{loginPwd},
@@ -122,33 +121,44 @@
   #{createTime},
   #{createTimeStr},
   #{updater},
-  #{updateTime}
+  #{updateTime},
+  #{userId}
   )
     </insert>
-    
+
     <!--修改用户信息-->
     <update id="updateEntity" parameterType="com.gtafe.data.center.system.user.vo.SysUserVo">
         UPDATE SYS_USER
-          SET   
-          <if test="type == 1">
-          	realname = #{userVo.realName},
-          	email = #{userVo.email},
-          	phone = #{userVo.phone},
+        SET
+        <if test="type == 1">
+            realname = #{userVo.realName},
+            email = #{userVo.email},
+            phone = #{userVo.phone},
             sex = #{userVo.sex},
-          </if>
+        </if>
         <if test="type == 2">
-            state = <choose><when test="userVo.state">1</when><otherwise>0</otherwise></choose>,
+            state =
+            <choose>
+                <when test="userVo.state">1</when>
+                <otherwise>0</otherwise>
+            </choose>
+            ,
         </if>
         <if test="type == 4">
-            send_error_mail = <choose><when test="userVo.sendErrorState">1</when><otherwise>0</otherwise></choose>,
+            send_error_mail =
+            <choose>
+                <when test="userVo.sendErrorState">1</when>
+                <otherwise>0</otherwise>
+            </choose>
+            ,
         </if>
-          <if test="type == 3">
-          	login_pwd = #{userVo.loginPwd},
-          </if>
-	      	updater = #{userVo.updater},
-          	updatetime = now()
-		WHERE
-		  user_id = #{userVo.userId}
+        <if test="type == 3">
+            login_pwd = #{userVo.loginPwd},
+        </if>
+        updater = #{userVo.updater},
+        updatetime = now()
+        WHERE
+        user_id = #{userVo.userId}
     </update>
 
     <!--刪除用戶-->

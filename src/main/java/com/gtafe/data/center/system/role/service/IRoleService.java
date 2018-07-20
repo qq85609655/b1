@@ -57,9 +57,10 @@ public interface IRoleService {
      * @param userId
      * @return
      */
-    TempUserRoleVo queryAllByUserId(int userId);
+    TempUserRoleVo queryAllByUserId(String userId);
     
     RoleInfoVo getRoleInfoVo(int roleId);
 
-    void clearUserRole(Integer userId);
+    void clearUserRole(String userId);
+
 }

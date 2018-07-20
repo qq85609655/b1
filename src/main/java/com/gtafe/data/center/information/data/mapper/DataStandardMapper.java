@@ -58,7 +58,7 @@ public interface DataStandardMapper {
      * @author 汪逢建
      * @date 2017年11月10日
      */
-    public boolean insertDataStandardVos(@Param("voList") List<DataStandardVo> voList, @Param("sourceId") int sourceId, @Param("userId") int userId);
+    public boolean insertDataStandardVos(@Param("voList") List<DataStandardVo> voList, @Param("sourceId") int sourceId, @Param("userId") String userId);
 
     /**
      * 更新数据
@@ -66,7 +66,7 @@ public interface DataStandardMapper {
      * @author 汪逢建
      * @date 2017年11月10日
      */
-    public boolean updateDataStandardVo(@Param("dataVo") DataStandardVo dataVo, @Param("sourceId") int sourceId, @Param("userId") int userId);
+    public boolean updateDataStandardVo(@Param("dataVo") DataStandardVo dataVo, @Param("sourceId") int sourceId, @Param("userId") String userId);
 
     /**
      * 查询下级节点情况

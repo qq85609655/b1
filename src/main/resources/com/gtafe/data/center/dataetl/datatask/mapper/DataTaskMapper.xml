@@ -54,9 +54,9 @@
         t.file_name fileName,
         t.file_path filePath,
         t.file_type fileType,
-        t.create_time createTime,
-        t.update_time updateTime,
-        t.access_time accessTime,
+        DATE_FORMAT(t.create_time, '%m-%d-%Y') createTime2,
+        DATE_FORMAT(t.update_time, '%m-%d-%Y') updateTime2,
+        DATE_FORMAT(t.access_time, '%m-%d-%Y') accessTime2,
         t.schedule_info scheduleInfo
         from t_trans_file_info t
         where 1=1

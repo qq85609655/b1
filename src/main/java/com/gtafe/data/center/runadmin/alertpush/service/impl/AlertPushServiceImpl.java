@@ -34,7 +34,7 @@ public class AlertPushServiceImpl extends BaseController implements AlertPushSer
 
     @Override
     public List<AlertPush> list(int pageNum, int pageSize, int isPush, String orgIds) {
-        List<Integer> orgIdList = StringUtil.splitListInt(orgIds);
+        List<String> orgIdList = StringUtil.splitListString(orgIds);
         if (orgIdList.isEmpty()) {
             return EmptyUtil.emptyList(pageSize, AlertPush.class);
         }
@@ -44,12 +44,12 @@ public class AlertPushServiceImpl extends BaseController implements AlertPushSer
     @Override
     public List<DataTaskVo> queryMappingVosByOrg(int businessType) {
         //查询当前登录用户有权限的资源任务
-        List<Integer> orgIds = orgServiceImpl.getUserAuthOrgIds(this.getUserId());
+        List<String> orgIds = orgServiceImpl.getUserAuthOrgIds(this.getUserId());
         return dataTaskMapper.queryListByOrgs(orgIds, businessType);
     }
 
     @Override
-    public List<Integer> queryUserMapTaskIds(int userId, int businessType) {
+    public List<Integer> queryUserMapTaskIds(String userId, int businessType) {
         return this.alertPushMapper.queryUserMapTaskIds(userId, businessType);
     }
 }

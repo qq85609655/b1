@@ -130,24 +130,6 @@ public class EtlSchedule {
 
     }
 
-//    public Properties iniProp(int taskId) {
-//
-//        DataTaskVo dataTask=etlMapper.getDataTaskById(taskId);
-//
-//        Properties prop = new Properties();
-//        prop.put("taskId",taskId);
-//        prop.put("dataTask",dataTask);
-//        prop.put("DS", etlMapper.getDSById(dataTask.getThirdConnectionId()));
-//        prop.put("centerDS", etlMapper.getCenterDS());
-//        prop.put("prjDBip", logip);
-//        prop.put("prjDBport", logport);
-//        prop.put("prjDBusername", logusername);
-//        prop.put("prjDBpassword", logpassword);
-//        prop.put("prjDBname", logdbname);
-//
-//        return prop;
-//    }
-
     @Scheduled(initialDelay=20000,fixedRate=10000)
     public void sched()  {
         try {

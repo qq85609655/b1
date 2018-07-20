@@ -124,7 +124,7 @@ public class CodeStandardServiceImpl implements CodeStandardService {
     }
 
     @Override
-    public boolean updateNodeVo(int sourceId, CodeNodeVo vo, int userId) {
+    public boolean updateNodeVo(int sourceId, CodeNodeVo vo, String userId) {
         CodeNodeVo oldCodeNodeVo = this.codeStandardMapper.queryNodeEntity(vo.getNodeId());
         boolean result = this.codeStandardMapper.updateNode(vo.getNodeId(), vo.getName(), vo.getDescription(), userId);
         LogInfo logInfo = new LogInfo();
@@ -183,7 +183,7 @@ public class CodeStandardServiceImpl implements CodeStandardService {
     }
 
     @Override
-    public boolean deleteNodeVo(int sourceId, int nodeId, int userId) {
+    public boolean deleteNodeVo(int sourceId, int nodeId, String userId) {
         CodeNodeVo nodeVo = this.codeStandardMapper.queryNodeEntity(nodeId);
         boolean result = false;
         int pNodeId = nodeVo.getParentnodeId();
@@ -220,7 +220,7 @@ public class CodeStandardServiceImpl implements CodeStandardService {
     }
 
     @Override
-    public boolean saveNodeVos(int sourceId, int nodeId, List<CodeNodeVo> voList, int userId) {
+    public boolean saveNodeVos(int sourceId, int nodeId, List<CodeNodeVo> voList, String userId) {
         StringBuffer operContent = new StringBuffer();
         int pNodeId = 0;
         //nodeId 为父级节点
@@ -252,7 +252,7 @@ public class CodeStandardServiceImpl implements CodeStandardService {
     }
 
     @Override
-    public boolean saveCodeVos(int sourceId, int nodeId, List<CodeInfoVo> voList, int userId) {
+    public boolean saveCodeVos(int sourceId, int nodeId, List<CodeInfoVo> voList, String userId) {
         CodeNodeVo nodeVo = this.codeStandardMapper.queryNodeEntity(nodeId);
         int pNodeId = nodeVo.getParentnodeId();
         if (nodeVo != null) {
@@ -287,7 +287,7 @@ public class CodeStandardServiceImpl implements CodeStandardService {
     }
 
     @Override
-    public boolean deleteCodeVoByNodeId(int sourceId, int nodeId, int userId) {
+    public boolean deleteCodeVoByNodeId(int sourceId, int nodeId, String userId) {
         CodeNodeVo nodeVo = this.codeStandardMapper.queryNodeEntity(nodeId);
         int pNodeId = nodeVo.getParentnodeId();
         if (nodeVo != null) {
@@ -315,7 +315,7 @@ public class CodeStandardServiceImpl implements CodeStandardService {
     }
 
     @Override
-    public boolean updateCodeVo(int sourceId, CodeInfoVo v, int userId) {
+    public boolean updateCodeVo(int sourceId, CodeInfoVo v, String userId) {
         int pNodeId = getParentNodeIdByCodeId(v.getCodeId());
         CodeInfoVo oldCodeInfoVo = this.codeStandardMapper.queryCodeEntity(v.getCodeId());
         if (oldCodeInfoVo == null) {
@@ -343,7 +343,7 @@ public class CodeStandardServiceImpl implements CodeStandardService {
      * @return
      */
     @Override
-    public boolean deleteCodeVo(int sourceId, int codeId, int userId) {
+    public boolean deleteCodeVo(int sourceId, int codeId, String userId) {
         CodeInfoVo infoVo = this.codeStandardMapper.queryCodeEntity(codeId);
         int pNodeId = getParentNodeIdByCodeId(codeId);
         LOGGER.info("pNodeId======" + pNodeId + ";sourceId====" + sourceId);

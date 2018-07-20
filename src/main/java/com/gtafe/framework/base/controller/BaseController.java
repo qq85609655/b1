@@ -22,6 +22,7 @@ public class BaseController {
     
     protected UserLoginInfo getUserInfo(){
         UserLoginInfo userInfo = gtSessionUserInfo(getRequest().getSession());
+        System.out.println("======================"+userInfo.getUserNo()+"----------------------");
         if(userInfo == null) {
              throw new NoLoginException();
         }
@@ -29,7 +30,7 @@ public class BaseController {
         
     }
     
-    protected int getUserId() {
+    protected String getUserId() {
         return getUserInfo().getUserId();
     }
     

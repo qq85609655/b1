@@ -22,7 +22,7 @@ public interface LogMapper extends BaseMapper {
                           @Param("startTime") String startTime,
                           @Param("endTime") String endTime,
                           @Param("operRes") int operRes,
-                          @Param("orgIdList") List<Integer> orgIdList,
+                          @Param("orgIdList") List<String> orgIdList,
                           @Param("keyWord") String keyWord);
 
     List<LogVo> queryList4Oper(@Param("pageNumKey") int pageNum,

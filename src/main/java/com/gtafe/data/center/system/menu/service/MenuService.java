@@ -30,8 +30,10 @@ public interface MenuService {
      * @author 汪逢建
      * @date 2017年11月1日
      */
-    public MenuAuthCodeInfo queryMenuAuthCodes();
+    MenuAuthCodeInfo queryMenuAuthCodes();
 
 
     MenuVo getEntityById(int moduleId);
+
+   // MenuAuthCodeInfo queryMenuAuthCodes2();
 }

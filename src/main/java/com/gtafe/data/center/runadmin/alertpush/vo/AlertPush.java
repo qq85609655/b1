@@ -10,13 +10,13 @@ package com.gtafe.data.center.runadmin.alertpush.vo;
 
 public class AlertPush {
 
-    private int id;
+    private String id;
 
     private String xm;
 
     private String userNo;
 
-    private int orgId;
+    private String orgId;
 
     private String orgName;
 
@@ -27,11 +27,11 @@ public class AlertPush {
     private int dyCount;
 
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -43,7 +43,7 @@ public class AlertPush {
         this.xm = xm;
     }
 
-    public int getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
@@ -55,7 +55,7 @@ public class AlertPush {
         this.userNo = userNo;
     }
 
-    public void setOrgId(int orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 

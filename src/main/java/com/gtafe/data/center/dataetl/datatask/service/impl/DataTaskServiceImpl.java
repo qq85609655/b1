@@ -25,18 +25,16 @@ import javax.annotation.Resource;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
-import com.gtafe.data.center.dataetl.datatask.vo.OSinfo;
-import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
+import com.gtafe.data.center.dataetl.datatask.vo.*;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.ConvertRuleValuemapper;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.rulevo.TargetMappingVo;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.rulevo.ValuemapperVo;
 import com.gtafe.data.center.dataetl.schedule.mapper.EtlMapper;
-import com.gtafe.data.center.dataetl.trans.ConstantValue;
 import com.gtafe.data.center.dataetl.trans.Utils;
 import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
 import com.gtafe.data.center.system.config.vo.SysConfigVo;
 import com.gtafe.framework.base.utils.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -46,7 +44,6 @@ import com.gtafe.data.center.common.common.constant.LogConstant;
 import com.gtafe.data.center.common.common.util.empty.EmptyUtil;
 import com.gtafe.data.center.dataetl.datatask.mapper.DataTaskMapper;
 import com.gtafe.data.center.dataetl.datatask.service.DataTaskService;
-import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.ConvertRuleSource;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.ConvertRuleTarget;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.rulevo.SourceTargetVo;
@@ -83,7 +80,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
                                       Integer status, String sourceTableName,
                                       int pageNum, int pageSize,
                                       Integer businessType) {
-        List<Integer> orgIdList = StringUtil.splitListInt(orgIds);
+        List<String> orgIdList = StringUtil.splitListString(orgIds);
         if (orgIdList.isEmpty()) {
             return EmptyUtil.emptyList(pageSize, DataTaskVo.class);
         }
@@ -250,7 +247,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
                 taskVo.getTaskName(), taskVo.getOrgId(), businessType) > 0) {
             throw new OrdinaryException(this.getName(businessType) + "资源名称已存在");
         }
-        int userId = this.getUserId();
+        String userId = this.getUserId();
         //插入数据
         this.dataTaskMapper.insertDataTask(taskVo, userId);
         int taskId = taskVo.getTaskId();
@@ -281,7 +278,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
                 taskVo.getTaskName(), taskVo.getOrgId(), businessType) > 0) {
             throw new OrdinaryException(this.getName(businessType) + "资源名称已存在");
         }
-        int userId = this.getUserId();
+        String userId = this.getUserId();
         int taskId = taskVo.getTaskId();
         //插入数据
         this.dataTaskMapper.updateDataTask(taskVo, userId);
@@ -723,34 +720,42 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         return this.dataTaskMapper.queryKfileListAll();
     }
 
+    private void cleanData(String type) {
+        System.out.println("-----------先清理数据库表数据------------------" + type);
+
+        this.sysConfigMapper.truncateTransFile(type);
+
+        System.out.println("------------end----------------" + type);
+    }
+
     @Override
     public void flushTransFileVo(String ktrpath, String type) {
-        this.sysConfigMapper.truncateTransFile(type);
+        cleanData(type);
         List<File> fileList = ReadFileUtil.getFileList(ktrpath, type);
-        if (fileList.size() > 0) {
-            for (File a : fileList) {
-                Path p = Paths.get(a.getAbsolutePath());
-                TransFileVo transFileVo = new TransFileVo();
-                try {
-
-                    BasicFileAttributes att = Files.readAttributes(p, BasicFileAttributes.class);//获取文件的属性
-                    String createtime = att.creationTime().toString();
-                    String accesstime = att.lastAccessTime().toString();
-                    String lastModifiedTime = att.lastModifiedTime().toString();
-                    String name = a.getName();
-                    String createUserName = "admin";
-                    transFileVo.setFileName(name);
-                    transFileVo.setCreateTime(DateUtil.parseDate(createtime));
-                    transFileVo.setFilePath(a.getCanonicalPath());
-                    transFileVo.setFileType(type);
-                    transFileVo.setUpdateTime(DateUtil.parseDate(lastModifiedTime));
-                    transFileVo.setAccessTime(DateUtil.parseDate(accesstime));
-                    transFileVo.setCreateUserInfo(createUserName);
-                    transFileVo.setScheduleInfo("0 0/60 * * * ? *");
-                    this.sysConfigMapper.saveTransFile(transFileVo);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+        TransFileVo transFileVo = new TransFileVo();
+        for (File a : fileList) {
+            Path p = Paths.get(a.getAbsolutePath());
+            try {
+                System.out.println(a.getCanonicalPath());
+                BasicFileAttributes att = Files.readAttributes(p, BasicFileAttributes.class);//获取文件的属性
+                String createtime = att.creationTime().toString();
+                String accesstime = att.lastAccessTime().toString();
+                String lastModifiedTime = att.lastModifiedTime().toString();
+                String name = a.getName();
+                System.out.println("扫描到" + type + "文件：" + name);
+                String createUserName = "admin";
+                transFileVo.setFileName(name);
+                transFileVo.setCreateTime(DateUtil.parseDate(createtime));
+                transFileVo.setFilePath(a.getCanonicalPath());
+                transFileVo.setFileType(type);
+                transFileVo.setUpdateTime(DateUtil.parseDate(lastModifiedTime));
+                transFileVo.setAccessTime(DateUtil.parseDate(accesstime));
+                transFileVo.setCreateUserInfo(createUserName);
+                transFileVo.setScheduleInfo("0 0/60 * * * ? *");
+                this.sysConfigMapper.saveTransFile(transFileVo);
+                System.out.println("插入了一条了:" + transFileVo.getFileName());
+            } catch (IOException e1) {
+                e1.printStackTrace();
             }
         }
     }
@@ -760,39 +765,102 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
     }
 
     @Override
-    public boolean runItem(String fileName) {
-        TransFileVo vo = this.dataTaskMapper.findEtlFileInfoById(fileName);
-        if (vo != null) {
-            String filePath = vo.getFilePath();
-            String type = vo.getFileType();
-            if (StringUtil.isBlank(filePath)) {
-                throw new OrdinaryException("文件路径不存在!");
-            }
-            if (StringUtil.isBlank(type) || !type.equals("ktr") || !type.equals("kjb")) {
-                throw new OrdinaryException("文件类型有异常!");
-            }
-            File ktrFile = new File(filePath);
-            if (!ktrFile.exists()) {
-                throw new OrdinaryException("文件不存在!!!");
-            }
-            int errors = 0;
-            KettleExecuUtil execuUtil = new KettleExecuUtil();
-            if (type.equals("ktr")) {
-                errors = execuUtil.runTrans(filePath);
-            } else if (type.equals("kjb")) {
-                errors = execuUtil.runJob(filePath);
-            }
-            if (errors > 0) {
-                return false;
-            } else {
-                return true;
+    public boolean runItem(List<String> vlist, String fileType) {
+        for (String fileName : vlist) {
+            String dfile = fileName + "." + fileType;
+            System.out.println(dfile);
+            TransFileVo vo = this.dataTaskMapper.findEtlFileInfoById(dfile);
+            if (vo != null) {
+                String filePath = vo.getFilePath();
+                if (StringUtil.isBlank(filePath)) {
+                    throw new OrdinaryException("文件路径不存在!");
+                }
+
+                File ktrFile = new File(filePath);
+                if (!ktrFile.exists()) {
+                    throw new OrdinaryException("文件不存在!!!");
+                }
+
+                int errors = 0;
+                KettleExecuUtil execuUtil = new KettleExecuUtil();
+                if (fileType.equals("ktr")) {
+                    errors = execuUtil.runTrans(filePath);
+                } else if (fileType.equals("kjb")) {
+                    errors = execuUtil.runJob(filePath);
+                }
+                if (errors > 0) {
+                    return false;
+                } else {
+                    return true;
+                }
             }
         }
         return false;
     }
 
+
+    /**
+     * 这个操作 是把选择的task 复制一份到目标部门里面。
+     *
+     * @param vv
+     * @return
+     */
     @Override
-    public List<DataTaskVo> queryTasks(int busType, int orgId) {
+    public boolean cloneTasksTo(TaskOrgsInfoVo vv) {
+        if (EmptyUtil.isEmpty(vv.getOrgList())) {
+            throw new OrdinaryException("目标机构信息不完整，请重新选择！");
+        }
+        System.out.println(vv.toString());
+        String ids = vv.getIds();
+        String[] ids_ = ids.split("#");
+        List<String> orgList = vv.getOrgList();
+        /**
+         * 循环已经选择的 被 克隆的 转换任务ids
+         *
+         */
+        for (String taskId : ids_) {
+            int taskId_ = Integer.parseInt(taskId);
+            DataTaskVo taskVo = dataTaskMapper.getDataTaskVo(taskId_);
+            int thirdConnectionId = 0;
+            if (taskVo == null) {
+                throw new OrdinaryException("数据资源不存在会已被删除！");
+            }
+            //  List<TaskStepVo> taskStepVos = this.dataTaskMapper.getTaskStepsAll(taskId_);
+            List<String> taskStepStrings = this.dataTaskMapper.getTaskSteps(taskId_);
+            System.out.println("当前转换有======" + taskStepStrings.size() + " 步");
+            for (String orgId : orgList) {
+                Integer thridconnId = 0;
+                List<Integer> thirdConnectionId_ = this.dataTaskMapper.getTopThirdConnectionId(orgId);
+                if (thirdConnectionId_.size() > 0) {
+                    thridconnId = thirdConnectionId_.get(0);
+                }
+                System.out.println("thridconnId======" + thridconnId);
+                DataTaskVo taskVo1 = new DataTaskVo();
+                BeanUtils.copyProperties(taskVo, taskVo1, new String[]{"id", "taskName", "description", "orgId", "thirdConnectionId"});
+                taskVo1.setOrgId(orgId);
+                taskVo1.setThirdConnectionId(thridconnId);
+                String taskName = taskVo.getTaskName() + "_复制_" + orgId;
+                taskVo1.setTaskName(taskName);
+                taskVo1.setDescription(taskName);
+                this.dataTaskMapper.insertDataTask(taskVo1, "1");
+                taskVo1.setSteps(taskStepStrings);
+                int tid = taskVo1.getTaskId();
+                this.dataTaskMapper.insertTaskSteps(tid, taskVo1.getSteps(), "1");
+
+                //保存日志
+                LogInfo logInfo = new LogInfo();
+                logInfo.setModuleId(getMoudleId(taskVo.getBusinessType()));
+                logInfo.setOperType("新增");
+                logInfo.setOperContent("新增" + this.getName(taskVo1.getBusinessType()) + "资源：" + taskVo1.getTaskName());
+                this.logServiceImpl.saveLog(logInfo);
+            }
+        }
+        return true;
+    }
+
+
+    @Override
+    public List<DataTaskVo> queryTasks(int busType, String orgId) {
         return this.dataTaskMapper.queryTasks(busType, orgId);
     }
 

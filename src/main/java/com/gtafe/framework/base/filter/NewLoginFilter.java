@@ -76,8 +76,9 @@ public class NewLoginFilter implements Filter {
                 JSONObject jsonObject = JSONObject.parseObject(result);
                 if (jsonObject != null) {
                     String userName = jsonObject.getString("UserName");
+                    SysUserVo userVo =null;
                     if (userName != null) {
-                        SysUserVo userVo = this.sysUserServiceImpl.getUserVoByUserNo(userName);
+                          userVo = this.sysUserServiceImpl.getUserVoByUserNo(userName);
                         if (userVo == null) {
                             System.out.println("用户不存在我们系统啊！");
                             String url = casLoginPath+"?ReturnUrl="+localApPath;

@@ -22,7 +22,7 @@ public interface OrgMapper extends BaseMapper {
 
 
     @Select("Select count(1) from sys_org where org_name=#{orgName} and parent_id=#{parentId} and node_type=#{nodeType}")
-    int queryByOrgName(@Param("orgName") String orgName, @Param("parentId") int parentId, @Param("nodeType") int nodeType);
+    int queryByOrgName(@Param("orgName") String orgName, @Param("parentId") String parentId, @Param("nodeType") int nodeType);
 
 
     @Select("Select count(1) from sys_org where org_no=#{orgNo}")
@@ -38,7 +38,7 @@ public interface OrgMapper extends BaseMapper {
      * @param ids
      * @return
      */
-    boolean deleteEntity(@Param("ids") List<Integer> ids);
+    boolean deleteEntity(@Param("ids") List<String> ids);
 
     /**
      * @param vo
@@ -50,14 +50,14 @@ public interface OrgMapper extends BaseMapper {
      * @param orgId
      * @return
      */
-    OrgVo getEntityById(@Param("orgId") int orgId);
+    OrgVo getEntityById(@Param("orgId") String orgId);
 
     /**
      * @param userId 小于0表示不过滤用户权限
      * @author 汪逢建
      * @date 2017年11月30日
      */
-    List<OrgVo> getOrgVos(@Param("userId") int userId);
+    List<OrgVo> getOrgVos(@Param("userId") String userId);
 
     @Insert("INSERT INTO  sys_org(org_name,org_address,org_no,org_type,node_type,state,sort,parent_id,creater,createtime,updater,updatetime,manager )  VALUES(#{orgName},#{orgAddress},#{orgNo},#{orgType},#{nodeType},#{state},#{sort},#{parentId},#{creater},#{createTime},#{updater},#{updateTime},#{manager})")
     @Options(useGeneratedKeys = true)
@@ -67,22 +67,23 @@ public interface OrgMapper extends BaseMapper {
     boolean updateSort(OrgVo org);
 
     @Delete("delete from sys_org where id = #{id}")
-    boolean deleteById(int id);
+    boolean deleteById(String id);
 
     @Select("SELECT  COUNT(*)  from sys_org WHERE  parent_id = #{id}")
-    boolean getSubOrgNum(int id);
+    boolean getSubOrgNum(String id);
 
     @Select("SELECT  org_no orgNo  from sys_org WHERE  parent_id = #{id}")
-    List<OrgVo> getSubOrg(int id);
+    List<OrgVo> getSubOrg(String id);
 
     @Select("SELECT id,parent_id parentId ,org_name orgName,org_no orgNo,org_address orgAddress,org_type orgType,state,node_type nodeType,manager  FROM  sys_org  WHERE  id = #{id}")
-    OrgVo getOrgVoById(int id);
+    OrgVo getOrgVoById(String id);
 
     @Update("update sys_org   set org_name = #{orgName}, org_type = #{orgType},manager = #{manager},org_address = #{orgAddress},updatetime = #{updateTime}, updater = #{updater} where id = #{id}")
     boolean updateOrg(OrgVo org);
 
     @Select("SELECT   id ,sort  from sys_org WHERE  parent_id = (SELECT parent_id FROM sys_org WHERE id = #{id}) order by sort")
-    List<OrgVo> getSameOrg(int id);
+    List<OrgVo> getSameOrg(String id);
+
     /**
      * @param userId 小于0表示不过滤用户权限
      * @author 周刚

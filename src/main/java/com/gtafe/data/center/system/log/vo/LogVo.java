@@ -10,7 +10,7 @@ public class LogVo {
     private String operType;//操作类型 1: 新增 2 删除 3  修改 4 启用 5 禁用 6 重置 7 授权
     private String operContent;//操作内容
     private String operUserName;//操作用户名称
-    private int operOrgId;//机构id
+    private String operOrgId;//机构id
     private String operOrgName;//操作机构名称
     private String operIp;//操作人客户端ip
     private int operRes; //操作成功 1 正常 2 异常
@@ -48,11 +48,11 @@ public class LogVo {
         this.operUserName = operUserName;
     }
 
-    public int getOperOrgId() {
+    public String getOperOrgId() {
         return operOrgId;
     }
 
-    public void setOperOrgId(int operOrgId) {
+    public void setOperOrgId(String operOrgId) {
         this.operOrgId = operOrgId;
     }
 
