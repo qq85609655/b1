@@ -2,6 +2,7 @@ package com.gtafe.data.center.system.org.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -111,6 +112,7 @@ public class OrgServiceImpl extends BaseController implements IOrgService {
 
     @Override
     public boolean insertOrg(OrgVo org) {
+        org.setId(UUID.randomUUID().toString());
         orgMapper.insertOrg(org);
         org.setSort(org.getSort());
         boolean result = orgMapper.updateSort(org);

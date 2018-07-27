@@ -59,7 +59,7 @@ public interface OrgMapper extends BaseMapper {
      */
     List<OrgVo> getOrgVos(@Param("userId") String userId);
 
-    @Insert("INSERT INTO  sys_org(org_name,org_address,org_no,org_type,node_type,state,sort,parent_id,creater,createtime,updater,updatetime,manager )  VALUES(#{orgName},#{orgAddress},#{orgNo},#{orgType},#{nodeType},#{state},#{sort},#{parentId},#{creater},#{createTime},#{updater},#{updateTime},#{manager})")
+    @Insert("INSERT INTO  sys_org(org_name,org_address,org_no,org_type,node_type,state,sort,parent_id,creater,createtime,updater,updatetime,manager,id )  VALUES(#{orgName},#{orgAddress},#{orgNo},#{orgType},#{nodeType},#{state},#{sort},#{parentId},#{creater},#{createTime},#{updater},#{updateTime},#{manager},#{id})")
     @Options(useGeneratedKeys = true)
     int insertOrg(OrgVo org);
 

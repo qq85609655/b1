@@ -26,6 +26,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * 此类是为集成中职智慧校园单点登录时候使用 主要是河南 山东 那些项目使用
+ */
 @Component
 public class NewLoginFilter implements Filter {
 
@@ -62,9 +65,9 @@ public class NewLoginFilter implements Filter {
                 CookieUitl.addCookie("ticket", ticket, servletRequest, servletResponse);
             }
         }
-        String  casServer=PropertyUtils.getProperty("java-cas-client.properties", "casServer");
-        String  localApPath=PropertyUtils.getProperty("java-cas-client.properties", "localApPath");
-        String  casLoginPath=PropertyUtils.getProperty("java-cas-client.properties", "casLoginPath");
+        String casServer = PropertyUtils.getProperty("java-cas-client.properties", "casServer");
+        String localApPath = PropertyUtils.getProperty("java-cas-client.properties", "localApPath");
+        String casLoginPath = PropertyUtils.getProperty("java-cas-client.properties", "casLoginPath");
         String casLoginOutPath = PropertyUtils.getProperty("java-cas-client.properties", "casLoginOutPath");
 
         HttpSession session = servletRequest.getSession();
@@ -76,12 +79,12 @@ public class NewLoginFilter implements Filter {
                 JSONObject jsonObject = JSONObject.parseObject(result);
                 if (jsonObject != null) {
                     String userName = jsonObject.getString("UserName");
-                    SysUserVo userVo =null;
+                    SysUserVo userVo = null;
                     if (userName != null) {
-                          userVo = this.sysUserServiceImpl.getUserVoByUserNo(userName);
+                        userVo = this.sysUserServiceImpl.getUserVoByUserNo(userName);
                         if (userVo == null) {
                             System.out.println("用户不存在我们系统啊！");
-                            String url = casLoginPath+"?ReturnUrl="+localApPath;
+                            String url = casLoginPath + "?ReturnUrl=" + localApPath;
                             throw new CasLoginException(url);
                         }
                         UserLoginInfo loginInfo = new UserLoginInfo();
@@ -104,7 +107,7 @@ public class NewLoginFilter implements Filter {
                     if (session != null) {
                         session.invalidate();
                     }
-                    String url = casLoginPath+"?ReturnUrl="+localApPath;
+                    String url = casLoginPath + "?ReturnUrl=" + localApPath;
                     servletResponse.sendRedirect(url);
                 }
             } else {
@@ -113,7 +116,7 @@ public class NewLoginFilter implements Filter {
                 if (session != null) {
                     session.invalidate();
                 }
-                String url = casLoginPath+"?ReturnUrl="+localApPath;
+                String url = casLoginPath + "?ReturnUrl=" + localApPath;
                 servletResponse.sendRedirect(url);
             }
         } else {
@@ -122,14 +125,16 @@ public class NewLoginFilter implements Filter {
             if (session != null) {
                 session.invalidate();
             }
-            String url = casLoginPath+"?ReturnUrl="+localApPath;
+            String url = casLoginPath + "?ReturnUrl=" + localApPath;
             servletResponse.sendRedirect(url);
         }
     }
+
     @Override
     public void init(FilterConfig arg0) throws ServletException {
 
     }
+
     @Override
     public void destroy() {
 

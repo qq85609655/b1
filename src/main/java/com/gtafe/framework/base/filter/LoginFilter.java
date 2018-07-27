@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 /***
- *
+ * 此过滤器是为 集成GTASSO 单点登录时 请求过滤使用
  * ClassName: 用户登录过滤器 <br/>
  */
 @Component

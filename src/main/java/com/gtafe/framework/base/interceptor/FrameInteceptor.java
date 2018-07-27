@@ -31,6 +31,7 @@ import com.gtafe.framework.base.exception.*;
 import com.gtafe.framework.base.register.IniVerifyFlag;
 import com.gtafe.framework.base.utils.CASInterfaceUtil;
 import com.gtafe.framework.base.utils.CookieUitl;
+import com.gtafe.framework.base.utils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -93,21 +94,32 @@ public class FrameInteceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response, Object handler)
             throws Exception {
+        String IniFlag = PropertyUtils.getProperty("config.properties", "IniVerifyFlag");
+
+        String SSO_TYPE = PropertyUtils.getProperty("config.properties", "SSO_TYPE");
 
         HttpServletRequest servletRequest = (HttpServletRequest) request;
         // 取得request 相关的东西 用户 请求 时间 参数
         LoggerInfo li = new LoggerInfo(request);
-     //   if(li != null){
-    //        return true;
-    //    }
+        if (SSO_TYPE.equals("1")) {
+            if (li != null) {
+                return true;
+            }
+        }
 
         if (li.getUrlPath().startsWith("/common/reg") || li.getUrlPath().startsWith("/forgetPwd/sendMail") || li.getUrlPath().startsWith("/forgetPwd/editPwd")) {
             return true;
         }
 
-        // if (!IniVerifyFlag.verifyFlag) {
-        //      throw new NoRegistException();
-        //  }
+        /**
+         * 开启在线注册效验
+         */
+
+        if (IniFlag.equals("Y")) {
+            if (!IniVerifyFlag.verifyFlag) {
+                throw new NoRegistException();
+            }
+        }
 
         // 判断是否登录地址，如果是登录，直接返回
         if (li.getUrlPath().startsWith("/common/")) {

@@ -32,6 +32,10 @@ public class OutputTable extends BaseStep {
 
     public StepMeta outputStep() {
 
+
+        System.out.println("目标表为：" + targetDBName);
+
+
         List<TargetMappingVo> mapping;
         List<TargetCondition> conditions;
 
@@ -119,7 +123,6 @@ public class OutputTable extends BaseStep {
 
 
     }
-
 
 
 }

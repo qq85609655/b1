@@ -63,33 +63,45 @@ public class LoginController extends BaseController {
             return loginServiceImpl.login(map.get("account").toString(), map.get("password").toString());
         }
     }
-/*
-    @RequestMapping(value = "/loginout", method = RequestMethod.GET)
-      public @ResponseBody
-      ResultVO loginout(HttpServletRequest request, HttpServletResponse response) throws Exception {
-          ResultVO result = new ResultVO();
-          String login = PropertyUtils.getProperty("java-cas-client.properties", "casServerLoginUrl");
-          if (login.indexOf("/login") != -1) {
-              login = login.substring(0, login.indexOf("/login"));
-          }
-          login += "/logout";
-          String serverName = PropertyUtils.getProperty("java-cas-client.properties", "serverName");
-          serverName += request.getContextPath();
-          serverName += "/?t=" + System.currentTimeMillis();// 放着浏览器首页缓存
-          String location = login + "?service=" + URLEncoder.encode(serverName, "UTF-8");
-          //response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
-          //response.setHeader("Location", location);
-          HttpSession session = request.getSession(false);
-          if (session != null) {
-              session.invalidate();
-          }
-          LOGGER.info(location);
-          result.setCounts(1);
-          result.setLocation(location);
-          result.setUserInfo(null);
-          return result;
-      }*/
 
+    /**
+     * 此方法是为 GTASSO 退出使用
+     *
+     * @param request
+     * @param response
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/loginout", method = RequestMethod.GET)
+    public @ResponseBody
+    ResultVO loginout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        ResultVO result = new ResultVO();
+        String login = PropertyUtils.getProperty("java-cas-client.properties", "casServerLoginUrl");
+        if (login.indexOf("/login") != -1) {
+            login = login.substring(0, login.indexOf("/login"));
+        }
+        login += "/logout";
+        String serverName = PropertyUtils.getProperty("java-cas-client.properties", "serverName");
+        serverName += request.getContextPath();
+        serverName += "/?t=" + System.currentTimeMillis();// 放着浏览器首页缓存
+        String location = login + "?service=" + URLEncoder.encode(serverName, "UTF-8");
+        //response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+        //response.setHeader("Location", location);
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        LOGGER.info(location);
+        result.setCounts(1);
+        result.setLocation(location);
+        result.setUserInfo(null);
+        return result;
+    }
+    /**
+     * 此方法为 集成智慧校园 单点登录时 退出使用
+     */
+
+/*
     @RequestMapping(value = "/loginout", method = RequestMethod.GET)
     public @ResponseBody
     ResultVO loginout(HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -118,7 +130,7 @@ public class LoginController extends BaseController {
             e.printStackTrace();
         }
         return result;
-    }
+    }*/
 
 
     /**
