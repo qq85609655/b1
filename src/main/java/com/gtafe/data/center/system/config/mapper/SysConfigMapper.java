@@ -32,10 +32,10 @@ public interface SysConfigMapper {
     @Update("update sys_config set logo_info=#{logoInfo}")
     boolean updateSystemLog(@Param("logoInfo") String logoInfo);
 
-    @Update("update sys_menu set menu_name=#{sysName} where parent_id = 0")
+    @Update("update sys_menu set menu_name=#{sysName} where parent_id = '0'")
     boolean updateSystemNameToMenu(@Param("sysName") String sysName);
 
-    @Update("update sys_org set org_name=#{schoolName} where parent_id = 0")
+    @Update("update sys_org set org_name=#{schoolName} where parent_id = '0'")
     boolean updateSchoolNameToOrg(@Param("schoolName") String schoolName);
 
     @Select("select email_host emailHost,email_user emailUser," +
