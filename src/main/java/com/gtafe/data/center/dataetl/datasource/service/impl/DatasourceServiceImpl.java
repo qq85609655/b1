@@ -374,6 +374,10 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
         return result;
     }
 
+    @Override
+    public List<DatasourceVO> getDbSourceListByOrgId(int orgId) {
+        return this.datasourceMapper.queryDatasourceListByOrgId(orgId);
+    }
 
     public TableFieldVV queryTableFields2(DatasourceVO datasourceVO,
                                           String table, String busType, String tType) throws Exception {

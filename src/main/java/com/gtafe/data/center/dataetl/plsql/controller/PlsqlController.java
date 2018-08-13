@@ -1,6 +1,10 @@
 package com.gtafe.data.center.dataetl.plsql.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.gtafe.data.center.dataetl.datasource.mapper.DatasourceMapper;
+import com.gtafe.data.center.dataetl.datasource.service.IDatasourceService;
+import com.gtafe.data.center.dataetl.datasource.service.impl.DatasourceServiceImpl;
+import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
 import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
 import com.gtafe.data.center.dataetl.plsql.service.PlsqlService;
 import com.gtafe.data.center.dataetl.plsql.vo.PlsqlParamVo;
@@ -24,6 +28,8 @@ public class PlsqlController {
 
     @Resource
     private PlsqlService plsqlServiceImpl;
+    @Resource
+    private IDatasourceService datasourceServiceImpl;
 
 
     @RequestMapping(path = "/queryList", method = RequestMethod.POST)
@@ -35,6 +41,12 @@ public class PlsqlController {
         return new PageInfo<PlsqlVo>(result);
     }
 
+
+    @RequestMapping(path = "/getDbSourceListByOrgId", method = RequestMethod.GET)
+    public @ResponseBody
+    List<DatasourceVO> getDbSourceListByOrgId(@RequestBody int orgId) {
+        return datasourceServiceImpl.getDbSourceListByOrgId(orgId);
+    }
 
     /**
      * 检测脚本是否能执行

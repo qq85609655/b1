@@ -39,7 +39,9 @@ public interface IDatasourceService {
 
     TableFieldVV queryTableFields2(DatasourceVO datasourceVO, String table, String busType, String tType) throws Exception;
 
+    List<DatasourceVO> getDbSourceListByOrgId(int orgId);
 
-  //  List<DatasourceVO> queryCenterData();
+
+    //  List<DatasourceVO> queryCenterData();
 
 }

@@ -52,4 +52,7 @@ public interface DatasourceMapper extends BaseMapper {
 
     @Delete("delete from t_center_tables where tableName is not null")
     void trankAll();
+
+    @Select("select id,name from data_etl_dataconnection where org_id=#{orgid}")
+    List<DatasourceVO> queryDatasourceListByOrgId(@Param("orgid") int orgId);
 }
