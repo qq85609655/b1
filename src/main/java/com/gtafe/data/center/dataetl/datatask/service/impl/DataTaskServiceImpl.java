@@ -736,13 +736,13 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         for (File a : fileList) {
             Path p = Paths.get(a.getAbsolutePath());
             try {
-                System.out.println(a.getCanonicalPath());
+             //   System.out.println(a.getCanonicalPath());
                 BasicFileAttributes att = Files.readAttributes(p, BasicFileAttributes.class);//获取文件的属性
                 String createtime = att.creationTime().toString();
                 String accesstime = att.lastAccessTime().toString();
                 String lastModifiedTime = att.lastModifiedTime().toString();
                 String name = a.getName();
-                System.out.println("扫描到" + type + "文件：" + name);
+            //    System.out.println("扫描到" + type + "文件：" + name);
                 String createUserName = "admin";
                 transFileVo.setFileName(name);
                 transFileVo.setCreateTime(DateUtil.parseDate(createtime));
@@ -753,7 +753,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
                 transFileVo.setCreateUserInfo(createUserName);
                 transFileVo.setScheduleInfo("0 0/60 * * * ? *");
                 this.sysConfigMapper.saveTransFile(transFileVo);
-                System.out.println("插入了一条了:" + transFileVo.getFileName());
+            //    System.out.println("插入了一条了:" + transFileVo.getFileName());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -827,14 +827,14 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
             }
             //  List<TaskStepVo> taskStepVos = this.dataTaskMapper.getTaskStepsAll(taskId_);
             List<String> taskStepStrings = this.dataTaskMapper.getTaskSteps(taskId_);
-            System.out.println("当前转换有======" + taskStepStrings.size() + " 步");
+           // System.out.println("当前转换有======" + taskStepStrings.size() + " 步");
             for (String orgId : orgList) {
                 Integer thridconnId = 0;
                 List<Integer> thirdConnectionId_ = this.dataTaskMapper.getTopThirdConnectionId(orgId);
                 if (thirdConnectionId_.size() > 0) {
                     thridconnId = thirdConnectionId_.get(0);
                 }
-                System.out.println("thridconnId======" + thridconnId);
+            //    System.out.println("thridconnId======" + thridconnId);
                 DataTaskVo taskVo1 = new DataTaskVo();
                 BeanUtils.copyProperties(taskVo, taskVo1, new String[]{"id", "taskName", "description", "orgId", "thirdConnectionId"});
                 taskVo1.setOrgId(orgId);

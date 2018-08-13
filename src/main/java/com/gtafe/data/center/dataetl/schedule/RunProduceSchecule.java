@@ -37,8 +37,8 @@ public class RunProduceSchecule {
         String produceNames = PropertyUtils.getProperty("config.properties", "produceNames");
         String produceDbLink = PropertyUtils.getProperty("config.properties", "produceDbLink");
         String RunProduceFlag = PropertyUtils.getProperty("config.properties", "RunProduceFlag");
-        System.out.println(produceNames);
-        System.out.println(produceDbLink);
+     //   System.out.println(produceNames);
+     //   System.out.println(produceDbLink);
         if (StringUtil.isNotBlank(RunProduceFlag) && RunProduceFlag.equals("Y")) {
             if (StringUtil.isNotBlank(produceNames) && StringUtil.isNotBlank(produceDbLink)) {
                 String[] prodstr = produceNames.split(";");
@@ -46,7 +46,7 @@ public class RunProduceSchecule {
                 ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
                 Connection connection = null;
                 Date nowTime = new Date(System.currentTimeMillis());
-                System.out.println(System.currentTimeMillis());
+               // System.out.println(System.currentTimeMillis());
                 SimpleDateFormat sdFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:dd");
                 String retStrFormatNowDate = sdFormatter.format(nowTime);
                 System.out.println(retStrFormatNowDate);
@@ -54,18 +54,18 @@ public class RunProduceSchecule {
                 try {
                     for (String prd : prodstr) {
                         long s = System.currentTimeMillis();
-                        System.out.println(" 开始执行存储过程：" + prd);
+                      //  System.out.println(" 开始执行存储过程：" + prd);
                         connection = connectDB.getConn();
                         if (connection != null) {
                             CallableStatement cs = connection.prepareCall("{call " + prd + "}");
                             cs.execute();
-                            System.out.println("执行结束了");
+                       //     System.out.println("执行结束了");
                             long s2 = System.currentTimeMillis();
-                            System.out.println("耗时：" + (s2 - s) / 1000 % 60 + " 秒");       //执行
+                         //   System.out.println("耗时：" + (s2 - s) / 1000 % 60 + " 秒");       //执行
                             cs.close();
                             connection.close();
                         } else {
-                            System.out.println("数据库连接不上啊!");
+                         //   System.out.println("数据库连接不上啊!");
                         }
                     }
                 } catch (Exception e) {
