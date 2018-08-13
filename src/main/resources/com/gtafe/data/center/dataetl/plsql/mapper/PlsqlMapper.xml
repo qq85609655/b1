@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gtafe.data.center.dataetl.plsql.mapper.PlsqlMapper">
+    <select id="queryList" resultType="com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo">
+        select
+        m.*
+        from data_etl_plsql m
+        where 1=1
+        <if test="nameKey != null and nameKey.trim().length()>0">
+            and (m.aliansName like CONCAT('%', #{nameKey}, '%') OR m.name like CONCAT('%', #{nameKey}, '%') )
+        </if>
+
+        <if test="orgIdList != null">
+            and m.orgId in (
+            <foreach collection="orgIdList" item="item" separator=",">
+                #{item}
+            </foreach>
+            )
+        </if>
+        order by m.updateTime desc
+    </select>
+
+</mapper>
