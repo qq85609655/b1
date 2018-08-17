@@ -176,7 +176,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
                 //循环 最后一步 目标步骤 来取得 对应关系
 
 
-                System.out.println("对应的字段名称为===========" + fieldValue);
+              //  System.out.println("对应的字段名称为===========" + fieldValue);
                 List<String> rules = etlMapper.queryCodes(taskVo.getCenterTablename(), fieldValue);
 
                 List<String> targetStrs = new ArrayList<String>();
@@ -520,7 +520,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
             String stepName = (String) entry.getKey();//值映射步骤名
-            System.out.println("当前的步骤名称：===" + stepName);
+           // System.out.println("当前的步骤名称：===" + stepName);
             Map<String, aa> relationMap = (Map<String, aa>) entry.getValue(); //对应的 输出和 映射值对象
             Iterator ralationIterator = relationMap.entrySet().iterator();
             while (ralationIterator.hasNext()) {
@@ -551,7 +551,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
                     if (center != null) {
                         List<TargetMappingVo> mappingVos = center.getMappings();
                         for (TargetMappingVo vo : mappingVos) {
-                            System.out.println("----S----" + vo.getSourceField() + "----T----" + vo.getTargetField());
+                         //   System.out.println("----S----" + vo.getSourceField() + "----T----" + vo.getTargetField());
                             //注意 此处是 以 目标字段为key  源字段为值  ：因为 目标字段不可能重复 ，但 源字段 可能重复
                             mmps.put(vo.getSourceField(), vo.getTargetField());
                         }
@@ -675,7 +675,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         if (sysConfigVo != null) {
             kettleInstallPath = sysConfigVo.getKettleInstallPath();
         }
-        System.out.println(kettleInstallPath);
+        //System.out.println(kettleInstallPath);
         if (StringUtil.isNotBlank(kettleInstallPath)) {
             String spoonFilePath = kettleInstallPath + File.separator + "Spoon.bat";
             File s = new File(spoonFilePath);
@@ -721,11 +721,11 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
     }
 
     private void cleanData(String type) {
-        System.out.println("-----------先清理数据库表数据------------------" + type);
+       // System.out.println("-----------先清理数据库表数据------------------" + type);
 
         this.sysConfigMapper.truncateTransFile(type);
 
-        System.out.println("------------end----------------" + type);
+       // System.out.println("------------end----------------" + type);
     }
 
     @Override
@@ -891,7 +891,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
                         (new InputStreamReader(process.getInputStream()));
                 while ((line = bufferedReader.readLine()) != null) {
                     sb.append(line + "\n");
-                    System.out.println(line);
+                    //System.out.println(line);
                 }
                 command = "";
 

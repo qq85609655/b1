@@ -207,43 +207,38 @@ public class DbInfo {
         Integer columnnums = Integer.valueOf(rsmd.getColumnCount());
 
         System.out.println("获得该ResultSet所有列的数目 " + columnnums);
-        if (rs.next()) {
-            for (int i = 0; i < columnnums; i++) {
+        for (int i = 1; i < columnnums + 1; i++) {
 
-                System.out.println("获得" + i + "列所在的Catalog名字 : " + rsmd.getCatalogName(i));
+            System.out.println(i + "列对应数据类型的类 " + rsmd.getColumnClassName(i));
 
-                System.out.println("获得\"+i+\"列对应数据类型的类 " + rsmd.getColumnClassName(i));
+            System.out.println(i + "列在数据库中类型的最大字符个数" + rsmd.getColumnDisplaySize(i));
 
-                System.out.println(i + "列在数据库中类型的最大字符个数" + rsmd.getColumnDisplaySize(i));
+            System.out.println(i + "列的默认的列的标题" + rsmd.getColumnLabel(i));
 
-                System.out.println(i + "列的默认的列的标题" + rsmd.getColumnLabel(i));
+          //  System.out.println(i + "列的类型,返回SqlType中的编号 " + rsmd.getColumnType(i));
 
-                System.out.println(i + "列的类型,返回SqlType中的编号 " + rsmd.getColumnType(i));
+            System.out.println(i + "列在数据库中的类型，返回类型全名" + rsmd.getColumnTypeName(i));
 
-                System.out.println(i + "列在数据库中的类型，返回类型全名" + rsmd.getColumnTypeName(i));
+            System.out.println(i + "列类型的精确度(类型的长度): " + rsmd.getPrecision(i));
 
-                System.out.println(i + "列类型的精确度(类型的长度): " + rsmd.getPrecision(i));
+            System.out.println(i + "列小数点后的位数 " + rsmd.getScale(i));
 
-                System.out.println(i + "列小数点后的位数 " + rsmd.getScale(i));
+         //   System.out.println(i + "列对应的模式的名称（应该用于Oracle） " + rsmd.getSchemaName(i));
 
-                System.out.println(i + "列对应的模式的名称（应该用于Oracle） " + rsmd.getSchemaName(i));
+           // System.out.println(i + "列对应的表名 " + rsmd.getTableName(i));
 
-                System.out.println(i + "列对应的表名 " + rsmd.getTableName(i));
+            System.out.println(i + "列是否自动递增" + rsmd.isAutoIncrement(i));
 
-                System.out.println(i + "列是否自动递增" + rsmd.isAutoIncrement(i));
+            System.out.println(i + "列在数据库中是否为货币型" + rsmd.isCurrency(i));
 
-                System.out.println(i + "列在数据库中是否为货币型" + rsmd.isCurrency(i));
+            System.out.println(i + "列是否为空" + rsmd.isNullable(i));
 
-                System.out.println(i + "列是否为空" + rsmd.isNullable(i));
+            System.out.println(i + "列是否为只读" + rsmd.isReadOnly(i));
 
-                System.out.println(i + "列是否为只读" + rsmd.isReadOnly(i));
-
-                System.out.println(i + "列能否出现在where中" + rsmd.isSearchable(i));
-
-            }
+        //    System.out.println(i + "列能否出现在where中" + rsmd.isSearchable(i));
+            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
         }
         rs.close();
-
         pst.close();
 
     }

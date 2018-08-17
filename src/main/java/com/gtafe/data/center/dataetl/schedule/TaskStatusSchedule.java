@@ -53,7 +53,7 @@ public class TaskStatusSchedule {
     // @Scheduled(cron = "0 02 17 ? * *")
     public void refrashTaskStatus() {
 
-        System.out.println("開始執行任務....");
+      //  System.out.println("開始執行任務....");
         this.doTask();
 
 
@@ -76,15 +76,15 @@ public class TaskStatusSchedule {
             connection = tDb.getConn();
             if (connection != null) {
                 centerStatus = 1;// ok
-                System.out.println("中心庫鏈接ok!");
+             //   System.out.println("中心庫鏈接ok!");
             } else {
                 boolean machineFlag = StringUtil.ping(centerVo.getIpAddress(), 1, 2);
                 if (machineFlag) {
                     centerStatus = 2; // database is ok
-                    System.out.println("中心庫機器ok ,但是數據庫連不上了!");
+                 //   System.out.println("中心庫機器ok ,但是數據庫連不上了!");
                 } else {
                     centerStatus = 3; // all is error
-                    System.out.println("中心庫機器宕機，請速聯係管理員!");
+                 //   System.out.println("中心庫機器宕機，請速聯係管理員!");
                 }
             }
         } finally {
@@ -103,7 +103,7 @@ public class TaskStatusSchedule {
             StringBuffer error = new StringBuffer("");
             StringBuffer sourceDesc = new StringBuffer("");
             StringBuffer targetDesc = new StringBuffer("");
-            System.out.println(vo.toString());
+         //   System.out.println(vo.toString());
             if (vo.getBusinessType() == 1) {
                 etlTaskStatus.setSourceTableName(vo.getThirdTablename());
                 etlTaskStatus.setTagertTableName(vo.getCenterTablename());
@@ -192,6 +192,6 @@ public class TaskStatusSchedule {
             etlTaskStatus.setTaskName(vo.getTaskName());
             dataTaskMapper.saveEtlTaskStatus(etlTaskStatus);
         }
-        System.out.println("任務....完畢,共計掃描任務:" + dataTaskVolist.size() + "條");
+      //  System.out.println("任務....完畢,共計掃描任務:" + dataTaskVolist.size() + "條");
     }
 }

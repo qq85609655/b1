@@ -9,6 +9,7 @@ import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
 import com.gtafe.data.center.dataetl.plsql.service.PlsqlService;
 import com.gtafe.data.center.dataetl.plsql.vo.PlsqlParamVo;
 import com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo;
+import com.gtafe.data.center.dataetl.plsql.vo.SearchResultVo;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,12 @@ public class PlsqlController {
     private IDatasourceService datasourceServiceImpl;
 
 
+    /**
+     * 列表展现
+     *
+     * @param param
+     * @return
+     */
     @RequestMapping(path = "/queryList", method = RequestMethod.POST)
     public @ResponseBody
     PageInfo<PlsqlVo> queryList(@RequestBody PlsqlParamVo param) {
@@ -42,10 +49,17 @@ public class PlsqlController {
     }
 
 
+    /**
+     * 根据机构id 查询其下有哪些数据源
+     *
+     * @param orgId
+     * @return
+     */
     @RequestMapping(path = "/getDbSourceListByOrgId", method = RequestMethod.GET)
     public @ResponseBody
-    List<DatasourceVO> getDbSourceListByOrgId(@RequestBody int orgId) {
-        return datasourceServiceImpl.getDbSourceListByOrgId(orgId);
+    List<DatasourceVO> getDbSourceListByOrgId(@RequestParam(value = "orgId", required = true) String orgId) {
+        System.out.println("orgid=====" + orgId);
+        return datasourceServiceImpl.getDbSourceListByOrgId(Integer.parseInt(orgId));
     }
 
     /**
@@ -61,11 +75,24 @@ public class PlsqlController {
     }
 
 
+    /**
+     * 获取单条数据
+     *
+     * @param id
+     * @return
+     */
     @RequestMapping(path = "/getInfoById", method = RequestMethod.GET)
-    public PlsqlVo getInfoById(@RequestParam(value = "id", required = true) int id) {
+    public @ResponseBody
+    PlsqlVo getInfoById(@RequestParam(value = "id", required = true) String id) {
         return plsqlServiceImpl.getInfoById(id);
     }
 
+    /**
+     * 批量删除
+     *
+     * @param ids
+     * @return
+     */
     @RequestMapping(path = "/deleteBatch/{ids}", method = RequestMethod.DELETE)
     public @ResponseBody
     boolean deleteBatch(
@@ -80,16 +107,43 @@ public class PlsqlController {
         return true;
     }
 
+    /**
+     * 保存
+     *
+     * @param vo
+     * @return
+     */
     @RequestMapping(path = "/insertData", method = RequestMethod.POST)
     public @ResponseBody
     boolean insertData(@RequestBody PlsqlVo vo) {
         return this.plsqlServiceImpl.insertData(vo);
     }
 
+    /**
+     * 修改
+     *
+     * @param vo
+     * @return
+     */
     @RequestMapping(path = "/updateData", method = RequestMethod.POST)
     public @ResponseBody
     boolean updateData(@RequestBody PlsqlVo vo) {
         return this.plsqlServiceImpl.updateData(vo);
+    }
+
+
+    /**
+     * 执行查询 出结果  默认查询出 前 100 条 计算总条数
+     * 需要针对三种数据库 不能分页
+     * 只是说明下数据格式 示例
+     *
+     * @param id
+     * @return
+     */
+    @RequestMapping(path = "/runNow/{id}", method = RequestMethod.POST)
+    public @ResponseBody
+    SearchResultVo runNow(@PathVariable("id") int id) {
+        return this.plsqlServiceImpl.runNow(id);
     }
 
 }

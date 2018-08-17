@@ -24,12 +24,13 @@
 
 
     <!--保存-->
-    <insert id="insertData" parameterType="com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo">
+    <insert id="insertData" useGeneratedKeys="true" keyProperty="vo.id"
+            parameterType="com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo">
         insert into data_etl_plsql(name,dbSourceId,content,
         aliansName,remark,status,orgId,creator,createTime,updator,updateTime)
         values (
-        #{vo.name},#{vo.dbSourceId},#{vo.content}#{vo.aliansName},#{vo.remark},#{vo.status},
-        #{vo.orgId},#{vo.creator},#{vo.createTime},#{vo.updator},#{vo.updateTime}
+        #{vo.name},#{vo.dbSourceId},#{vo.content},#{vo.aliansName},#{vo.remark},#{vo.status},
+        #{vo.orgId},#{vo.creator},now(),#{vo.updator},now()
         )
     </insert>
 
