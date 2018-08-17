@@ -38,4 +38,9 @@ public interface PlsqlMapper {
 
     @Select("select columnLabel_ columnLabel,typeName_ typeName  from data_etl_plsql_detail where  sqlId=#{idd}")
     List<ItemDetailVo> getItemDetailVos(@Param("idd") int id);
+
+    @Select("select  * from data_etl_plsql where dbSourceId=#{orgId} ")
+    List<PlsqlVo> getItemsByOrgId(@Param("orgId") String orgId);
+
+    List<ItemDetailVo> getItemDetailVosByAlianName(@Param("aliansName") String table);
 }

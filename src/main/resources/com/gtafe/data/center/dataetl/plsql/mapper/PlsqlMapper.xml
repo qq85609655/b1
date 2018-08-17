@@ -41,4 +41,10 @@
         createTime=#{vo.createTime},updator=#{vo.updator},updateTime=#{vo.updateTime} where id=#{vo.id}
     </update>
 
+
+    <select id="getItemDetailVosByAlianName">
+        SELECT id,columnLabel_ columnLabel,displaySize_ displaySize,typeName_ typeName,precision_ precision,scale_ scale,
+        isAutoIncrement_ isAutoIncrement,isCurrency_ isCurrency,isNullable_ isNullable,isReadOnly_ isReadOnly,sqlId
+        from data_etl_plsql_detail where sqlId =(select id from data_etl_plsql where aliansName=#{aliansName})
+    </select>
 </mapper>

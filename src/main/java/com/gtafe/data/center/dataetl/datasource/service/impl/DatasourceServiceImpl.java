@@ -21,6 +21,9 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import com.gtafe.data.center.dataetl.datatask.vo.rule.TableFieldVV;
+import com.gtafe.data.center.dataetl.plsql.mapper.PlsqlMapper;
+import com.gtafe.data.center.dataetl.plsql.vo.ItemDetailVo;
+import com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo;
 import com.gtafe.framework.base.utils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +53,9 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
 
     @Autowired
     private DatasourceMapper datasourceMapper;
+
+    @Autowired
+    private PlsqlMapper plsqlMapper;
 
     @Autowired
     private LogService logServiceImpl;
@@ -196,15 +202,21 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
     @Override
     public List<String> queryTablesByDatasource(DatasourceVO datasourceVO, String busType) {
         List<String> tbs = new ArrayList<String>();
+        Connection connection = null;
         ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
         String B_MYSQL_READ_VIEW = PropertyUtils.getProperty("config.properties", "B_MYSQL_READ_VIEW");
+        //开启用户自定义查询功能后 就会查询到系统定义的查询语句
+        String USER_DEFINE = PropertyUtils.getProperty("config.properties", "USER_DEFINE");
         String B_SQLSERVER_READ_VIEW = PropertyUtils.getProperty("config.properties", "B_SQLSERVER_READ_VIEW");
         if (!StringUtil.isNotBlank(B_MYSQL_READ_VIEW)) {
             B_MYSQL_READ_VIEW = "N";
         }
-
+        //默认为N
+        if (!StringUtil.isNotBlank(USER_DEFINE)) {
+            USER_DEFINE = "N";
+        }
         try {
-            Connection connection = connectDB.getConn();
+            connection = connectDB.getConn();
             if (null != connection) {
                 Statement st = connection.createStatement();
                 String sql = "";
@@ -300,6 +312,12 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                     }
                 }
                 connection.close();
+                if (USER_DEFINE.equals("Y")) {
+                    List<PlsqlVo> plsqlVos = this.plsqlMapper.getItemsByOrgId(datasourceVO.getOrgId());
+                    for (PlsqlVo v : plsqlVos) {
+                        tbs.add(v.getAliansName() + "#U");
+                    }
+                }
                 return tbs;
             } else {
                 return tbs;
@@ -307,7 +325,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
         } catch (SQLException e) {
             LOGGER.error("SQLException" + e.getMessage());
         } finally {
-
+            connectDB.closeDbConn(connection);
         }
         return tbs;
     }
@@ -386,87 +404,107 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
         ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
         Connection connection = null;
         StringBuilder keyComment = new StringBuilder("");
-        try {
-            connection = connectDB.getConn();
-            if (null == connection) {
-                return vv;
-            }
-            Statement st = connection.createStatement();
-            String sql = "";
-            if (2 == datasourceVO.getDbType()) {
-                // oracle 的sql 生成
-                LOGGER.info("========================oracle===============");
-                sql = genSqlStringOracle(table);
-            } else if (3 == datasourceVO.getDbType()) {
-                // sqlserver 的sql生成
-                LOGGER.info("=========================sqlserver==============");
-                sql = genSqlStringSqlServer(table);
-            } else {
-                // mysql sql语句生成
-                LOGGER.info("=========================mysql==============");
-                sql = genSqlStringMySql(table, datasourceVO.getDbName());
-            }
-            LOGGER.info(sql);
-            ResultSet rs = st.executeQuery(sql);
-            int keyCount = 0;
-            int keyAutoAddCount = 0;
-            while (rs.next()) {
-                TableFieldVo field = new TableFieldVo();
-                field.setField(rs.getString(1));
-                field.setDataType(rs.getString(2));
-                int type = rs.getInt(6);
-                if (type == 1) {
-                    LOGGER.info(type + "");
-                    this.handleNumberLength(field, rs, datasourceVO.getDbType());
+        if (!tType.equals("U")) {
+            try {
+                connection = connectDB.getConn();
+                if (null == connection) {
+                    return vv;
+                }
+                Statement st = connection.createStatement();
+                String sql = "";
+                if (2 == datasourceVO.getDbType()) {
+                    // oracle 的sql 生成
+                    LOGGER.info("========================oracle===============");
+                    sql = genSqlStringOracle(table);
+                } else if (3 == datasourceVO.getDbType()) {
+                    // sqlserver 的sql生成
+                    LOGGER.info("=========================sqlserver==============");
+                    sql = genSqlStringSqlServer(table);
                 } else {
-                    String length = rs.getString(3);
-                    long len = length != null ? Long.parseLong(length) : 0L;
-                    field.setLength(len);
-                    field.setDecimalLength(0L);
+                    // mysql sql语句生成
+                    LOGGER.info("=========================mysql==============");
+                    sql = genSqlStringMySql(table, datasourceVO.getDbName());
                 }
-                String primarykey = rs.getString(7);
-                LOGGER.info("当前是不是主键哦：" + primarykey);
-                field.setPrimarykey(primarykey != null && "1".equals(primarykey) ? 1 : 0);
-                String comment = rs.getString(8);
-                field.setComment(comment == null ? "" : comment);
-                String nullable = rs.getString(9);
-                field.setNullable(nullable != null && "0".equals(nullable) ? 0 : 1);
-                String isAutoAdd = rs.getString(10);
-                LOGGER.info(isAutoAdd);
-                field.setIsAutoCreate(isAutoAdd);//默认设置为N 非自增
+                LOGGER.info(sql);
+                ResultSet rs = st.executeQuery(sql);
+                int keyCount = 0;
+                int keyAutoAddCount = 0;
+                while (rs.next()) {
+                    TableFieldVo field = new TableFieldVo();
+                    field.setField(rs.getString(1));
+                    field.setDataType(rs.getString(2));
+                    int type = rs.getInt(6);
+                    if (type == 1) {
+                        LOGGER.info(type + "");
+                        this.handleNumberLength(field, rs, datasourceVO.getDbType());
+                    } else {
+                        String length = rs.getString(3);
+                        long len = length != null ? Long.parseLong(length) : 0L;
+                        field.setLength(len);
+                        field.setDecimalLength(0L);
+                    }
+                    String primarykey = rs.getString(7);
+                    LOGGER.info("当前是不是主键哦：" + primarykey);
+                    field.setPrimarykey(primarykey != null && "1".equals(primarykey) ? 1 : 0);
+                    String comment = rs.getString(8);
+                    field.setComment(comment == null ? "" : comment);
+                    String nullable = rs.getString(9);
+                    field.setNullable(nullable != null && "0".equals(nullable) ? 0 : 1);
+                    String isAutoAdd = rs.getString(10);
+                    LOGGER.info(isAutoAdd);
+                    field.setIsAutoCreate(isAutoAdd);//默认设置为N 非自增
 
-                if (primarykey != null && "1".equals(primarykey)) {
-                    keyCount++;
-                }
+                    if (primarykey != null && "1".equals(primarykey)) {
+                        keyCount++;
+                    }
 
-                if (tType.equals("T")) {
-                    if (isAutoAdd.equals("Y")) {//主键是自增的话 就不需要再放到前台去。。。
-                        keyAutoAddCount++;
-                        if (busType.equals("2")) {
-                            continue;
+                    if (tType.equals("T")) {
+                        if (isAutoAdd.equals("Y")) {//主键是自增的话 就不需要再放到前台去。。。
+                            keyAutoAddCount++;
+                            if (busType.equals("2")) {
+                                continue;
+                            }
                         }
                     }
+                    result.add(field);
                 }
+                if (tType.equals("T")) {
+                    if (keyAutoAddCount > 0 && keyCount > 0) {
+                        keyComment.append("<font color=RED>注意:当前选择的目标表主键是自增的,所以不需要选择，系统自动给隐藏了！</font>");
+                    } else {
+                        keyComment.append("<font color=RED>注意:当前选择的目标表 主键是非自增的 或者无主键存在！所以必须要指定值！</font>");
+                    }
+                }
+                vv.setTableFieldVoList(result);
+                vv.setKeyComment(keyComment.toString());
+                vv.setKetAutoAddCount(keyAutoAddCount);
+                connection.close();
+                connection = null;
+            } catch (SQLException e) {
+                LOGGER.error("SQLException", e);
+            } finally {
+                if (connection != null) {
+                    connection.close();
+                }
+            }
+        } else {
+            List<ItemDetailVo> vos = this.plsqlMapper.getItemDetailVosByAlianName(table);
+            for (ItemDetailVo vo : vos) {
+                TableFieldVo field = new TableFieldVo();
+                field.setField(vo.getColumnLabel());
+                field.setLength(vo.getDisplaySize());
+                field.setDataType(vo.getTypeName());
+                field.setNullable(vo.isNullable());
+                field.setIsAutoCreate(vo.isAutoIncrement() == true ? "Y" : "N");
+                field.setComment(vo.getColumnLabel());
+                field.setPrimarykey(vo.isReadOnly() == true ? 1 : 0);
+                field.setDecimalLength(vo.getPrecision());
                 result.add(field);
             }
-            if (tType.equals("T")) {
-                if (keyAutoAddCount > 0 && keyCount > 0) {
-                    keyComment.append("<font color=RED>注意:当前选择的目标表主键是自增的,所以不需要选择，系统自动给隐藏了！</font>");
-                } else {
-                    keyComment.append("<font color=RED>注意:当前选择的目标表 主键是非自增的 或者无主键存在！所以必须要指定值！</font>");
-                }
-            }
+
             vv.setTableFieldVoList(result);
-            vv.setKeyComment(keyComment.toString());
-            vv.setKetAutoAddCount(keyAutoAddCount);
-            connection.close();
-            connection = null;
-        } catch (SQLException e) {
-            LOGGER.error("SQLException", e);
-        } finally {
-            if (connection != null) {
-                connection.close();
-            }
+            vv.setKetAutoAddCount(1);
+            vv.setKeyComment("无");
         }
         return vv;
     }
