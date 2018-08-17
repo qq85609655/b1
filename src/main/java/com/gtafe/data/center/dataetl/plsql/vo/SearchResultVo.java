@@ -1,12 +1,15 @@
 package com.gtafe.data.center.dataetl.plsql.vo;
 
+
 import java.util.List;
-import java.util.Map;
 
 /**
  * 查询结果
  */
 public class SearchResultVo {
+    private String sqlName;
+
+    private String dbType;
 
     private long dataCount;
 
@@ -41,9 +44,27 @@ public class SearchResultVo {
     @Override
     public String toString() {
         return "SearchResultVo{" +
-                "dataCount=" + dataCount +
+                "sqlName='" + sqlName + '\'' +
+                ", dbType='" + dbType + '\'' +
+                ", dataCount=" + dataCount +
                 ", itemDetailVos=" + itemDetailVos +
                 ", datas=" + datas +
                 '}';
+    }
+
+    public String getSqlName() {
+        return sqlName;
+    }
+
+    public void setSqlName(String sqlName) {
+        this.sqlName = sqlName;
+    }
+
+    public String getDbType() {
+        return dbType;
+    }
+
+    public void setDbType(String dbType) {
+        this.dbType = dbType;
     }
 }

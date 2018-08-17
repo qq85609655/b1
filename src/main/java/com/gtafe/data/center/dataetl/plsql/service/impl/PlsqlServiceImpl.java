@@ -256,7 +256,7 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
         int ccount = itemDetailVos.size();
         SearchResultVo vo = new SearchResultVo();
         PlsqlVo plsqlVo = this.plsqlMapper.getInfoById(id);
-        String coutsqlStr = "select count(1) from ";
+        String coutsqlStr = "select count(*) c  from ";
         StringBuffer sbb = new StringBuffer("select  ");
         String[] types = new String[ccount];
         //把类型放到数组中中
@@ -271,7 +271,7 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
         System.out.println(sqlstr);
         long dataCount = 0;
         List<Object[]> dataLists = new ArrayList<Object[]>();
-        coutsqlStr += "(" + plsqlVo.getContent() + ")";
+        coutsqlStr += "(" + plsqlVo.getContent() + ")  xx ";
         DatasourceVO datasourceVO = this.datasourceMapper.queryDatasourceInfoById(plsqlVo.getDbSourceId());
         ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
         if (connectDB.getConn() != null) {
@@ -296,15 +296,28 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
                 //执行查询 总数
                 rs = st.executeQuery(coutsqlStr);
                 while (rs.next()) {
-                    dataCount = (Long) rs.getObject(1);
+                    dataCount = rs.getInt("C");
                 }
+                System.out.println(dataCount);
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new OrdinaryException("执行查询异常："+e.getMessage());
             }
         }
         vo.setItemDetailVos(itemDetailVos);
         vo.setDataCount(dataCount);
         vo.setDatas(dataLists);
+        String dbTypeStr = "";
+        if (datasourceVO.getDbType() == 1) {
+            dbTypeStr = "MYSQL";
+        }
+        if (datasourceVO.getDbType() == 2) {
+            dbTypeStr = "ORACLE";
+        }
+        if (datasourceVO.getDbType() == 3) {
+            dbTypeStr = "MSSQL SEVER";
+        }
+        vo.setDbType(dbTypeStr);
+        vo.setSqlName(plsqlVo.getAliansName());
         System.out.println(vo.toString());
         return vo;
     }
