@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
 import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
+import com.gtafe.data.center.dataetl.plsql.mapper.PlsqlMapper;
+import com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo;
 import com.gtafe.data.center.dataetl.schedule.mapper.EtlMapper;
 import com.gtafe.data.center.runadmin.alertpush.mapper.AlertPushMapper;
 import com.gtafe.data.center.runadmin.etlerrorlog.mapper.KettleLogMapper;
@@ -87,6 +89,9 @@ public class EtlTrans {
     @Autowired
     private LogService logServiceImpl;
 
+    @Autowired
+    private PlsqlMapper plsqlMapper;
+
     /**
      * 执行转换任务 并对转换过程中的异常情况进行发邮件通知
      *
@@ -130,6 +135,7 @@ public class EtlTrans {
         logDS.setUsername(logusername);
         logDS.setPassword(logpassword);
         logDS.setDbName(logdbname);
+        String tType = "";
 
         int busType = dataTask.getBusinessType();
         //源表名和目标表名
@@ -140,6 +146,7 @@ public class EtlTrans {
             sourceDS = etlMapper.getDSById(dataTask.getThirdConnectionId());
             targetDS = StringUtil.getBySysConfig(vo);
             sourceDBName = dataTask.getThirdTablename().split("#")[0];
+            tType = dataTask.getThirdTablename().split("#")[1];
             targetDBName = dataTask.getCenterTablename();
         } else if (busType == 2) { // 订阅 从中心库表数据 到 第三方库表数据
             targetDS = etlMapper.getDSById(dataTask.getThirdConnectionId());
@@ -158,16 +165,22 @@ public class EtlTrans {
 
         //input
         for (String stepstr : dataTask.getSteps()) {
-
+            System.out.println(dataTask.toString());
             //判断步骤类型
             List stepInfo = Utils.getStepInfo(stepstr);
             if (stepInfo == null) {
                 etlMapper.stopErrorTask(taskId);
                 return;
             }
+
             if ((int) stepInfo.get(2) == ConstantValue.STEP_INPUTTABLE) {
+                String sqlContent = "";
                 //初始化表输入
-                InputTable inputTable = new InputTable(locationX, 100, (String) stepInfo.get(1), sourceDS, sourceDBName, taskId);
+                if (tType.equals("U")) {
+                    PlsqlVo plsqlVo = this.plsqlMapper.getInfoByAliansName(sourceDBName);
+                    sqlContent = plsqlVo.getContent();
+                }
+                InputTable inputTable = new InputTable(locationX, 100, (String) stepInfo.get(1), sourceDS, sourceDBName, taskId, tType, sqlContent);
                 inputStep = inputTable.inputStep();
                 transMeta.addStep(inputStep);
                 fromStep = inputStep;

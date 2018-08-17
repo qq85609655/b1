@@ -313,9 +313,11 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                 }
                 connection.close();
                 if (USER_DEFINE.equals("Y")) {
-                    List<PlsqlVo> plsqlVos = this.plsqlMapper.getItemsByOrgId(datasourceVO.getOrgId());
-                    for (PlsqlVo v : plsqlVos) {
-                        tbs.add(v.getAliansName() + "#U");
+                    if (busType.equals("1")) {
+                        List<PlsqlVo> plsqlVos = this.plsqlMapper.getItemsByOrgId(datasourceVO.getOrgId());
+                        for (PlsqlVo v : plsqlVos) {
+                            tbs.add(v.getAliansName() + "#U");
+                        }
                     }
                 }
                 return tbs;
@@ -488,7 +490,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                 }
             }
         } else {
-            List<ItemDetailVo> vos = this.plsqlMapper.getItemDetailVosByAlianName(table);
+            List<ItemDetailVo> vos = this.plsqlMapper.getItemDetailVosByAlianName(table, datasourceVO.getOrgId());
             for (ItemDetailVo vo : vos) {
                 TableFieldVo field = new TableFieldVo();
                 field.setField(vo.getColumnLabel());
@@ -498,7 +500,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                 field.setIsAutoCreate(vo.isAutoIncrement() == true ? "Y" : "N");
                 field.setComment(vo.getColumnLabel());
                 field.setPrimarykey(vo.isReadOnly() == true ? 1 : 0);
-                field.setDecimalLength(vo.getPrecision());
+                field.setDecimalLength(vo.getPreci());
                 result.add(field);
             }
 

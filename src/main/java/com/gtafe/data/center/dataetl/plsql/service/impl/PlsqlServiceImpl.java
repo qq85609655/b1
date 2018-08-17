@@ -4,7 +4,6 @@ import com.gtafe.data.center.common.common.util.empty.EmptyUtil;
 import com.gtafe.data.center.dataetl.datasource.mapper.DatasourceMapper;
 import com.gtafe.data.center.dataetl.datasource.utils.ConnectDB;
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
-import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
 import com.gtafe.data.center.dataetl.plsql.mapper.PlsqlMapper;
 import com.gtafe.data.center.dataetl.plsql.service.PlsqlService;
 import com.gtafe.data.center.dataetl.plsql.utils.DbInfo;
@@ -13,10 +12,8 @@ import com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo;
 import com.gtafe.data.center.dataetl.plsql.vo.SearchResultVo;
 import com.gtafe.framework.base.controller.BaseController;
 import com.gtafe.framework.base.exception.OrdinaryException;
-import com.gtafe.framework.base.utils.DateUtil;
 import com.gtafe.framework.base.utils.PropertyUtils;
 import com.gtafe.framework.base.utils.StringUtil;
-import jdk.nashorn.internal.ir.WhileNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -128,7 +125,8 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
         vo.setUpdateTime(new Date());
         vo.setUpdator(getUserId());
         vo.setStatus(true);
-        System.out.println(vo.toString());
+        //System.out.println(vo.toString());
+        checkAliansName(vo.getAliansName(), vo.getOrgId(), 0);
         plsqlMapper.insertData(vo);
         int pid = vo.getId();
         // 根据sql脚本 分解item 详细字段说明
@@ -171,24 +169,20 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
             for (int i = 1; i < columnnums + 1; i++) {
                 ItemDetailVo vvv = new ItemDetailVo();
 
-                //   System.out.println(i + "列对应数据类型的类 " + rsmd.getColumnClassName(i));
-                //    vvv.setTypeName(rsmd.getColumnClassName(i));
-
                 System.out.println(i + "列在数据库中类型的最大字符个数" + rsmd.getColumnDisplaySize(i));
                 vvv.setDisplaySize(rsmd.getColumnDisplaySize(i));
 
                 System.out.println(i + "列的默认的列的标题" + rsmd.getColumnLabel(i));
                 vvv.setColumnLabel(rsmd.getColumnLabel(i));
 
-
                 System.out.println(i + "列在数据库中的类型，返回类型全名" + rsmd.getColumnTypeName(i));
                 vvv.setTypeName(rsmd.getColumnTypeName(i));
 
                 System.out.println(i + "列类型的精确度(类型的长度): " + rsmd.getPrecision(i));
-                vvv.setPrecision(rsmd.getPrecision(i));
+                vvv.setPreci(rsmd.getPrecision(i));
 
                 System.out.println(i + "列小数点后的位数 " + rsmd.getScale(i));
-                vvv.setScale(rsmd.getScale(i));
+                vvv.setScal(rsmd.getScale(i));
 
                 System.out.println(i + "列是否自动递增" + rsmd.isAutoIncrement(i));
                 vvv.setAutoIncrement(rsmd.isAutoIncrement(i));
@@ -207,7 +201,6 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
             }
             pst.close();
             rs.close();
-            rsmd = null;
         } catch (Exception e) {
             if (connection != null) {
                 connectDB.closeDbConn(connection);
@@ -236,9 +229,17 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
         for (ItemDetailVo vo1 : itemDetailVos) {
             this.plsqlMapper.insertItemDetail(vo1);
         }
+        checkAliansName(vo.getAliansName(), vo.getId(), vo.getId());
         // 然后修改主数据
         plsqlMapper.updateData(vo);
         return true;
+    }
+
+    private void checkAliansName(String aliansName, int orgId, int id) {
+        int countAliansName = this.plsqlMapper.checkAliansNameRepeat(aliansName, orgId, id);
+        if (countAliansName > 0) {
+            throw new OrdinaryException("别名已经存在了，请重新输入！");
+        }
     }
 
     @Override
@@ -300,7 +301,7 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
                 }
                 System.out.println(dataCount);
             } catch (Exception e) {
-                throw new OrdinaryException("执行查询异常："+e.getMessage());
+                throw new OrdinaryException("执行查询异常：" + e.getMessage());
             }
         }
         vo.setItemDetailVos(itemDetailVos);

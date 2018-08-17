@@ -6,8 +6,8 @@ public class ItemDetailVo {
     private String columnLabel;
     private int displaySize;
     private String typeName;
-    private int precision;
-    private int scale;
+    private int preci;
+    private int scal;
     private boolean isAutoIncrement;
     private boolean isCurrency;
     private int isNullable;
@@ -46,20 +46,28 @@ public class ItemDetailVo {
         this.typeName = typeName;
     }
 
-    public int getPrecision() {
-        return precision;
+    public int getPreci() {
+        return preci;
     }
 
-    public void setPrecision(int precision) {
-        this.precision = precision;
+    public void setPreci(int preci) {
+        this.preci = preci;
     }
 
-    public int getScale() {
-        return scale;
+    public int getScal() {
+        return scal;
     }
 
-    public void setScale(int scale) {
-        this.scale = scale;
+    public void setScal(int scal) {
+        this.scal = scal;
+    }
+
+    public int getIsNullable() {
+        return isNullable;
+    }
+
+    public void setIsNullable(int isNullable) {
+        this.isNullable = isNullable;
     }
 
     public boolean isAutoIncrement() {
@@ -100,5 +108,22 @@ public class ItemDetailVo {
 
     public void setSqlId(int sqlId) {
         this.sqlId = sqlId;
+    }
+
+    @Override
+    public String toString() {
+        return "ItemDetailVo{" +
+                "id=" + id +
+                ", columnLabel='" + columnLabel + '\'' +
+                ", displaySize=" + displaySize +
+                ", typeName='" + typeName + '\'' +
+                ", preci=" + preci +
+                ", scal=" + scal +
+                ", isAutoIncrement=" + isAutoIncrement +
+                ", isCurrency=" + isCurrency +
+                ", isNullable=" + isNullable +
+                ", isReadOnly=" + isReadOnly +
+                ", sqlId=" + sqlId +
+                '}';
     }
 }

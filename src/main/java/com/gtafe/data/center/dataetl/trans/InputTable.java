@@ -2,6 +2,7 @@ package com.gtafe.data.center.dataetl.trans;
 
 import com.gtafe.data.center.dataetl.datasource.utils.ConnectDB;
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
+import com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo;
 import com.gtafe.framework.base.utils.PropertyUtils;
 import com.gtafe.framework.base.utils.StringUtil;
 import org.pentaho.di.trans.step.StepMeta;
@@ -20,14 +21,21 @@ public class InputTable extends BaseStep {
 
     String sourceTableName;
 
+    String tType;
+
+    String sqlContent;
+
     int taskId;
 
-    public InputTable(int locationX, int locattionY, String name, DatasourceVO ds, String sourceTableName, int taskId) {
+    public InputTable(int locationX, int locattionY, String name, DatasourceVO ds, String sourceTableName, int taskId, String tType, String sqlContent) {
         super(locationX, locattionY, name);
         this.ds = ds;
         this.sourceTableName = sourceTableName;
         this.taskId = taskId;
+        this.tType = tType;
+        this.sqlContent = sqlContent;
     }
+
 
     public StepMeta inputStep() {
 
@@ -40,10 +48,17 @@ public class InputTable extends BaseStep {
         tableInput.setDatabaseMeta(Utils.InitDatabaseMeta(ds));
 
         String selectSQL;
-        if (ds.getDbType() == 2) {
-            selectSQL = "SELECT *  FROM  \"" + sourceTableName + "\"";
+        //如果这边是用户自定义的， 那就不需要再从表或视图查询了
+        //直接 根据 查询脚本语句来了
+        if (tType.equals("U")) {
+            System.out.println(sqlContent);
+            selectSQL = sqlContent;
         } else {
-            selectSQL = "SELECT *  FROM " + sourceTableName.toLowerCase();
+            if (ds.getDbType() == 2) {
+                selectSQL = "SELECT *  FROM  " + sourceTableName;
+            } else {
+                selectSQL = "SELECT *  FROM " + sourceTableName.toLowerCase();
+            }
         }
         //说明开启了
         if (StringUtil.isNotBlank(B_READ_PART) && B_READ_PART.equals("Y")) {
@@ -57,7 +72,6 @@ public class InputTable extends BaseStep {
                     if (this.taskId == tdid) {
                         selectSQL = selectSQL + " where " + filter_by + " = " + filter;
                     }
-
                 }
             }
         }
@@ -77,27 +91,11 @@ public class InputTable extends BaseStep {
         }
 
         System.out.println(selectSQL);
-        //
-      //  showData(selectSQL, ds);
-        //
 
         tableInput.setSQL(selectSQL);
 
         return initStep(tableInput);
 
-    }
-
-    private void showData(String selectSQL, DatasourceVO ds) {
-        Statement stmt = null;
-        ConnectDB dbconn = StringUtil.getEntityBy(ds);
-        Connection connection = dbconn.getConn();
-        try {
-            stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery(selectSQL);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 }

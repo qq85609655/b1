@@ -34,6 +34,15 @@
         )
     </insert>
 
+    <select id="checkAliansNameRepeat" resultType="java.lang.Integer">
+        select count(1)
+        from data_etl_plsql
+        where aliansName = #{aliansName}
+        and orgId=#{orgId}
+        <if test="id != null ">
+            and id != #{id}
+        </if>
+    </select>
 
     <update id="updateData" parameterType="com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo">
          update data_etl_plsql set name=#{vo.name},dbSourceId=#{vo.dbSourceId},content=#{vo.content},
@@ -42,9 +51,9 @@
     </update>
 
 
-    <select id="getItemDetailVosByAlianName">
-        SELECT id,columnLabel_ columnLabel,displaySize_ displaySize,typeName_ typeName,precision_ precision,scale_ scale,
+    <select id="getItemDetailVosByAlianName"  resultType="com.gtafe.data.center.dataetl.plsql.vo.ItemDetailVo">
+        SELECT id,columnLabel_ columnLabel,displaySize_ displaySize,typeName_ typeName,precision_ preci,scale_ scal,
         isAutoIncrement_ isAutoIncrement,isCurrency_ isCurrency,isNullable_ isNullable,isReadOnly_ isReadOnly,sqlId
-        from data_etl_plsql_detail where sqlId =(select id from data_etl_plsql where aliansName=#{aliansName})
+        from data_etl_plsql_detail where sqlId =(select id from data_etl_plsql where aliansName=#{aliansName} and orgId=#{orgId})
     </select>
 </mapper>
