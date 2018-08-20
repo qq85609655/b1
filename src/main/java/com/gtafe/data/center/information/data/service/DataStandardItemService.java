@@ -3,6 +3,7 @@ package com.gtafe.data.center.information.data.service;
 import java.util.List;
 
 import com.gtafe.data.center.dataetl.datatask.vo.rule.TableFieldVo;
+import com.gtafe.data.center.dataetl.plsql.vo.SearchResultVo;
 import com.gtafe.data.center.information.data.vo.DataStandardItemVo;
 
 public interface DataStandardItemService {
@@ -54,4 +55,6 @@ public interface DataStandardItemService {
      * @date 2017年12月19日
      */
     boolean rebuildSubclassTable(String subclassCode);
+
+    SearchResultVo queryDataShow( String code);
 }

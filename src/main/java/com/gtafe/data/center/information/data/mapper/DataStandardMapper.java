@@ -96,4 +96,6 @@ public interface DataStandardMapper {
             "\t\t    info_datastandard_org where sourceid=#{sourceId} and node_type=3 ")
     List<DataStandardVo> queryAll(@Param("sourceId") int sourceId);
 
+    @Select("select code_name name, tablename tableName from info_datastandard_org where code=#{code}")
+    DataStandardVo queryDataOrgDetailInfoByCode(@Param("code") String code);
 }

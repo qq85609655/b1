@@ -1,14 +1,13 @@
 package com.gtafe.data.center.information.data.service.impl;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.gtafe.data.center.dataetl.plsql.vo.ItemDetailVo;
+import com.gtafe.data.center.dataetl.plsql.vo.SearchResultVo;
 import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
 import com.gtafe.data.center.system.config.vo.SysConfigVo;
 import org.slf4j.Logger;
@@ -231,6 +230,7 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
         System.out.println("ok 表[" + tableName + "]已经创建了。。。" + res);
     }
 
+
     /**
      * 判断表是否存在 如果存在 则先删除表 再创建表
      *
@@ -376,5 +376,91 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
         logInfo.setOperContent("删除元数据:" + dbVo.getItemCode() + "/" + dbVo.getItemName());
         this.logServiceImpl.saveLog(logInfo);
         return true;
+    }
+
+    @Override
+    public SearchResultVo queryDataShow(String code) {
+        SearchResultVo vo = new SearchResultVo();
+        List<Object[]> datasss = new ArrayList<Object[]>();
+        long dataCount = 0;
+        StringBuffer sql_data = new StringBuffer("select ");
+        String coutsqlStr = "";
+        List<ItemDetailVo> itemDetailVos = new ArrayList<ItemDetailVo>();
+        // 根据code 从info_datastandard_org 查询 其对应的表名称
+        String tableName = "";
+        DataStandardVo dataOrgDetailInfoByCode = this.dataStandardMapper.queryDataOrgDetailInfoByCode(code);
+        if (dataOrgDetailInfoByCode != null) {
+            tableName = dataOrgDetailInfoByCode.getName() + "(" + dataOrgDetailInfoByCode.getTableName() + ")";
+            if (tableName.length() == 0) {
+                throw new OrdinaryException("没有找到表名称!--------" + code);
+            }
+            vo.setSqlName(tableName);
+        }
+        String[] types = {};
+        List<DataStandardItemVo> dataStandardItemVos = this.dataStandardItemMapper.queryItemListBy(code, 1);
+        for (DataStandardItemVo d : dataStandardItemVos) {
+            ItemDetailVo itemDetailVo = new ItemDetailVo();
+            itemDetailVo.setId(d.getId());
+            itemDetailVo.setColumnLabel(d.getItemName());
+            sql_data.append(" ").append(d.getItemName()).append(",");
+            itemDetailVos.add(itemDetailVo);
+        }
+        int counnnt = itemDetailVos.size();
+        types = new String[counnnt];
+        for (int i = 0; i < counnnt; i++) {
+            DataStandardItemVo v = dataStandardItemVos.get(i);
+            types[i] = v.getDataType();
+        }
+        Connection connection = this.getCenterDbConnect();
+        String sqlstr = sql_data.toString().substring(0, sql_data.length() - 1) + "    from   " + dataOrgDetailInfoByCode.getTableName() + "  xx    ";
+        coutsqlStr = "select count(*) c  from " + dataOrgDetailInfoByCode.getTableName() + " xx ";
+        System.out.println(sqlstr);
+        if (connection != null) {
+            try {
+                Statement st = connection.createStatement();
+                ResultSet rs = st.executeQuery(sqlstr);
+                while (rs.next()) {
+                    Object[] datas = new Object[counnnt];
+                    for (int a = 0; a < counnnt; a++) {
+                        System.out.println(types[a]);
+                        //判断当前的字段类型是什么再做转换
+                        if (types[a].equals("D")) {
+                            //日期
+                            datas[a] = rs.getDate(a + 1);
+                        } else if (types[a].equals("C")) {
+                            //字符串
+                            datas[a] = rs.getString(a + 1);
+                        } else if (types[a].equals("N")) {
+                            //整型
+                            datas[a] = rs.getInt(a + 1);
+                        }
+                        System.out.println(datas[a]);
+                    }
+                    datasss.add(datas);
+                }
+                //执行查询 总数
+                rs = st.executeQuery(coutsqlStr);
+                while (rs.next()) {
+                    dataCount = rs.getInt("C");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                // throw new OrdinaryException("执行查询异常：" + e.getMessage());
+            }
+        }
+        System.out.println(dataCount);
+        vo.setDatas(datasss);
+        vo.setItemDetailVos(itemDetailVos);
+        vo.setDataCount(dataCount);
+        System.out.println(vo.toString());
+        return vo;
+    }
+
+    private Connection getCenterDbConnect() {
+        Connection connection = null;
+        SysConfigVo configVo = this.sysConfigMapper.queryCenterDbInfo();
+        ConnectDB connectDB = StringUtil.getEntityBySysConfig(configVo);
+        connection = connectDB.getConn();
+        return connection;
     }
 }
