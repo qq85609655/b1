@@ -1,13 +1,17 @@
 package com.gtafe.data.center.dataetl.datatask.controller;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 
 import com.gtafe.data.center.dataetl.datatask.vo.TaskOrgsInfoVo;
 import com.gtafe.data.center.system.role.vo.RoleInfoVo;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -159,5 +163,18 @@ public class DataTaskController extends BaseController {
     boolean updateStatus(@RequestParam int taskId,
                          @RequestParam boolean checked) {
         return dataTaskServiceImpl.batchUpdateState(taskId + "", checked ? 1 : 0);
+    }
+
+
+    @RequestMapping("exportRelations")
+    public void exportRelations(HttpServletResponse response) throws UnsupportedEncodingException {
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-disposition", "attachment;filename=" + new String("转换任务字段对应关系说明.xlsx".getBytes("gbk"), "iso-8859-1"));
+        Workbook wb = dataTaskServiceImpl.exportRelations();
+        try {
+            wb.write(response.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

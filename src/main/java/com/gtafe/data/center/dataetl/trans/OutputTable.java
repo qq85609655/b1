@@ -1,7 +1,11 @@
 package com.gtafe.data.center.dataetl.trans;
 
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
+import com.gtafe.data.center.dataetl.datatask.vo.EtlTaskNoteVo;
+import com.gtafe.data.center.dataetl.datatask.vo.TaskFieldDetailsVo;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.ConvertRuleTarget;
+import com.gtafe.data.center.dataetl.datatask.vo.rule.TableFieldVo;
+import com.gtafe.data.center.dataetl.datatask.vo.rule.rulevo.SourceTargetVo;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.rulevo.TargetCondition;
 import com.gtafe.data.center.dataetl.datatask.vo.rule.rulevo.TargetMappingVo;
 import org.pentaho.di.trans.step.StepMeta;
@@ -9,8 +13,8 @@ import org.pentaho.di.trans.steps.insertupdate.InsertUpdateMeta;
 import org.pentaho.di.trans.steps.tableoutput.TableOutputMeta;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 /*
 输出表
@@ -30,27 +34,42 @@ public class OutputTable extends BaseStep {
         this.targetDBName = targetDBName;
     }
 
-    public StepMeta outputStep() {
-
-
-        System.out.println("目标表为：" + targetDBName);
-
-
+    public List<TaskFieldDetailsVo> getTaskFieldDetailsVoList(String stepstr) {
+        List<TaskFieldDetailsVo> detailsVos = new ArrayList<TaskFieldDetailsVo>();
         List<TargetMappingVo> mapping;
-        List<TargetCondition> conditions;
-
+        SourceTargetVo sourceTargetVo;
+        List<TableFieldVo> targetTableFieldVoList;
         try {
             mapping = mapper.readValue(stepstr, ConvertRuleTarget.class).getData().getMappings();
+            sourceTargetVo=mapper.readValue(stepstr,ConvertRuleTarget.class).getData();
+            targetTableFieldVoList = mapper.readValue(stepstr, ConvertRuleTarget.class).getTargetList();
         } catch (IOException e) {
             return null;
         }
+        for (int i = 0; i < mapping.size(); i++) {
+            TaskFieldDetailsVo detailsVoo = new TaskFieldDetailsVo();
+            detailsVoo.setSourceField(mapping.get(i).getSourceField());
+            detailsVoo.setTargetField(mapping.get(i).getTargetField());
+            detailsVos.add(detailsVoo);
+        }
+        for (int i = 0; i < targetTableFieldVoList.size(); i++) {
+            TableFieldVo tableFieldVo = targetTableFieldVoList.get(i);
+            System.out.println(tableFieldVo.toString());
+        }
 
+        return detailsVos;
+    }
+
+    public StepMeta outputStep() {
+        System.out.println("目标表为：" + targetDBName);
+        List<TargetMappingVo> mapping;
+        List<TargetCondition> conditions;
         try {
+            mapping = mapper.readValue(stepstr, ConvertRuleTarget.class).getData().getMappings();
             conditions = mapper.readValue(stepstr, ConvertRuleTarget.class).getData().getConditions();
         } catch (IOException e) {
             return null;
         }
-
         if (conditions == null || conditions.size() == 0) {
             TableOutputMeta tableOutput = new TableOutputMeta();
             tableOutput.setDatabaseMeta(Utils.InitDatabaseMeta(ds));
@@ -72,8 +91,6 @@ public class OutputTable extends BaseStep {
                 sourceFields[i] = mapping.get(i).getSourceField();
                 targetFields[i] = mapping.get(i).getTargetField();
             }
-            tableOutput.setFieldStream(sourceFields);
-            tableOutput.setFieldDatabase(targetFields);
             return initStep(tableOutput);
         } else {
             InsertUpdateMeta insertUpdateMeta = new InsertUpdateMeta();
@@ -108,6 +125,8 @@ public class OutputTable extends BaseStep {
             for (int i = 0; i < mapping.size(); i++) {
                 updateStream[i] = mapping.get(i).getSourceField();
                 updateLookup[i] = mapping.get(i).getTargetField();
+                System.out.println("updateStream[" + i + "]========" + updateStream[i]);
+                System.out.println("updateLookup[" + i + "]========" + updateLookup[i]);
                 update[i] = true;
             }
             insertUpdateMeta.setKeyLookup(keyLookup);

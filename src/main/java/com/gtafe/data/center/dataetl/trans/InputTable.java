@@ -51,7 +51,7 @@ public class InputTable extends BaseStep {
         //如果这边是用户自定义的， 那就不需要再从表或视图查询了
         //直接 根据 查询脚本语句来了
         if (tType.equals("U")) {
-            System.out.println(sqlContent);
+            System.out.println("U==========" + sqlContent);
             selectSQL = sqlContent;
         } else {
             if (ds.getDbType() == 2) {
@@ -59,6 +59,7 @@ public class InputTable extends BaseStep {
             } else {
                 selectSQL = "SELECT *  FROM " + sourceTableName.toLowerCase();
             }
+            System.out.println("T====V======" + selectSQL);
         }
         //说明开启了
         if (StringUtil.isNotBlank(B_READ_PART) && B_READ_PART.equals("Y")) {
@@ -90,7 +91,6 @@ public class InputTable extends BaseStep {
             }
         }
 
-        System.out.println(selectSQL);
 
         tableInput.setSQL(selectSQL);
 

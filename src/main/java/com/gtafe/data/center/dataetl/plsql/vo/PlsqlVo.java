@@ -12,10 +12,19 @@ public class PlsqlVo implements Serializable {
     private String remark;
     private boolean status;
     private int orgId;
+    private String orgName;
     private String creator;
     private Date createTime;
     private String updator;
     private Date updateTime;
+
+    public String getOrgName() {
+        return orgName;
+    }
+
+    public void setOrgName(String orgName) {
+        this.orgName = orgName;
+    }
 
     public int getId() {
         return id;

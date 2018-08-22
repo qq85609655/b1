@@ -33,11 +33,8 @@ public class DynamicValueMapper extends BaseStep {
     }
 
     public List<StepMeta> valueMapperStep() {
-
         List<DynamicValueMappingVo> valuemapperVos;
-
         List<StepMeta> stepMetas = new ArrayList<>();
-
         try {
             valuemapperVos = mapper.readValue(stepstr, ConvertRuleDynamicValuemapper.class).getDataList();
         } catch (IOException e) {
@@ -47,7 +44,6 @@ public class DynamicValueMapper extends BaseStep {
         int k = 0;
 
         for (DynamicValueMappingVo valuemapperVo : valuemapperVos) {
-
             ValueMapperMeta valueMapperMeta = new ValueMapperMeta();
             valueMapperMeta.setFieldToUse(valuemapperVo.getSourceField());
             if (valuemapperVo.getTargetField() != null) {
@@ -62,33 +58,22 @@ public class DynamicValueMapper extends BaseStep {
             stepMetas.add(initStep(valueMapperMeta));
             locationX += 100;
         }
-
         return stepMetas;
     }
 
     private ValueMapperMeta CompactMapperMeta(ValueMapperMeta valueMapperMeta, DatasourceVO targetDs, DynamicValueMappingVo valuemapperVo) {
-
         StringBuilder sql = new StringBuilder("select distinct ").append(" ");
-
         sql.append(valuemapperVo.getReleaseFieldName()).append(" ").append(" , ");
-
         sql.append(valuemapperVo.getTargetFieldName()).append(" ");
-
         sql.append(" from ");
-
         sql.append(valuemapperVo.getReleaseTableName()).append(" ");
-
         System.out.println(sql.toString());
-
         ConnectDB connectDB = StringUtil.getEntityBy(targetDs);
-
         Connection connection = connectDB.getConn();
-
         if (connection != null) {
             try {
                 List<String> sourceList = new ArrayList<String>();
                 List<String> targetList = new ArrayList<String>();
-
                 Statement st = connection.createStatement();
                 ResultSet rs = st.executeQuery(sql.toString());
                 while (rs.next()) {
@@ -111,38 +96,10 @@ public class DynamicValueMapper extends BaseStep {
                 rs.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 connectDB.closeDbConn(connection);
             }
         }
         return valueMapperMeta;
     }
 }
-
-/**
- * System.out.println("SourceField===" + valuemapperVo.getSourceField());
- * List<String> sourceList = null;
- * try {
- * sourceList = Utils.querySourceListBy(targetDs, valuemapperVo);
- * } catch (SQLException e) {
- * sourceList = new ArrayList<String>();
- * e.printStackTrace();
- * <p>
- * }
- * long sourceSize = sourceList.size();
- * String[] sourcestr = new String[Integer.parseInt(sourceSize + "")];
- * String[] targetstr = new String[Integer.parseInt(sourceSize + "")];
- * <p>
- * for (int i = 0; i < sourceSize; i++) {
- * sourcestr[i] = sourceList.get(i);
- * try {
- * targetstr[i] = Utils.queryTargetStrBy(targetDs, valuemapperVo, sourcestr[i]);
- * } catch (SQLException e) {
- * targetstr[i] = "";
- * e.printStackTrace();
- * }
- * }
- * <p>
- * valueMapperMeta.setSourceValue(sourcestr);
- * valueMapperMeta.setTargetValue(targetstr);
- */

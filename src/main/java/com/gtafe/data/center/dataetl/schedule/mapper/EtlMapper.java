@@ -2,6 +2,8 @@ package com.gtafe.data.center.dataetl.schedule.mapper;
 
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
 import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
+import com.gtafe.data.center.dataetl.datatask.vo.EtlTaskNoteVo;
+import com.gtafe.data.center.dataetl.datatask.vo.TaskFieldDetailsVo;
 import com.gtafe.data.center.runadmin.etlerrorlog.vo.KettleLogVO;
 import com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus;
 
@@ -28,6 +30,20 @@ public interface EtlMapper {
             @Result(column = "updatetime", property = "updateTime")
     })
     List<DataTaskVo> getAllTask();
+
+    @Select("select * from data_etl_task  ")
+    @Results({
+            @Result(column = "task_id", property = "taskId", id = true),
+            @Result(column = "task_name", property = "taskName"),
+            @Result(column = "third_connection_id", property = "thirdConnectionId"),
+            @Result(column = "third_tablename", property = "thirdTablename"),
+            @Result(column = "business_type", property = "businessType"),
+            @Result(column = "org_id", property = "orgId"),
+            @Result(column = "center_tablename", property = "centerTablename"),
+            @Result(column = "run_expression", property = "runEexpression"),
+            @Result(column = "updatetime", property = "updateTime")
+    })
+    List<DataTaskVo> getAllTask2();
 
     @Select("select * from data_etl_dataconnection where id=#{id}")
     @Results({
@@ -78,6 +94,7 @@ public interface EtlMapper {
             @Result(column = "business_type", property = "businessType"),
             @Result(column = "run_expression", property = "runEexpression"),
             @Result(column = "run_status", property = "runStatus"),
+            @Result(column = "org_id", property = "orgId"),
             @Result(column = "task_id", property = "steps", many = @Many(select = "getStepById", fetchType = FetchType.EAGER))
     })
     DataTaskVo getDataTaskById(@Param("id") int id);
@@ -106,4 +123,6 @@ public interface EtlMapper {
             "AND o.tablename = #{tableName} \n" +
             "AND i.item_name =#{field}")
     List<String> queryCodes(@Param("tableName") String tableName, @Param("field") String field);
+
+
 }

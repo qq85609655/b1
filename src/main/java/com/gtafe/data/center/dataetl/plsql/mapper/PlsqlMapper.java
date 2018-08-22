@@ -42,10 +42,10 @@ public interface PlsqlMapper {
     @Select("select  * from data_etl_plsql where orgId=#{orgId} ")
     List<PlsqlVo> getItemsByOrgId(@Param("orgId") String orgId);
 
-    List<ItemDetailVo> getItemDetailVosByAlianName(@Param("aliansName") String table,@Param("orgId") String orgId);
+    List<ItemDetailVo> getItemDetailVosByAlianName(@Param("aliansName") String table, @Param("orgId") String orgId);
 
     int checkAliansNameRepeat(@Param("aliansName") String aliansName, @Param("orgId") int orgId, @Param("id") int id);
 
-    @Select("select content from data_etl_plsql where aliansName=#{aliansName}")
-    PlsqlVo getInfoByAliansName(@Param("AliansName") String AliansName);
+    @Select("select content from data_etl_plsql where aliansName=#{aliansName} and orgId=#{orgId}")
+    PlsqlVo getInfoByAliansName(@Param("aliansName") String AliansName, @Param("orgId") String orgId);
 }

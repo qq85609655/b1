@@ -252,6 +252,23 @@
      )  
     </insert>
 
+    <insert id="saveTaskFieldNoteInfo" parameterType="com.gtafe.data.center.dataetl.datatask.vo.EtlTaskNoteVo">
+    insert  into data_etl_field_note (taskId,busType,taskName,sourceTable,sourceTableName,
+             targetTable,targetTableName,remark)
+    values (#{noteVo.taskId},#{noteVo.busType},#{noteVo.taskName},
+            #{noteVo.sourceTable},#{noteVo.sourceTableName},
+            #{noteVo.targetTable},#{noteVo.targetTableName},#{noteVo.remark})
+    </insert>
+
+    <insert id="saveTaskFieldNoteDetail" parameterType="com.gtafe.data.center.dataetl.datatask.vo.TaskFieldDetailsVo">
+    insert  into data_etl_field_detail (taskId,sourceField,sourceFieldName,sourceFieldType,sourceFieldLength,
+              targetField,targetFieldName,targetFieldType,targetFieldLength)
+     values (#{detailsVo.taskId},#{detailsVo.sourceField},#{detailsVo.sourceFieldName},
+              #{detailsVo.sourceFieldType},#{detailsVo.sourceFieldLength},
+              #{detailsVo.targetField},#{detailsVo.targetFieldName},
+              #{detailsVo.targetFieldType}, #{detailsVo.targetFieldLength})
+    </insert>
+
 
     <select id="queryTaskStatusList" resultType="com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus">
         SELECT

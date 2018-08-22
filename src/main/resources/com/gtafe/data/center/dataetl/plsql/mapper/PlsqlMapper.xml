@@ -5,9 +5,10 @@
 <mapper namespace="com.gtafe.data.center.dataetl.plsql.mapper.PlsqlMapper">
     <select id="queryList" resultType="com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo">
         select
-        m.*
-        from data_etl_plsql m
-        where 1=1
+        m.*,
+        o.org_name orgName
+        from data_etl_plsql m,sys_org o
+        where m.orgId=o.id
         <if test="nameKey != null and nameKey.trim().length()>0">
             and (m.aliansName like CONCAT('%', #{nameKey}, '%') OR m.name like CONCAT('%', #{nameKey}, '%') )
         </if>

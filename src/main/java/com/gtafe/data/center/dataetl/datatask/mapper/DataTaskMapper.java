@@ -3,13 +3,12 @@ package com.gtafe.data.center.dataetl.datatask.mapper;
 
 import java.util.List;
 
-import com.gtafe.data.center.dataetl.datatask.vo.TaskStepVo;
-import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
+import com.gtafe.data.center.dataetl.datatask.vo.*;
 import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
-import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
 import com.gtafe.data.center.runadmin.nodewatch.vo.EtlTaskStatus;
 import com.gtafe.framework.base.mapper.BaseMapper;
 
@@ -118,4 +117,20 @@ public interface DataTaskMapper extends BaseMapper {
 
     @Select("select id from data_etl_dataconnection where org_id=#{orgId}")
     List<Integer> getTopThirdConnectionId(@Param("orgId") String orgId);
+
+    void saveTaskFieldNoteInfo(@Param("noteVo") EtlTaskNoteVo taskFieldsVo);
+
+    void saveTaskFieldNoteDetail(@Param("detailsVo")TaskFieldDetailsVo vo);
+
+    @Delete("delete from data_etl_field_note where taskId=#{taskId}")
+    void deleteTaskNoteAndDetail1(@Param("taskId")int taskId);
+
+    @Delete("delete from data_etl_field_detail where taskId=#{taskId}")
+    void deleteTaskNoteAndDetail2(@Param("taskId")int taskId);
+
+    @Select("select * from data_etl_field_note")
+    List<EtlTaskNoteVo> getEtltaskNotes();
+
+    @Select("select * from data_etl_field_detail where taskId=#{taskId}")
+    List<TaskFieldDetailsVo> queryFieldDetailsList(@Param("taskId")int taskId);
 }

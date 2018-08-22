@@ -34,6 +34,10 @@ import com.gtafe.data.center.dataetl.trans.Utils;
 import com.gtafe.data.center.system.config.mapper.SysConfigMapper;
 import com.gtafe.data.center.system.config.vo.SysConfigVo;
 import com.gtafe.framework.base.utils.*;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -176,7 +180,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
                 //循环 最后一步 目标步骤 来取得 对应关系
 
 
-              //  System.out.println("对应的字段名称为===========" + fieldValue);
+                //  System.out.println("对应的字段名称为===========" + fieldValue);
                 List<String> rules = etlMapper.queryCodes(taskVo.getCenterTablename(), fieldValue);
 
                 List<String> targetStrs = new ArrayList<String>();
@@ -520,7 +524,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         while (iter.hasNext()) {
             Map.Entry entry = (Map.Entry) iter.next();
             String stepName = (String) entry.getKey();//值映射步骤名
-           // System.out.println("当前的步骤名称：===" + stepName);
+            // System.out.println("当前的步骤名称：===" + stepName);
             Map<String, aa> relationMap = (Map<String, aa>) entry.getValue(); //对应的 输出和 映射值对象
             Iterator ralationIterator = relationMap.entrySet().iterator();
             while (ralationIterator.hasNext()) {
@@ -551,7 +555,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
                     if (center != null) {
                         List<TargetMappingVo> mappingVos = center.getMappings();
                         for (TargetMappingVo vo : mappingVos) {
-                         //   System.out.println("----S----" + vo.getSourceField() + "----T----" + vo.getTargetField());
+                            //   System.out.println("----S----" + vo.getSourceField() + "----T----" + vo.getTargetField());
                             //注意 此处是 以 目标字段为key  源字段为值  ：因为 目标字段不可能重复 ，但 源字段 可能重复
                             mmps.put(vo.getSourceField(), vo.getTargetField());
                         }
@@ -721,11 +725,11 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
     }
 
     private void cleanData(String type) {
-       // System.out.println("-----------先清理数据库表数据------------------" + type);
+        // System.out.println("-----------先清理数据库表数据------------------" + type);
 
         this.sysConfigMapper.truncateTransFile(type);
 
-       // System.out.println("------------end----------------" + type);
+        // System.out.println("------------end----------------" + type);
     }
 
     @Override
@@ -736,13 +740,13 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         for (File a : fileList) {
             Path p = Paths.get(a.getAbsolutePath());
             try {
-             //   System.out.println(a.getCanonicalPath());
+                //   System.out.println(a.getCanonicalPath());
                 BasicFileAttributes att = Files.readAttributes(p, BasicFileAttributes.class);//获取文件的属性
                 String createtime = att.creationTime().toString();
                 String accesstime = att.lastAccessTime().toString();
                 String lastModifiedTime = att.lastModifiedTime().toString();
                 String name = a.getName();
-            //    System.out.println("扫描到" + type + "文件：" + name);
+                //    System.out.println("扫描到" + type + "文件：" + name);
                 String createUserName = "admin";
                 transFileVo.setFileName(name);
                 transFileVo.setCreateTime(DateUtil.parseDate(createtime));
@@ -753,7 +757,7 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
                 transFileVo.setCreateUserInfo(createUserName);
                 transFileVo.setScheduleInfo("0 0/60 * * * ? *");
                 this.sysConfigMapper.saveTransFile(transFileVo);
-            //    System.out.println("插入了一条了:" + transFileVo.getFileName());
+                //    System.out.println("插入了一条了:" + transFileVo.getFileName());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
@@ -827,14 +831,14 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
             }
             //  List<TaskStepVo> taskStepVos = this.dataTaskMapper.getTaskStepsAll(taskId_);
             List<String> taskStepStrings = this.dataTaskMapper.getTaskSteps(taskId_);
-           // System.out.println("当前转换有======" + taskStepStrings.size() + " 步");
+            // System.out.println("当前转换有======" + taskStepStrings.size() + " 步");
             for (String orgId : orgList) {
                 Integer thridconnId = 0;
                 List<Integer> thirdConnectionId_ = this.dataTaskMapper.getTopThirdConnectionId(orgId);
                 if (thirdConnectionId_.size() > 0) {
                     thridconnId = thirdConnectionId_.get(0);
                 }
-            //    System.out.println("thridconnId======" + thridconnId);
+                //    System.out.println("thridconnId======" + thridconnId);
                 DataTaskVo taskVo1 = new DataTaskVo();
                 BeanUtils.copyProperties(taskVo, taskVo1, new String[]{"id", "taskName", "description", "orgId", "thirdConnectionId"});
                 taskVo1.setOrgId(orgId);
@@ -942,5 +946,40 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
         fos.close();
 
         runtime.exec(path);
+    }
+
+
+    //每个任务一个sheet
+    @Override
+    public Workbook exportRelations() {
+        List<EtlTaskNoteVo> etlTaskNoteVos = this.dataTaskMapper.getEtltaskNotes();
+        Workbook wb = new XSSFWorkbook();
+        for (EtlTaskNoteVo etlTaskNoteVo : etlTaskNoteVos) {
+            Sheet etlTaskNoteVoSheet = wb.createSheet(etlTaskNoteVo.getTaskName() + "说明");
+            Row someThing = etlTaskNoteVoSheet.createRow(0);
+            someThing.createCell(0).setCellValue(etlTaskNoteVo.getTaskName());
+            someThing.createCell(1).setCellValue("源表：");
+            someThing.createCell(2).setCellValue(etlTaskNoteVo.getSourceTable());
+            someThing.createCell(3).setCellValue("目标表：");
+            someThing.createCell(4).setCellValue(etlTaskNoteVo.getTargetTable());
+
+            Row rowHead = etlTaskNoteVoSheet.createRow(1);
+            rowHead.createCell(0).setCellValue("序号");
+            rowHead.createCell(1).setCellValue("源字段");
+            rowHead.createCell(2).setCellValue(" ");
+            rowHead.createCell(3).setCellValue("目标字段");
+            rowHead.createCell(4).setCellValue(" ");
+            List<TaskFieldDetailsVo> taskFieldDetailsVos = this.dataTaskMapper.queryFieldDetailsList(etlTaskNoteVo.getTaskId());
+            for (int i = 0; i < taskFieldDetailsVos.size(); i++) {
+                Row row = etlTaskNoteVoSheet.createRow(i + 2);
+                row.createCell(0).setCellValue(i + 1);
+                row.createCell(1).setCellValue(taskFieldDetailsVos.get(i).getSourceField());
+                row.createCell(2).setCellValue("");
+                row.createCell(3).setCellValue(taskFieldDetailsVos.get(i).getTargetField());
+                row.createCell(4).setCellValue("");
+            }
+        }
+        System.out.println("导出完毕。。。");
+        return wb;
     }
 }

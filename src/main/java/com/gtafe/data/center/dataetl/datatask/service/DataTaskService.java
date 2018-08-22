@@ -14,6 +14,7 @@ import java.util.List;
 import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
 import com.gtafe.data.center.dataetl.datatask.vo.TaskOrgsInfoVo;
 import com.gtafe.data.center.dataetl.datatask.vo.TransFileVo;
+import org.apache.poi.ss.usermodel.Workbook;
 
 public interface DataTaskService {
 
@@ -69,4 +70,6 @@ public interface DataTaskService {
     List<DataTaskVo> queryTasks(int businessType, String orgId);
 
     boolean cloneTasksTo(TaskOrgsInfoVo vo);
+
+    Workbook exportRelations();
 }

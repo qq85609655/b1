@@ -3,6 +3,7 @@ package com.gtafe.data.center.dataetl.trans;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
+import com.gtafe.data.center.dataetl.datatask.vo.EtlTaskNoteVo;
 import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
 import com.gtafe.data.center.dataetl.plsql.mapper.PlsqlMapper;
 import com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo;
@@ -20,9 +21,7 @@ import com.gtafe.data.center.system.user.vo.SysUserVo;
 import com.gtafe.framework.base.exception.OrdinaryException;
 import com.gtafe.framework.base.utils.DateUtil;
 import com.gtafe.framework.base.utils.MailSender;
-import com.gtafe.framework.base.utils.PinYinUtil;
 import com.gtafe.framework.base.utils.StringUtil;
-import net.sourceforge.pinyin4j.PinyinHelper;
 import org.pentaho.di.core.KettleEnvironment;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.trans.Trans;
@@ -36,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -99,8 +97,10 @@ public class EtlTrans {
      */
     public void execute(int taskId) {
 
+
         //任务
         DataTaskVo dataTask = etlMapper.getDataTaskById(taskId);
+
 
         if (dataTask == null) {
             etlMapper.stopErrorTask(taskId);
@@ -177,7 +177,7 @@ public class EtlTrans {
                 String sqlContent = "";
                 //初始化表输入
                 if (tType.equals("U")) {
-                    PlsqlVo plsqlVo = this.plsqlMapper.getInfoByAliansName(sourceDBName);
+                    PlsqlVo plsqlVo = this.plsqlMapper.getInfoByAliansName(sourceDBName, dataTask.getOrgId());
                     sqlContent = plsqlVo.getContent();
                 }
                 InputTable inputTable = new InputTable(locationX, 100, (String) stepInfo.get(1), sourceDS, sourceDBName, taskId, tType, sqlContent);
