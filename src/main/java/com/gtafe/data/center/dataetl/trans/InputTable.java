@@ -48,6 +48,7 @@ public class InputTable extends BaseStep {
         String sort_mode = PropertyUtils.getProperty("config.properties", "sort_mode");
         TableInputMeta tableInput = new TableInputMeta();
         tableInput.setDatabaseMeta(Utils.InitDatabaseMeta(ds));
+        String B_ShowData = PropertyUtils.getProperty("config.properties", "B_SHOW_DATA");
 
         String selectSQL;
         //如果这边是用户自定义的， 那就不需要再从表或视图查询了
@@ -55,33 +56,16 @@ public class InputTable extends BaseStep {
         if (tType.equals("U")) {
             System.out.println("U==========" + sqlContent);
             selectSQL = sqlContent;
-            ConnectDB connectDB = StringUtil.getEntityBy(ds);
-            Connection connection = connectDB.getConn();
-            if (connection == null) {
-                throw new OrdinaryException("无法取得连接");
-            }
-            try {
-                PreparedStatement pst = connection.prepareStatement(selectSQL);
-                ResultSet rs = pst.executeQuery();
-                while (rs.next()) {
-                    System.out.println(rs.getString(1) + "--" + rs.getString(2)
-                            + "--" + rs.getString(3) + "--" + rs.getString(4) + "--" + rs.getString(5));
-                }
-                rs.close();
-                pst.close();
-                connection.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                connectDB.closeDbConn(connection);
-            }
         } else {
             if (ds.getDbType() == 2) {
                 selectSQL = "SELECT *  FROM  " + sourceTableName;
             } else {
                 selectSQL = "SELECT *  FROM " + sourceTableName.toLowerCase();
             }
-            System.out.println("T====V======" + selectSQL);
+
+        }
+        if (B_ShowData.equals("Y")) {
+            showDataInfo(selectSQL);
         }
         //说明开启了
         if (StringUtil.isNotBlank(B_READ_PART) && B_READ_PART.equals("Y")) {
@@ -118,6 +102,29 @@ public class InputTable extends BaseStep {
 
         return initStep(tableInput);
 
+    }
+
+    private void showDataInfo(String selectSQL) {
+        System.out.println(selectSQL);
+        ConnectDB connectDB = StringUtil.getEntityBy(ds);
+        Connection connection = connectDB.getConn();
+        if (connection == null) {
+            throw new OrdinaryException("无法取得连接");
+        }
+        try {
+            PreparedStatement pst = connection.prepareStatement(selectSQL);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                System.out.println(rs.getString(1));
+            }
+            rs.close();
+            pst.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            connectDB.closeDbConn(connection);
+        }
     }
 
 }
