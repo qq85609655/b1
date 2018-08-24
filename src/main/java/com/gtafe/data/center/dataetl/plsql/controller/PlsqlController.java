@@ -59,7 +59,7 @@ public class PlsqlController {
     public @ResponseBody
     List<DatasourceVO> getDbSourceListByOrgId(@RequestParam(value = "orgId", required = true) String orgId) {
         System.out.println("orgid=====" + orgId);
-        return datasourceServiceImpl.getDbSourceListByOrgId(Integer.parseInt(orgId));
+        return datasourceServiceImpl.getDbSourceListByOrgId(orgId);
     }
 
     /**

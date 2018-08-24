@@ -395,7 +395,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
     }
 
     @Override
-    public List<DatasourceVO> getDbSourceListByOrgId(int orgId) {
+    public List<DatasourceVO> getDbSourceListByOrgId(String  orgId) {
         return this.datasourceMapper.queryDatasourceListByOrgId(orgId);
     }
 

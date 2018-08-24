@@ -3,6 +3,7 @@ package com.gtafe.data.center.dataetl.plsql.utils;
 import com.gtafe.data.center.dataetl.datasource.mapper.DatasourceMapper;
 import com.gtafe.data.center.dataetl.datasource.utils.ConnectDB;
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
+import com.gtafe.framework.base.exception.OrdinaryException;
 import com.gtafe.framework.base.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -194,11 +195,19 @@ public class DbInfo {
      * @throws Exception
      */
     public void getRsInfo(DatasourceVO datasourceVO, String sqlstr) throws Exception {
+        System.out.println(datasourceVO.toString());
         ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
         Connection connection = connectDB.getConn();
+        if (connection == null) {
+            throw new OrdinaryException("无法取得连接");
+        }
         PreparedStatement pst = connection.prepareStatement(sqlstr);
 
         ResultSet rs = pst.executeQuery();
+     /*   while (rs.next()) {
+            System.out.println(rs.getString(1) + "--" + rs.getString(2)
+                    + "--" + rs.getString(3) + "--" + rs.getString(4) + "--" + rs.getString(5));
+        }*/
 
         ResultSetMetaData rsmd = rs.getMetaData();//结果集元
 
@@ -215,7 +224,7 @@ public class DbInfo {
 
             System.out.println(i + "列的默认的列的标题" + rsmd.getColumnLabel(i));
 
-          //  System.out.println(i + "列的类型,返回SqlType中的编号 " + rsmd.getColumnType(i));
+            //  System.out.println(i + "列的类型,返回SqlType中的编号 " + rsmd.getColumnType(i));
 
             System.out.println(i + "列在数据库中的类型，返回类型全名" + rsmd.getColumnTypeName(i));
 
@@ -223,9 +232,9 @@ public class DbInfo {
 
             System.out.println(i + "列小数点后的位数 " + rsmd.getScale(i));
 
-         //   System.out.println(i + "列对应的模式的名称（应该用于Oracle） " + rsmd.getSchemaName(i));
+            //   System.out.println(i + "列对应的模式的名称（应该用于Oracle） " + rsmd.getSchemaName(i));
 
-           // System.out.println(i + "列对应的表名 " + rsmd.getTableName(i));
+            // System.out.println(i + "列对应的表名 " + rsmd.getTableName(i));
 
             System.out.println(i + "列是否自动递增" + rsmd.isAutoIncrement(i));
 
@@ -235,7 +244,7 @@ public class DbInfo {
 
             System.out.println(i + "列是否为只读" + rsmd.isReadOnly(i));
 
-        //    System.out.println(i + "列能否出现在where中" + rsmd.isSearchable(i));
+            //    System.out.println(i + "列能否出现在where中" + rsmd.isSearchable(i));
             System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
         }
         rs.close();

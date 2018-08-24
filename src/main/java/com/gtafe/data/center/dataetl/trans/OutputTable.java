@@ -41,7 +41,7 @@ public class OutputTable extends BaseStep {
         List<TableFieldVo> targetTableFieldVoList;
         try {
             mapping = mapper.readValue(stepstr, ConvertRuleTarget.class).getData().getMappings();
-            sourceTargetVo=mapper.readValue(stepstr,ConvertRuleTarget.class).getData();
+            sourceTargetVo = mapper.readValue(stepstr, ConvertRuleTarget.class).getData();
             targetTableFieldVoList = mapper.readValue(stepstr, ConvertRuleTarget.class).getTargetList();
         } catch (IOException e) {
             return null;
@@ -91,6 +91,8 @@ public class OutputTable extends BaseStep {
                 sourceFields[i] = mapping.get(i).getSourceField();
                 targetFields[i] = mapping.get(i).getTargetField();
             }
+            tableOutput.setFieldStream(sourceFields);
+            tableOutput.setFieldDatabase(targetFields);
             return initStep(tableOutput);
         } else {
             InsertUpdateMeta insertUpdateMeta = new InsertUpdateMeta();

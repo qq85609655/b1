@@ -3,12 +3,14 @@ package com.gtafe.data.center.dataetl.trans;
 import com.gtafe.data.center.dataetl.datasource.utils.ConnectDB;
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
 import com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo;
+import com.gtafe.framework.base.exception.OrdinaryException;
 import com.gtafe.framework.base.utils.PropertyUtils;
 import com.gtafe.framework.base.utils.StringUtil;
 import org.pentaho.di.trans.step.StepMeta;
 import org.pentaho.di.trans.steps.tableinput.TableInputMeta;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -53,6 +55,26 @@ public class InputTable extends BaseStep {
         if (tType.equals("U")) {
             System.out.println("U==========" + sqlContent);
             selectSQL = sqlContent;
+            ConnectDB connectDB = StringUtil.getEntityBy(ds);
+            Connection connection = connectDB.getConn();
+            if (connection == null) {
+                throw new OrdinaryException("无法取得连接");
+            }
+            try {
+                PreparedStatement pst = connection.prepareStatement(selectSQL);
+                ResultSet rs = pst.executeQuery();
+                while (rs.next()) {
+                    System.out.println(rs.getString(1) + "--" + rs.getString(2)
+                            + "--" + rs.getString(3) + "--" + rs.getString(4) + "--" + rs.getString(5));
+                }
+                rs.close();
+                pst.close();
+                connection.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                connectDB.closeDbConn(connection);
+            }
         } else {
             if (ds.getDbType() == 2) {
                 selectSQL = "SELECT *  FROM  " + sourceTableName;

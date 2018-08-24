@@ -4,6 +4,8 @@ import com.gtafe.data.center.common.common.util.empty.EmptyUtil;
 import com.gtafe.data.center.dataetl.datasource.mapper.DatasourceMapper;
 import com.gtafe.data.center.dataetl.datasource.utils.ConnectDB;
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
+import com.gtafe.data.center.dataetl.datatask.mapper.DataTaskMapper;
+import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
 import com.gtafe.data.center.dataetl.plsql.mapper.PlsqlMapper;
 import com.gtafe.data.center.dataetl.plsql.service.PlsqlService;
 import com.gtafe.data.center.dataetl.plsql.utils.DbInfo;
@@ -28,6 +30,8 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
     private PlsqlMapper plsqlMapper;
     @Autowired
     private DatasourceMapper datasourceMapper;
+    @Autowired
+    private DataTaskMapper dataTaskMapper;
 
 
     @Override
@@ -229,13 +233,13 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
         for (ItemDetailVo vo1 : itemDetailVos) {
             this.plsqlMapper.insertItemDetail(vo1);
         }
-        checkAliansName(vo.getAliansName(), vo.getId(), vo.getId());
+        checkAliansName(vo.getAliansName(), vo.getOrgId(), vo.getId());
         // 然后修改主数据
         plsqlMapper.updateData(vo);
         return true;
     }
 
-    private void checkAliansName(String aliansName, int orgId, int id) {
+    private void checkAliansName(String aliansName, String orgId, int id) {
         int countAliansName = this.plsqlMapper.checkAliansNameRepeat(aliansName, orgId, id);
         if (countAliansName > 0) {
             throw new OrdinaryException("别名已经存在了，请重新输入！");
@@ -245,9 +249,23 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
     @Override
     public void deleteBatchs(List<Integer> idList) {
         for (Integer idd : idList) {
+            if (checkIsUseing(idd)) {
+                throw new OrdinaryException("存在已经被使用的查询语句!");
+            }
             plsqlMapper.deleteItemsById(idd);
             plsqlMapper.deleteById(idd);
         }
+    }
+
+    private boolean checkIsUseing(Integer idd) {
+        boolean b = false;
+        PlsqlVo v = this.plsqlMapper.getInfoById(idd);
+        String name = v.getAliansName() + "#U";
+        int a = this.dataTaskMapper.getCountByAlianName(name);
+        if (a > 0) {
+            b = true;
+        }
+        return b;
     }
 
 

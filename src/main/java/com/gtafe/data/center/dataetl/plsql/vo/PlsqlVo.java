@@ -11,7 +11,7 @@ public class PlsqlVo implements Serializable {
     private String aliansName;
     private String remark;
     private boolean status;
-    private int orgId;
+    private String orgId;
     private String orgName;
     private String creator;
     private Date createTime;
@@ -82,11 +82,11 @@ public class PlsqlVo implements Serializable {
         this.status = status;
     }
 
-    public int getOrgId() {
+    public String getOrgId() {
         return orgId;
     }
 
-    public void setOrgId(int orgId) {
+    public void setOrgId(String orgId) {
         this.orgId = orgId;
     }
 

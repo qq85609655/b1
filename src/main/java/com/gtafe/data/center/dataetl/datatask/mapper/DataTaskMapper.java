@@ -133,4 +133,7 @@ public interface DataTaskMapper extends BaseMapper {
 
     @Select("select * from data_etl_field_detail where taskId=#{taskId}")
     List<TaskFieldDetailsVo> queryFieldDetailsList(@Param("taskId")int taskId);
+
+    @Select("select count(1) c from data_etl_task t where t.third_tablename =#{alianname} ")
+    int getCountByAlianName(@Param("alianname") String alianname);
 }

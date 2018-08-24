@@ -1,13 +1,3 @@
-/**
- * Project Name: gtacore
- * File Name:	<#%modlue%#>ServiceImpl.java
- * Description: This is writen by tools
- * Date: 		2017-08-14 17:52:20
- * Author: 		Xiang Zhiling
- * History:
- * Copyright (c) 2017, GTA All Rights Reserved.
- */
-
 package com.gtafe.data.center.dataetl.datatask.service.impl;
 
 
@@ -954,7 +944,25 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
     public Workbook exportRelations() {
         List<EtlTaskNoteVo> etlTaskNoteVos = this.dataTaskMapper.getEtltaskNotes();
         Workbook wb = new XSSFWorkbook();
-        for (EtlTaskNoteVo etlTaskNoteVo : etlTaskNoteVos) {
+
+        //生成
+      /*  cell.setCellFormula("hyperlink(\"test1.xls#testSheet!d4\",\"testSheet!d4\")");
+
+        hyperlink：是office的excel的函数；
+
+        test1.xls#testSheet!d4：是hyperlink的第一个参数，链接地址；
+
+        testSheet!d4：是hyperlink第二个参数，当前单元格cell的显示值
+
+        注：可以打开excel，并定位到对应的sheet页的对应单元格*/
+  /*      for (EtlTaskNoteVo etlTaskNoteVo : etlTaskNoteVos) {
+            Sheet etlTaskNoteVoSheet = wb.createSheet("目录说明");
+            Row lb = etlTaskNoteVoSheet.createRow(0);
+        }*/
+
+
+        for (int i = 0; i < etlTaskNoteVos.size(); i++) {
+            EtlTaskNoteVo etlTaskNoteVo = etlTaskNoteVos.get(i);
             Sheet etlTaskNoteVoSheet = wb.createSheet(etlTaskNoteVo.getTaskName() + "说明");
             Row someThing = etlTaskNoteVoSheet.createRow(0);
             someThing.createCell(0).setCellValue(etlTaskNoteVo.getTaskName());
@@ -970,12 +978,12 @@ public class DataTaskServiceImpl extends BaseController implements DataTaskServi
             rowHead.createCell(3).setCellValue("目标字段");
             rowHead.createCell(4).setCellValue(" ");
             List<TaskFieldDetailsVo> taskFieldDetailsVos = this.dataTaskMapper.queryFieldDetailsList(etlTaskNoteVo.getTaskId());
-            for (int i = 0; i < taskFieldDetailsVos.size(); i++) {
-                Row row = etlTaskNoteVoSheet.createRow(i + 2);
-                row.createCell(0).setCellValue(i + 1);
-                row.createCell(1).setCellValue(taskFieldDetailsVos.get(i).getSourceField());
+            for (int i2 = 0; i2 < taskFieldDetailsVos.size(); i2++) {
+                Row row = etlTaskNoteVoSheet.createRow(i2 + 2);
+                row.createCell(0).setCellValue(i2 + 1);
+                row.createCell(1).setCellValue(taskFieldDetailsVos.get(i2).getSourceField());
                 row.createCell(2).setCellValue("");
-                row.createCell(3).setCellValue(taskFieldDetailsVos.get(i).getTargetField());
+                row.createCell(3).setCellValue(taskFieldDetailsVos.get(i2).getTargetField());
                 row.createCell(4).setCellValue("");
             }
         }
