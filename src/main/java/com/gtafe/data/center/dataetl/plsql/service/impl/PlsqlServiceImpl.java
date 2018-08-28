@@ -9,6 +9,7 @@ import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
 import com.gtafe.data.center.dataetl.plsql.mapper.PlsqlMapper;
 import com.gtafe.data.center.dataetl.plsql.service.PlsqlService;
 import com.gtafe.data.center.dataetl.plsql.utils.DbInfo;
+import com.gtafe.data.center.dataetl.plsql.vo.ColumnDetail;
 import com.gtafe.data.center.dataetl.plsql.vo.ItemDetailVo;
 import com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo;
 import com.gtafe.data.center.dataetl.plsql.vo.SearchResultVo;
@@ -268,6 +269,19 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
         return b;
     }
 
+
+    @Override
+    public boolean upDateColumn(ColumnDetail vo) {
+        System.out.println(vo.toString());
+        this.plsqlMapper.upDateColumn(vo);
+        return true;
+    }
+
+
+    @Override
+    public List<ItemDetailVo> queryColunDetailList(int pageNum, int pageSize, int sqlId) {
+        return this.plsqlMapper.queryColunDetailList(pageNum, pageSize, sqlId);
+    }
 
     @Override
     public SearchResultVo runNow(int id) {

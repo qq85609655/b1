@@ -4,6 +4,7 @@ public class ItemDetailVo {
 
     private int id;
     private String columnLabel;
+    private String columnLabelName;
     private int displaySize;
     private String typeName;
     private int preci;
@@ -13,6 +14,14 @@ public class ItemDetailVo {
     private int isNullable;
     private boolean isReadOnly;
     private int sqlId;
+
+    public String getColumnLabelName() {
+        return columnLabelName;
+    }
+
+    public void setColumnLabelName(String columnLabelName) {
+        this.columnLabelName = columnLabelName;
+    }
 
     public int getId() {
         return id;

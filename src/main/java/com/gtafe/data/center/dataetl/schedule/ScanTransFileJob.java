@@ -20,6 +20,7 @@ import com.gtafe.framework.base.utils.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +38,8 @@ import java.util.logging.FileHandler;
 /**
  * 内部定时任务 扫描ktr kjb 文件的定时任务
  */
+
+@PropertySource("classpath:config.properties")
 @Component
 public class ScanTransFileJob {
     Logger logger = LoggerFactory.getLogger(ScanTransFileJob.class);
@@ -47,7 +50,7 @@ public class ScanTransFileJob {
     @Autowired
     DataTaskService dataTaskServiceImpl;
 
-    @Scheduled(cron = "0 0 0/30 * * *")
+    @Scheduled(cron = "${ScanSchedule}")
     public void ScanTransFileJob() {
      //   System.out.println("開始執行任務....");
       this.doTask();

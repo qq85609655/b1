@@ -12,6 +12,7 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +32,8 @@ import static org.quartz.TriggerBuilder.newTrigger;
  * <p>
  * 隔一段时间 扫描磁盘 是否有新的文件，如果有就加入到数据库表中，并刷新quartz 的job
  */
+
+@PropertySource("classpath:config.properties")
 @Component
 public class RunTransFileSchedule {
     Logger logger = LoggerFactory.getLogger(RunTransFileSchedule.class);
@@ -45,7 +48,7 @@ public class RunTransFileSchedule {
     @Autowired
     SysConfigMapper sysConfigMapper;
 
-     @Scheduled(initialDelay = 200000000, fixedRate =9000000)
+    @Scheduled(cron = "${ScanSchedule}")
     private void doRunTransTask() throws SchedulerException {
 
         SysConfigVo sysConfigVo = sysConfigMapper.queryEntity(false);

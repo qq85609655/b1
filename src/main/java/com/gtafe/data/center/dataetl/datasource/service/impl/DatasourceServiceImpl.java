@@ -498,7 +498,7 @@ public class DatasourceServiceImpl extends BaseService implements IDatasourceSer
                 field.setDataType(vo.getTypeName());
                 field.setNullable(vo.isNullable());
                 field.setIsAutoCreate(vo.isAutoIncrement() == true ? "Y" : "N");
-                field.setComment(vo.getColumnLabel());
+                field.setComment(vo.getColumnLabelName());
                 field.setPrimarykey(vo.isReadOnly() == true ? 1 : 0);
                 field.setDecimalLength(vo.getPreci());
                 result.add(field);

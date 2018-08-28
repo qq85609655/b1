@@ -1,5 +1,7 @@
 package com.gtafe.data.center.dataetl.plsql.service;
 
+import com.gtafe.data.center.dataetl.plsql.vo.ColumnDetail;
+import com.gtafe.data.center.dataetl.plsql.vo.ItemDetailVo;
 import com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo;
 import com.gtafe.data.center.dataetl.plsql.vo.SearchResultVo;
 
@@ -20,4 +22,8 @@ public interface PlsqlService {
     void deleteBatchs(List<Integer> idList);
 
     SearchResultVo runNow(int id);
+
+    boolean upDateColumn(ColumnDetail vo);
+
+    List<ItemDetailVo> queryColunDetailList(int pageNum, int pageSize, int sqlId);
 }

@@ -7,9 +7,7 @@ import com.gtafe.data.center.dataetl.datasource.service.impl.DatasourceServiceIm
 import com.gtafe.data.center.dataetl.datasource.vo.DatasourceVO;
 import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
 import com.gtafe.data.center.dataetl.plsql.service.PlsqlService;
-import com.gtafe.data.center.dataetl.plsql.vo.PlsqlParamVo;
-import com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo;
-import com.gtafe.data.center.dataetl.plsql.vo.SearchResultVo;
+import com.gtafe.data.center.dataetl.plsql.vo.*;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +47,18 @@ public class PlsqlController {
     }
 
 
+
+    @RequestMapping(path = "/queryList2", method = RequestMethod.POST)
+    public @ResponseBody
+    PageInfo<ItemDetailVo> queryColunDetailList(@RequestBody ItemParamVo param) {
+        LOGGER.debug("in PlsqlController.queryList method");
+        List<ItemDetailVo> result = plsqlServiceImpl.queryColunDetailList(param.getPageNum(), param.getPageSize(), param.getSqlId());
+        LOGGER.debug("Result: ", result.size());
+        return new PageInfo<ItemDetailVo>(result);
+    }
+
+
+
     /**
      * 根据机构id 查询其下有哪些数据源
      *
@@ -73,6 +83,18 @@ public class PlsqlController {
     boolean checkOut(@RequestBody PlsqlVo vo) {
         return this.plsqlServiceImpl.checkOut(vo);
     }
+
+
+    @RequestMapping(path = "/upDateColumn", method = RequestMethod.POST)
+    public @ResponseBody
+    boolean upDateColumn(@RequestBody ColumnDetail vo) {
+        return this.plsqlServiceImpl.upDateColumn(vo);
+    }
+
+
+
+
+
 
 
     /**

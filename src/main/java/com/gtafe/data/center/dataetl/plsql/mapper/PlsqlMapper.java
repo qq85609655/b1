@@ -1,12 +1,10 @@
 package com.gtafe.data.center.dataetl.plsql.mapper;
 
 import com.gtafe.data.center.dataetl.datatask.vo.DataTaskVo;
+import com.gtafe.data.center.dataetl.plsql.vo.ColumnDetail;
 import com.gtafe.data.center.dataetl.plsql.vo.ItemDetailVo;
 import com.gtafe.data.center.dataetl.plsql.vo.PlsqlVo;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -28,9 +26,9 @@ public interface PlsqlMapper {
     @Insert("insert into data_etl_plsql_detail(" +
             "columnLabel_,displaySize_,typeName_,precision_," +
             "scale_,isAutoIncrement_,isCurrency_,isNullable_," +
-            "isReadOnly_,sqlId)" +
+            "isReadOnly_,sqlId,columnLabelName)" +
             " values(#{vo.columnLabel},#{vo.displaySize},#{vo.typeName},#{vo.preci},#{vo.scal}," +
-            "#{vo.isAutoIncrement},#{vo.isCurrency},#{vo.isNullable},#{vo.isReadOnly},#{vo.sqlId})")
+            "#{vo.isAutoIncrement},#{vo.isCurrency},#{vo.isNullable},#{vo.isReadOnly},#{vo.sqlId},#{vo.columnLabel})")
     void insertItemDetail(@Param("vo") ItemDetailVo vo);
 
     @Delete("delete from data_etl_plsql_detail where sqlId=#{idd}")
@@ -48,4 +46,9 @@ public interface PlsqlMapper {
 
     @Select("select content from data_etl_plsql where aliansName=#{aliansName} and orgId=#{orgId}")
     PlsqlVo getInfoByAliansName(@Param("aliansName") String AliansName, @Param("orgId") String orgId);
+
+    @Update("update data_etl_plsql_detail set columnLabelName=#{vo.columnLabelName} where id=#{vo.id}  ")
+    void upDateColumn(@Param("vo") ColumnDetail vo);
+
+    List<ItemDetailVo> queryColunDetailList(@Param("pageNumKey") int pageNum, @Param("pageSizeKey") int pageSize, @Param("sqlId") int sqlId);
 }

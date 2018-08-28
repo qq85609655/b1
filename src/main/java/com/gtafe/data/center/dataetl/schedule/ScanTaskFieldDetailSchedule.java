@@ -11,6 +11,7 @@ import com.gtafe.data.center.dataetl.trans.Utils;
 import com.gtafe.framework.base.utils.StringUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,7 @@ import java.util.List;
 /**
  * 扫描task 并把所有的任务的输出字段 保存入库
  */
+@PropertySource("classpath:config.properties")
 @Component
 public class ScanTaskFieldDetailSchedule {
 
@@ -30,7 +32,7 @@ public class ScanTaskFieldDetailSchedule {
     @Autowired
     DataTaskMapper dataTaskMapper;
 
-    @Scheduled(cron = "0 */60 * * * ?")
+    @Scheduled(cron = "${ScanSchedule}")
     public void executeJob() {
         List<DataTaskVo> dataTasks = etlMapper.getAllTask2();
         System.out.println("查询出来 总任务数量为：" + dataTasks.size());

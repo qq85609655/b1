@@ -10,6 +10,7 @@ import com.gtafe.data.center.system.config.vo.SysConfigVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.gtafe.data.center.dataetl.datasource.mapper.DatasourceMapper;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Component;
 /**
  * 内部定时任务 扫描task 的状态
  */
+@PropertySource("classpath:config.properties")
 @Component
 public class TaskStatusSchedule {
 
@@ -43,17 +45,11 @@ public class TaskStatusSchedule {
 
     @Resource
     private SysConfigMapper sysConfigMapper;
-    Logger logger = LoggerFactory.getLogger(TaskStatusSchedule.class);
-
-
     /**
      * 定时任务 每十分钟扫描一次转换任务： 针对机器和运行任务进行组装结果
      */
-    @Scheduled(cron = "0 0/60 * * * *")
-    // @Scheduled(cron = "0 02 17 ? * *")
+    @Scheduled(cron = "${ScanSchedule}")
     public void refrashTaskStatus() {
-
-      //  System.out.println("開始執行任務....");
         this.doTask();
 
 

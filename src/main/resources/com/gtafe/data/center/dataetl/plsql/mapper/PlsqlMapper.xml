@@ -23,6 +23,12 @@
         order by m.updateTime desc
     </select>
 
+    <select id="queryColunDetailList" resultType="com.gtafe.data.center.dataetl.plsql.vo.ItemDetailVo">
+             SELECT id,columnLabel_ columnLabel,displaySize_ displaySize,typeName_ typeName,precision_ preci,scale_ scal,
+                 isAutoIncrement_ isAutoIncrement,isCurrency_ isCurrency,isNullable_ isNullable,isReadOnly_ isReadOnly,sqlId,columnLabelName
+              from data_etl_plsql_detail where sqlId =#{sqlId}
+    </select>
+
 
     <!--保存-->
     <insert id="insertData" useGeneratedKeys="true" keyProperty="vo.id"
@@ -52,9 +58,9 @@
     </update>
 
 
-    <select id="getItemDetailVosByAlianName"  resultType="com.gtafe.data.center.dataetl.plsql.vo.ItemDetailVo">
+    <select id="getItemDetailVosByAlianName" resultType="com.gtafe.data.center.dataetl.plsql.vo.ItemDetailVo">
         SELECT id,columnLabel_ columnLabel,displaySize_ displaySize,typeName_ typeName,precision_ preci,scale_ scal,
-        isAutoIncrement_ isAutoIncrement,isCurrency_ isCurrency,isNullable_ isNullable,isReadOnly_ isReadOnly,sqlId
+        isAutoIncrement_ isAutoIncrement,isCurrency_ isCurrency,isNullable_ isNullable,isReadOnly_ isReadOnly,sqlId,columnLabelName
         from data_etl_plsql_detail where sqlId =(select id from data_etl_plsql where aliansName=#{aliansName} and orgId=#{orgId})
     </select>
 </mapper>
