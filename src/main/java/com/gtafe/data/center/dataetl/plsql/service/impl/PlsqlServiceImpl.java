@@ -289,8 +289,15 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
         int ccount = itemDetailVos.size();
         SearchResultVo vo = new SearchResultVo();
         PlsqlVo plsqlVo = this.plsqlMapper.getInfoById(id);
+        DatasourceVO datasourceVO = this.datasourceMapper.queryDatasourceInfoById(plsqlVo.getDbSourceId());
+        int dbType = datasourceVO.getDbType();
+        StringBuffer sbb = new StringBuffer("");
         String coutsqlStr = "select count(*) c  from ";
-        StringBuffer sbb = new StringBuffer("select  ");
+        if (dbType == 3) {
+            sbb.append("select top 100  ");
+        } else {
+            sbb.append("selet ");
+        }
         String[] types = new String[ccount];
         //把类型放到数组中中
         for (int i = 0; i < ccount; i++) {
@@ -301,11 +308,16 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
             sbb.append(v.getColumnLabel()).append(",");
         }
         String sqlstr = sbb.toString().substring(0, sbb.length() - 1) + " from ( " + plsqlVo.getContent() + ") xx ";
-        System.out.println(sqlstr);
+
         long dataCount = 0;
         List<Object[]> dataLists = new ArrayList<Object[]>();
         coutsqlStr += "(" + plsqlVo.getContent() + ")  xx ";
-        DatasourceVO datasourceVO = this.datasourceMapper.queryDatasourceInfoById(plsqlVo.getDbSourceId());
+        if (dbType == 1) {//mysql 数据库
+            sqlstr = sqlstr + " LIMIT  100 ";
+        } else if (dbType == 2) {//oracle 数据库
+            sqlstr = sqlstr + "where ROWNUM <= 100 ";
+        }
+        System.out.println(sqlstr);
         ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
         if (connectDB.getConn() != null) {
             Connection connection = connectDB.getConn();
@@ -322,6 +334,8 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
                             datas[a] = rs.getString(a + 1);
                         } else if (types[a].equals("int")) {
                             datas[a] = rs.getInt(a + 1);
+                        } else {
+                            datas[a] = rs.getString(a + 1);
                         }
                     }
                     dataLists.add(datas);

@@ -412,7 +412,7 @@ public class DataStandardItemServiceImpl extends BaseController implements DataS
             types[i] = v.getDataType();
         }
         Connection connection = this.getCenterDbConnect();
-        String sqlstr = sql_data.toString().substring(0, sql_data.length() - 1) + "    from   " + dataOrgDetailInfoByCode.getTableName() + "  xx    ";
+        String sqlstr = sql_data.toString().substring(0, sql_data.length() - 1) + "    from   " + dataOrgDetailInfoByCode.getTableName() + "  xx   limit 100  ";
         coutsqlStr = "select count(*) c  from " + dataOrgDetailInfoByCode.getTableName() + " xx ";
         System.out.println(sqlstr);
         if (connection != null) {
