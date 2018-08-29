@@ -315,7 +315,7 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
         if (dbType == 1) {//mysql 数据库
             sqlstr = sqlstr + " LIMIT  100 ";
         } else if (dbType == 2) {//oracle 数据库
-            sqlstr = sqlstr + "where ROWNUM <= 100 ";
+            sqlstr = plsqlVo.getContent() + " where ROWNUM <= 100 ";
         }
         System.out.println(sqlstr);
         ConnectDB connectDB = StringUtil.getEntityBy(datasourceVO);
