@@ -334,8 +334,6 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
                             datas[a] = rs.getString(a + 1);
                         } else if (types[a].equals("int")) {
                             datas[a] = rs.getInt(a + 1);
-                        } else {
-                            datas[a] = rs.getString(a + 1);
                         }
                     }
                     dataLists.add(datas);
@@ -346,8 +344,11 @@ public class PlsqlServiceImpl extends BaseController implements PlsqlService {
                     dataCount = rs.getInt("C");
                 }
                 System.out.println(dataCount);
+                connectDB.closeDbConn(connection);
             } catch (Exception e) {
                 throw new OrdinaryException("执行查询异常：" + e.getMessage());
+            } finally {
+                connectDB.closeDbConn(connection);
             }
         }
         vo.setItemDetailVos(itemDetailVos);

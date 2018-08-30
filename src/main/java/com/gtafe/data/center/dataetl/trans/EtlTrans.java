@@ -180,7 +180,7 @@ public class EtlTrans {
                     PlsqlVo plsqlVo = this.plsqlMapper.getInfoByAliansName(sourceDBName, dataTask.getOrgId());
                     sqlContent = plsqlVo.getContent();
                 }
-                InputTable inputTable = new InputTable(locationX, 100, (String) stepInfo.get(1), sourceDS, sourceDBName, taskId, tType, sqlContent);
+                InputTable inputTable = new InputTable(locationX, 100, (String) stepInfo.get(1), sourceDS, sourceDBName, taskId, tType, sqlContent,busType,targetDS);
                 inputStep = inputTable.inputStep();
                 transMeta.addStep(inputStep);
                 fromStep = inputStep;

@@ -37,11 +37,11 @@ public class OutputTable extends BaseStep {
     public List<TaskFieldDetailsVo> getTaskFieldDetailsVoList(String stepstr) {
         List<TaskFieldDetailsVo> detailsVos = new ArrayList<TaskFieldDetailsVo>();
         List<TargetMappingVo> mapping;
-        SourceTargetVo sourceTargetVo;
+        //SourceTargetVo sourceTargetVo;
         List<TableFieldVo> targetTableFieldVoList;
         try {
             mapping = mapper.readValue(stepstr, ConvertRuleTarget.class).getData().getMappings();
-            sourceTargetVo = mapper.readValue(stepstr, ConvertRuleTarget.class).getData();
+            //sourceTargetVo = mapper.readValue(stepstr, ConvertRuleTarget.class).getData();
             targetTableFieldVoList = mapper.readValue(stepstr, ConvertRuleTarget.class).getTargetList();
         } catch (IOException e) {
             return null;
@@ -70,6 +70,7 @@ public class OutputTable extends BaseStep {
         } catch (IOException e) {
             return null;
         }
+        System.out.println(conditions.size() == 0 ? "全表更新" : "按条件更新");
         if (conditions == null || conditions.size() == 0) {
             TableOutputMeta tableOutput = new TableOutputMeta();
             tableOutput.setDatabaseMeta(Utils.InitDatabaseMeta(ds));
